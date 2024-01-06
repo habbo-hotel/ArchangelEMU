@@ -61,13 +61,80 @@ import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 public enum Incoming {
-    acceptFriendEvent(137, AcceptFriendEvent.class), acceptTradingEvent(3863, AcceptTradingEvent.class), addAdminRightsToMemberEvent(2894, AddAdminRightsToMemberEvent.class), addFavouriteRoomEvent(3817, AddFavouriteRoomEvent.class), addItemToTradeEvent(3107, AddItemToTradeEvent.class), addItemsToTradeEvent(1263, AddItemsToTradeEvent.class), addJukeboxDiskEvent(753, AddJukeboxDiskEvent.class), addSpamWallPostItEvent(3283, AddSpamWallPostItEvent.class), ambassadorAlertEvent(2996, AmbassadorAlertEvent.class), answerPollEvent(3505, AnswerPollEvent.class), applySnapshotEvent(3373, ApplySnapshotEvent.class), approveMembershipRequestEvent(3386, ApproveMembershipRequestEvent.class), approveNameEvent(2109, ApproveNameEvent.class), assignRightsEvent(808, AssignRightsEvent.class), avatarEffectActivatedEvent(2959, AvatarEffectActivatedEvent.class), avatarEffectSelectedEvent(1752, AvatarEffectSelectedEvent.class), avatarExpressionEvent(2456, AvatarExpressionEvent.class), banUserWithDurationEvent(1477, BanUserWithDurationEvent.class), breedPetsEvent(1638, BreedPetsEvent.class), buildersClubPlaceWallItemEvent(2462, BuildersClubPlaceWallItemEvent.class), buildersClubQueryFurniCountEvent(2529, BuildersClubQueryFurniCountEvent.class), buyMarketplaceOfferEvent(1603, BuyMarketplaceOfferEvent.class), callForHelpEvent(1691, CallForHelpEvent.class), callForHelpFromForumMessageEvent(1412, CallForHelpFromForumMessageEvent.class), callForHelpFromForumThreadEvent(534, CallForHelpFromForumThreadEvent.class), callForHelpFromIMEvent(2950, CallForHelpFromIMEvent.class), callForHelpFromPhotoEvent(2492, CallForHelpFromPhotoEvent.class), canCreateRoomEvent(2128, CanCreateRoomEvent.class), cancelMarketplaceOfferEvent(434, CancelMarketplaceOfferEvent.class), cancelPetBreedingEvent(2713, CancelPetBreedingEvent.class), cancelTypingEvent(1474, CancelTypingEvent.class), changeMottoEvent(2228, ChangeMottoEvent.class), changePostureEvent(2235, ChangePostureEvent.class), changeUserNameEvent(2977, ChangeUserNameEvent.class), chatEvent(1314, ChatEvent.class), chatReviewGuideDecidesOnOfferEvent(3365, ChatReviewGuideDecidesOnOfferEvent.class), chatReviewGuideDetachedEvent(2501, ChatReviewGuideDetachedEvent.class), chatReviewGuideVoteEvent(3961, ChatReviewGuideVoteEvent.class), chatReviewSessionCreateEvent(3060, ChatReviewSessionCreateEvent.class), checkUserNameEvent(3950, CheckUserNameEvent.class), clientHelloEvent(4000, ClientHelloEvent.class), closeIssueDefaultActionEvent(2717, CloseIssueDefaultActionEvent.class), closeIssuesEvent(2067, CloseIssuesEvent.class), closeTradingEvent(2551, CloseTradingEvent.class), commandBotEvent(2624, CommandBotEvent.class), completeDiffieHandshakeEvent(773, CompleteDiffieHandshakeEvent.class), compostPlantEvent(3835, CompostPlantEvent.class), confirmAcceptTradingEvent(2760, ConfirmAcceptTradingEvent.class), confirmDeclineTradingEvent(2341, ConfirmDeclineTradingEvent.class), confirmPetBreedingEvent(3382, ConfirmPetBreedingEvent.class), controlYoutubeDisplayPlaybackEvent(3005, ControlYoutubeDisplayPlaybackEvent.class), craftEvent(3591, CraftEvent.class), craftSecretEvent(1251, CraftSecretEvent.class), createFlatEvent(2752, CreateFlatEvent.class), createGuildEvent(230, CreateGuildEvent.class), creditFurniRedeemEvent(3115, CreditFurniRedeemEvent.class), customizeAvatarWithFurniEvent(3374, CustomizeAvatarWithFurniEvent.class), customizePetWithFurniEvent(1328, CustomizePetWithFurniEvent.class), danceEvent(2080, DanceEvent.class), deactivateGuildEvent(1134, DeactivateGuildEvent.class), declineFriendEvent(2890, DeclineFriendEvent.class), deleteFavouriteRoomEvent(309, DeleteFavouriteRoomEvent.class), deleteRoomEvent(532, DeleteRoomEvent.class), deselectFavouriteHabboGroupEvent(1820, DeselectFavouriteHabboGroupEvent.class), diceOffEvent(1533, DiceOffEvent.class),
+    acceptFriendEvent(137, AcceptFriendEvent.class),
+    acceptTradingEvent(3863, AcceptTradingEvent.class),
+    addAdminRightsToMemberEvent(2894, AddAdminRightsToMemberEvent.class),
+    addFavouriteRoomEvent(3817, AddFavouriteRoomEvent.class),
+    addItemToTradeEvent(3107, AddItemToTradeEvent.class),
+    addItemsToTradeEvent(1263, AddItemsToTradeEvent.class),
+    addJukeboxDiskEvent(753, AddJukeboxDiskEvent.class),
+    addSpamWallPostItEvent(3283, AddSpamWallPostItEvent.class),
+    ambassadorAlertEvent(2996, AmbassadorAlertEvent.class),
+    answerPollEvent(3505, AnswerPollEvent.class),
+    applySnapshotEvent(3373, ApplySnapshotEvent.class),
+    approveMembershipRequestEvent(3386, ApproveMembershipRequestEvent.class),
+    approveNameEvent(2109, ApproveNameEvent.class),
+    assignRightsEvent(808, AssignRightsEvent.class),
+    avatarEffectActivatedEvent(2959, AvatarEffectActivatedEvent.class),
+    avatarEffectSelectedEvent(1752, AvatarEffectSelectedEvent.class),
+    avatarExpressionEvent(2456, AvatarExpressionEvent.class),
+    banUserWithDurationEvent(1477, BanUserWithDurationEvent.class),
+    breedPetsEvent(1638, BreedPetsEvent.class),
+    buildersClubPlaceWallItemEvent(2462, BuildersClubPlaceWallItemEvent.class),
+    buildersClubQueryFurniCountEvent(2529, BuildersClubQueryFurniCountEvent.class),
+    buyMarketplaceOfferEvent(1603, BuyMarketplaceOfferEvent.class),
+    callForHelpEvent(1691, CallForHelpEvent.class),
+    callForHelpFromForumMessageEvent(1412, CallForHelpFromForumMessageEvent.class),
+    callForHelpFromForumThreadEvent(534, CallForHelpFromForumThreadEvent.class),
+    callForHelpFromIMEvent(2950, CallForHelpFromIMEvent.class),
+    callForHelpFromPhotoEvent(2492, CallForHelpFromPhotoEvent.class),
+    canCreateRoomEvent(2128, CanCreateRoomEvent.class),
+    cancelMarketplaceOfferEvent(434, CancelMarketplaceOfferEvent.class),
+    cancelPetBreedingEvent(2713, CancelPetBreedingEvent.class),
+    cancelTypingEvent(1474, CancelTypingEvent.class),
+    changeMottoEvent(2228, ChangeMottoEvent.class),
+    changePostureEvent(2235, ChangePostureEvent.class),
+    changeUserNameEvent(2977, ChangeUserNameEvent.class),
+    chatEvent(1314, ChatEvent.class),
+    chatReviewGuideDecidesOnOfferEvent(3365, ChatReviewGuideDecidesOnOfferEvent.class),
+    chatReviewGuideDetachedEvent(2501, ChatReviewGuideDetachedEvent.class),
+    chatReviewGuideVoteEvent(3961, ChatReviewGuideVoteEvent.class),
+    chatReviewSessionCreateEvent(3060, ChatReviewSessionCreateEvent.class),
+    checkUserNameEvent(3950, CheckUserNameEvent.class),
+    clientHelloEvent(4000, ClientHelloEvent.class),
+    closeIssueDefaultActionEvent(2717, CloseIssueDefaultActionEvent.class),
+    closeIssuesEvent(2067, CloseIssuesEvent.class),
+    closeTradingEvent(2551, CloseTradingEvent.class),
+    commandBotEvent(2624, CommandBotEvent.class),
+    completeDiffieHandshakeEvent(773, CompleteDiffieHandshakeEvent.class),
+    compostPlantEvent(3835, CompostPlantEvent.class),
+    confirmAcceptTradingEvent(2760, ConfirmAcceptTradingEvent.class),
+    confirmDeclineTradingEvent(2341, ConfirmDeclineTradingEvent.class),
+    confirmPetBreedingEvent(3382, ConfirmPetBreedingEvent.class),
+    controlYoutubeDisplayPlaybackEvent(3005, ControlYoutubeDisplayPlaybackEvent.class),
+    craftEvent(3591, CraftEvent.class),
+    craftSecretEvent(1251, CraftSecretEvent.class),
+    createFlatEvent(2752, CreateFlatEvent.class),
+    createGuildEvent(230, CreateGuildEvent.class),
+    creditFurniRedeemEvent(3115, CreditFurniRedeemEvent.class),
+    customizeAvatarWithFurniEvent(3374, CustomizeAvatarWithFurniEvent.class),
+    customizePetWithFurniEvent(1328, CustomizePetWithFurniEvent.class),
+    danceEvent(2080, DanceEvent.class),
+    deactivateGuildEvent(1134, DeactivateGuildEvent.class),
+    declineFriendEvent(2890, DeclineFriendEvent.class),
+    deleteFavouriteRoomEvent(309, DeleteFavouriteRoomEvent.class),
+    deleteRoomEvent(532, DeleteRoomEvent.class),
+    deselectFavouriteHabboGroupEvent(1820, DeselectFavouriteHabboGroupEvent.class),
+    diceOffEvent(1533, DiceOffEvent.class),
 
     dropCarryItemEvent(2814, DropCarryItemEvent.class),
 
@@ -913,5 +980,4 @@ public enum Incoming {
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
-
 }
