@@ -71,10 +71,10 @@ public class Bot extends Avatar implements Runnable {
         this.gender = HabboGender.valueOf(set.getString("gender"));
 
         //@Deprecated
-        this.ownerId = set.getInt("owner_id");
+        this.ownerId = set.getInt("user_id");
         this.ownerName = set.getString("owner_name");
 
-        this.ownerInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(set.getInt("owner_id"));
+        this.ownerInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(set.getInt("user_id"));
 
         this.chatAuto = set.getString("chat_auto").equals("1");
         this.chatRandom = set.getString("chat_random").equals("1");
@@ -99,7 +99,7 @@ public class Bot extends Avatar implements Runnable {
     @Override
     public void run() {
         if (this.sqlUpdateNeeded) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, owner_id = ?, room_id = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ?, x = ?, y = ?, z = ? WHERE id = ?")) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, user_id = ?, room_id = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ?, x = ?, y = ?, z = ? WHERE id = ?")) {
                 statement.setString(1, this.name);
                 statement.setString(2, this.motto);
                 statement.setString(3, this.figure);

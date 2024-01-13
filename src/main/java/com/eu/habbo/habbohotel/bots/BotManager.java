@@ -61,7 +61,7 @@ public class BotManager {
 
     public Bot createBot(THashMap<String, String> data, String type) {
         Bot bot = null;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO bots (owner_id, room_id, name, motto, figure, gender, type) VALUES (0, 0, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO bots (user_id, room_id, name, motto, figure, gender, type) VALUES (0, 0, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, data.get("name"));
             statement.setString(2, data.get("motto"));
             statement.setString(3, data.get("figure"));
@@ -70,7 +70,7 @@ public class BotManager {
             statement.execute();
             try (ResultSet set = statement.getGeneratedKeys()) {
                 if (set.next()) {
-                    try (PreparedStatement stmt = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots LEFT JOIN users ON bots.owner_id = users.id WHERE bots.id = ? LIMIT 1")) {
+                    try (PreparedStatement stmt = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots LEFT JOIN users ON bots.user_id = users.id WHERE bots.id = ? LIMIT 1")) {
                         stmt.setInt(1, set.getInt(1));
                         try (ResultSet resultSet = stmt.executeQuery()) {
                             if (resultSet.next()) {

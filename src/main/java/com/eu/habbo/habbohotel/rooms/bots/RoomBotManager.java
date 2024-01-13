@@ -57,7 +57,7 @@ public class RoomBotManager extends RoomUnitSubManager {
     public synchronized void loadBots(Connection connection) {
         this.currentBots.clear();
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.owner_id = users.id WHERE room_id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.user_id = users.id WHERE room_id = ?")) {
             statement.setInt(1, this.room.getRoomInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {

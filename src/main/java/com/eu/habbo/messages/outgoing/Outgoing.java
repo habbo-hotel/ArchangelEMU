@@ -154,7 +154,7 @@ public class Outgoing {
     public static final int game2GameDirectoryStatusMessageComposer = 2246;  //todo?
     public static final int game2InArenaQueueMessageComposer = 872;//todo?
     public static final int game2JoiningGameFailedMessageComposer = 1730; // todo?
-    public static final int game2StopCounterMessageComposer = 2233; //todo?
+    public static final int game2StopCounterMessageComposer = -1; //todo?
     public static final int game2UserLeftGameMessageComposer = 2383;//todo?
     public static final int game2WeeklyFriendsLeaderboardComposer = 2270;//todo?
     public static final int game2WeeklyLeaderboardComposer = 2196; //todo?

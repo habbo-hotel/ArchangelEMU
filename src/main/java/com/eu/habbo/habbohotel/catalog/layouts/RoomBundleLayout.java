@@ -189,7 +189,7 @@ public class RoomBundleLayout extends SingleBundle {
             }
 
             if (Emulator.getConfig().getBoolean("bundle.bots.enabled")) {
-                try (PreparedStatement statement = connection.prepareStatement("INSERT INTO bots (owner_id, room_id, name, motto, figure, gender, x, y, z, chat_lines, chat_auto, chat_random, chat_delay, dance, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement statement = connection.prepareStatement("INSERT INTO bots (user_id, room_id, name, motto, figure, gender, x, y, z, chat_lines, chat_auto, chat_random, chat_delay, dance, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                     synchronized (this.room.getRoomUnitManager().getRoomBotManager().getCurrentBots()) {
                         statement.setInt(1, userId);
                         statement.setInt(2, roomId);
