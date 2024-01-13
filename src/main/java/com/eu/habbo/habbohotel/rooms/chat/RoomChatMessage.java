@@ -48,7 +48,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
     private byte emotion;
 
     public RoomChatMessage(MessageHandler message) {
-        if (message.packet.getMessageId() == Incoming.whisperEvent) {
+        if (message.packet.getMessageId() == Incoming.whisperEvent.getMessageId()) {
             String data = message.packet.readString();
             this.targetHabbo = message.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(data.split(" ")[0]);
             this.message = data.substring(data.split(" ")[0].length() + 1);

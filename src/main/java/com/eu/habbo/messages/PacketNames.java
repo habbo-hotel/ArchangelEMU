@@ -6,22 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 
 @Slf4j
 public class PacketNames {
-
-
-    private final HashMap<Integer, String> incoming;
-    private final HashMap<Integer, String> outgoing;
-
-    public PacketNames() {
-        this.incoming = new HashMap<>();
-        this.outgoing = new HashMap<>();
-    }
+    private final HashMap<Integer, String> incoming = new HashMap<>();
+    private final HashMap<Integer, String> outgoing = new HashMap<>();
 
     public void initialize() {
-        PacketNames.getNames(Incoming.class, this.incoming);
+        Arrays.stream(Incoming.values()).forEach(packet -> incoming.put(packet.getMessageId(), packet.name()));
         PacketNames.getNames(Outgoing.class, this.outgoing);
     }
 
