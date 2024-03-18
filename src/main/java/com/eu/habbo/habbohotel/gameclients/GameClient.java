@@ -1,0 +1,103 @@
+package com.eu.habbo.habbohotel.gameclients;
+
+import com.eu.habbo.Emulator;
+import com.eu.habbo.crypto.HabboEncryption;
+import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.MessageComposer;
+import io.netty.channel.Channel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Slf4j
+public class GameClient {
+    
+    @Getter
+    private final Channel channel;
+    @Getter
+    private final HabboEncryption encryption;
+
+    @Setter
+    @Getter
+    private Habbo habbo;
+    @Setter
+    @Getter
+    private boolean handshakeFinished;
+    @Getter
+    private String machineId = "";
+
+    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
+    public final ConcurrentHashMap<Class<? extends MessageHandler>, Long> messageTimestamps = new ConcurrentHashMap<>();
+    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
+
+    public GameClient(Channel channel) {
+        this.channel = channel;
+        this.encryption = Emulator.getCrypto().isEnabled()
+                ? new HabboEncryption(
+                    Emulator.getCrypto().getExponent(),
+                    Emulator.getCrypto().getModulus(),
+                    Emulator.getCrypto().getPrivateExponent())
+                : null;
+    }
+
+
+    public void sendResponse(MessageComposer composer) {
+        this.sendResponse(composer.compose());
+    }
+
+    public void sendResponse(ServerMessage response) {
+        if (this.channel.isOpen()) {
+            if (response == null || response.getHeader() <= 0) {
+                return;
+            }
+
+            this.channel.write(response, this.channel.voidPromise());
+            this.channel.flush();
+        }
+    }
+
+    public void sendResponses(ArrayList<ServerMessage> responses) {
+        if (this.channel.isOpen()) {
+            for (ServerMessage response : responses) {
+                if (response == null || response.getHeader() <= 0) {
+                    return;
+                }
+
+                this.channel.write(response);
+            }
+
+            this.channel.flush();
+        }
+    }
+
+    public void dispose() {
+        try {
+            this.channel.close();
+
+            if (this.habbo != null) {
+                if (this.habbo.isOnline()) {
+                    this.habbo.getHabboInfo().setOnline(false);
+                    this.habbo.disconnect();
+                }
+
+                this.habbo = null;
+            }
+        } catch (Exception e) {
+            log.error("Caught exception", e);
+        }
+    }
+
+    public void setMachineId(String machineId) {
+        if (machineId == null) {
+            throw new RuntimeException("Cannot set machineID to NULL");
+        }
+
+        this.machineId = machineId;
+    }
+
+}

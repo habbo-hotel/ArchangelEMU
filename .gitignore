@@ -1,0 +1,16 @@
+logging/
+compiled-builds/
+*.iml
+.idea/
+target/**
+TODO.txt
+packet.pkt
+plugins/**
+target/
+config.ini
+*.txt
+*.jar
+*.log
+*.zip
+.DS_Store
+
