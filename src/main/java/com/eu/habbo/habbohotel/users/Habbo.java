@@ -28,6 +28,8 @@ import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
+import com.eu.habbo.roleplay.inventory.WeaponsComponent;
+import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import lombok.Getter;
@@ -57,6 +59,10 @@ public class Habbo extends Avatar implements Runnable {
     @Getter
     private GameClient client;
 
+    @Setter
+    @Getter
+    private final HabboRoleplayStats habboRoleplayStats;
+
     private volatile boolean update;
     private volatile boolean disconnected = false;
     private volatile boolean disconnecting = false;
@@ -65,6 +71,7 @@ public class Habbo extends Avatar implements Runnable {
         this.client = null;
         this.habboInfo = new HabboInfo(set);
         this.habboStats = HabboStats.load(this.habboInfo);
+        this.habboRoleplayStats = HabboRoleplayStats.load(this);
         this.inventory = new HabboInventory(this);
 
         this.messenger = new Messenger();

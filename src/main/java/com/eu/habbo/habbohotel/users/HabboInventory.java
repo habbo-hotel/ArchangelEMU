@@ -4,6 +4,7 @@ import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceState;
 import com.eu.habbo.habbohotel.users.inventory.*;
+import com.eu.habbo.roleplay.inventory.WeaponsComponent;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,10 @@ public class HabboInventory {
     private EffectsComponent effectsComponent;
     private ItemsComponent itemsComponent;
     private PetsComponent petsComponent;
+
+    @Setter
+    @Getter
+    private WeaponsComponent weaponsComponent;
 
     public HabboInventory(Habbo habbo) {
         this.habbo = habbo;
@@ -62,6 +67,12 @@ public class HabboInventory {
             log.error("Caught exception", e);
         }
 
+        try {
+            this.weaponsComponent = new WeaponsComponent(this.habbo);
+        } catch (Exception e) {
+            log.error("Caught exception", e);
+        }
+
         this.items = MarketPlace.getOwnOffers(this.habbo);
     }
 
@@ -74,6 +85,7 @@ public class HabboInventory {
         this.itemsComponent.dispose();
         this.petsComponent.dispose();
         this.wardrobeComponent.dispose();
+        this.weaponsComponent.dispose();
 
         this.badgesComponent = null;
         this.botsComponent = null;
@@ -81,6 +93,7 @@ public class HabboInventory {
         this.itemsComponent = null;
         this.petsComponent = null;
         this.wardrobeComponent = null;
+        this.weaponsComponent = null;
     }
 
     public void addMarketplaceOffer(MarketPlaceOffer marketPlaceOffer) {
