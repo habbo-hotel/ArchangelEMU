@@ -1,120 +1,48 @@
 package com.eu.habbo.roleplay.weapons;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
 public class Weapon {
+
+    @Getter
     private int id;
+
+    @Getter
+    @Setter
     private String displayName;
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public void setDisplayName(String newDisplayName) {
-        this.displayName = newDisplayName;
-    }
-
+    @Getter
     private String uniqueName;
-
-    public String getUniqueName() {
-        return this.uniqueName;
-    }
-
-    public void setUniqueName(String newUniqueName) {
-        this.uniqueName = newUniqueName;
-    }
-
+    @Getter
+    @Setter
     private String type;
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String newType) {
-        this.type = newType;
-    }
+    @Getter
+    @Setter
     private int minDamage;
-
-    public int getMinDamage() {
-        return this.minDamage;
-    }
-
-    public void setMinDamage(int newMinDamage) {
-        this.minDamage = newMinDamage;
-    }
-
+    @Getter
+    @Setter
     private int maxDamage;
-
-    public int getMaxDamage() {
-        return this.maxDamage;
-    }
-
-    public void setMaxDamage(int newMaxDamage) {
-        this.maxDamage = newMaxDamage;
-    }
-
+    @Getter
+    @Setter
     private int rangeInTiles;
-
-    public int getRangeInTiles() {
-        return this.rangeInTiles;
-    }
-
-    public void setRangeInTiles(int newRange) {
-        this.rangeInTiles = newRange;
-    }
-
+    @Getter
+    @Setter
     private double accuracy;
-
-    public double getAccuracy() {
-        return this.accuracy;
-    }
-
-    public void setAccuracy(double newAccuracy) {
-        this.accuracy = newAccuracy;
-    }
-
+    @Getter
+    @Setter
     private double reloadTime;
-
-    public double getReloadTime() {
-        return this.reloadTime;
-    }
-
-    public void setReloadTime(double newReloadTime) {
-        this.reloadTime = newReloadTime;
-    }
-
+    @Setter
     private int ammoCapacity;
-
-    public int getAmmoCapacity() {
-        return this.ammoCapacity;
-    }
-
-    public void setAmmoCapacity(int newAmmoCapacity) {
-        this.ammoCapacity = newAmmoCapacity;
-    }
-
+    @Getter
+    @Setter
     private double weight;
-
-    public double getWeight() {
-        return this.weight;
-    }
-
-    public void setWeight(double newWeight) {
-        this.weight = newWeight;
-    }
-
+    @Getter
+    @Setter
     private int cooldownSeconds;
-
-    public int getCooldownSeconds() {
-        return this.cooldownSeconds;
-    }
-
-    public void setCooldownSeconds(int newCooldownSeconds) {
-        this.cooldownSeconds = newCooldownSeconds;
-    }
-
     private String specialAbilities;
 
     public String[] getSpecialAbilities() {
@@ -125,35 +53,15 @@ public class Weapon {
         this.specialAbilities = Arrays.toString(newSpecialAbilities);
     }
 
+    @Getter
+    @Setter
     private String equipEffect;
-
-    public String getEquipEffect() {
-        return this.equipEffect;
-    }
-
-    public void setEquipEffect(String newEquipEffect) {
-        this.equipEffect = newEquipEffect;
-    }
-
+    @Getter
+    @Setter
     private String equipMessage;
-
-    public String getEquipMessage() {
-        return this.equipMessage;
-    }
-
-    public void setEquipMessage(String newEquipMessage) {
-        this.equipMessage = newEquipMessage;
-    }
-
+    @Getter
+    @Setter
     private String attackMessage;
-
-    public String getAttackMessage() {
-        return this.attackMessage;
-    }
-
-    public void setAttackMessage(String newAttackMessage) {
-        this.attackMessage = newAttackMessage;
-    }
 
     public Weapon(ResultSet set) throws SQLException {
         this.load(set);

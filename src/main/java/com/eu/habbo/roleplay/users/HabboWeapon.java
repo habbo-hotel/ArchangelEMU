@@ -12,17 +12,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public class HabboWeapon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HabboWeapon.class);
 
-    @Getter
     private Weapon weapon;
 
-    @Getter
     private int weaponID;
 
-    @Getter
     private int userID;
 
     public HabboWeapon(ResultSet set) throws SQLException {
