@@ -38,10 +38,10 @@ public class GangsManager {
     private CorporationsShiftsManager corporationsShiftManager;
 
 
-    public GangsManager() {
+    private GangsManager() {
         long millis = System.currentTimeMillis();
         this.corporations = new TIntObjectHashMap<>();
-        this.corporationsShiftManager = new CorporationsShiftsManager();
+        this.corporationsShiftManager = CorporationsShiftsManager.getInstance();
 
         this.reload();
 

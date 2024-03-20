@@ -26,6 +26,9 @@ import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
+import com.eu.habbo.roleplay.corporations.CorporationsManager;
+import com.eu.habbo.roleplay.gangs.GangsManager;
+import com.eu.habbo.roleplay.weapons.WeaponsManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,6 +60,10 @@ public class GameEnvironment {
     private PollManager pollManager;
     private SubscriptionManager subscriptionManager;
     private CalendarManager calendarManager;
+    private CorporationsManager corporationsManager;
+    private GangsManager gangsManager;
+    private WeaponsManager weaponsManager;
+
 
     public void load() throws Exception {
         log.info("GameEnvironment -> Loading...");
@@ -82,6 +89,9 @@ public class GameEnvironment {
         this.craftingManager = new CraftingManager();
         this.pollManager = new PollManager();
         this.calendarManager = new CalendarManager();
+        this.corporationsManager = CorporationsManager.getInstance();
+        this.gangsManager = GangsManager.getInstance();
+        this.weaponsManager = WeaponsManager.getInstance();
 
         this.roomManager.loadPublicRooms();
         this.navigatorManager.loadNavigator();

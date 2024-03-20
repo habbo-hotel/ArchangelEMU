@@ -48,14 +48,16 @@ public final class Emulator {
 
     private static final String logo =
             """
-
-                    ███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗\s
-                    ████╗ ████║██╔═══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗
-                    ██╔████╔██║██║   ██║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗███████╗   ██║   ███████║██████╔╝
-                    ██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗
-                    ██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║
-                    ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝
-                    """;
+                                                ##                                            ###   \s
+                                               ##                                             ##   \s
+                     ####    #####     ####    #####     ####    #####     #####    ####      ##   \s
+                        ##   ##  ##   ##       ##  ##       ##   ##  ##   ##  ##   ##  ##     ##   \s
+                     #####   ##       ##       ##  ##    #####   ##  ##   ##  ##   ######     ##   \s
+                    ##  ##   ##       ##       ##  ##   ##  ##   ##  ##    #####   ##         ##   \s
+                     #####   ##        ####    ##  ##    #####   ##  ##       ##    #####    ####  \s
+                                                                          #####                    \s
+                                                                   By LeChris github.com/habbo-hotel\s
+            """;
 
 
 
@@ -84,14 +86,6 @@ public final class Emulator {
         Runtime.getRuntime().addShutdownHook(hook);
     }
 
-    public static void promptEnterKey(){
-        log.info("\n");
-        log.info("This is a developer preview build. Your plugins for Arcturus Morningstar 3.x will NOT work on this build.");
-        log.info("Press \"ENTER\" if you agree to the terms stated above...");
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
-    }
-
     public static void main(String[] args) {
         try {
             // Check if running on Windows and not in IntelliJ.
@@ -112,16 +106,8 @@ public final class Emulator {
 
             System.out.println(logo);
 
-            // Checks if this is a BETA build before allowing them to continue.
-            if (PREVIEW.toLowerCase().contains("preview") ) {
-                System.out.println();
-                promptEnterKey();
-            }
-            log.info("eek. Has it really been a year?");
-            log.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
             log.info("Version: {}", VERSION);
             log.info("Build: {}", build);
-            log.info("Follow our development at https://git.krews.org/morningstar/Arcturus-Community");
 
             long startTime = System.nanoTime();
 

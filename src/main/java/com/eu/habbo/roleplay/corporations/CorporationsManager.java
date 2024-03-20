@@ -36,10 +36,10 @@ public class CorporationsManager {
     private CorporationsShiftsManager corporationsShiftManager;
 
 
-    public CorporationsManager() {
+    private CorporationsManager() {
         long millis = System.currentTimeMillis();
         this.corporations = new TIntObjectHashMap<>();
-        this.corporationsShiftManager = new CorporationsShiftsManager();
+        this.corporationsShiftManager = CorporationsShiftsManager.getInstance();
 
         this.reload();
 

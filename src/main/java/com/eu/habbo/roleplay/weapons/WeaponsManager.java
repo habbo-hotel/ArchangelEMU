@@ -29,7 +29,7 @@ public class WeaponsManager {
     }
 
 
-    public WeaponsManager() {
+    private WeaponsManager() {
         long millis = System.currentTimeMillis();
         this.weapons = new TIntObjectHashMap<>();
 

@@ -27,7 +27,7 @@ public class CorporationsShiftsManager {
     private final Map<Integer, CorporationShift> activeUserShifts;
     private final ScheduledExecutorService scheduler;
 
-    public CorporationsShiftsManager() {
+    private CorporationsShiftsManager() {
         long millis = System.currentTimeMillis();
         this.activeUserShifts = new HashMap<>();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();

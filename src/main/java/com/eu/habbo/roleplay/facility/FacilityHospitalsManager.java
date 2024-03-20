@@ -27,7 +27,7 @@ public class FacilityHospitalsManager {
     private final List<Habbo> usersToHeal;
     private final ScheduledExecutorService scheduler;
 
-    public FacilityHospitalsManager() {
+    private FacilityHospitalsManager() {
         long millis = System.currentTimeMillis();
         this.usersToHeal = new CopyOnWriteArrayList<>();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
