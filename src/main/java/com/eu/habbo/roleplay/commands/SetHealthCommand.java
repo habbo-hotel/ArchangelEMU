@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 
 public class SetHealthCommand extends Command {
     public SetHealthCommand() {
-        super("sethealth");
+        super("cmd_sethealth");
     }
     @Override
     public boolean handle(GameClient gameClient, String[] params) {

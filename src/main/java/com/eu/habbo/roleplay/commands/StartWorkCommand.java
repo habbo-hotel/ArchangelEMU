@@ -9,7 +9,7 @@ import com.eu.habbo.roleplay.corporations.CorporationPosition;
 
 public class StartWorkCommand extends Command {
     public StartWorkCommand() {
-        super("startwork");
+        super("cmd_startwork");
     }
 
     @Override

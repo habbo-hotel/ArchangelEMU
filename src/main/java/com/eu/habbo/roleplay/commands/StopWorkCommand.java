@@ -7,7 +7,7 @@ import com.eu.habbo.roleplay.corporations.CorporationShift;
 
 public class StopWorkCommand extends Command {
     public StopWorkCommand() {
-        super("stopwork");
+        super("cmd_stopwork");
     }
 
     @Override

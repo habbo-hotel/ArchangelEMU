@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 
 public class OfferJobCommand extends Command {
     public OfferJobCommand() {
-        super("offerjob");
+        super("cmd_offerjob");
     }
     @Override
     public boolean handle(GameClient gameClient, String[] params) {

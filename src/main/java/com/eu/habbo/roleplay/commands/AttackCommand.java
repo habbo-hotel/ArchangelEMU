@@ -9,7 +9,7 @@ import com.eu.habbo.roleplay.users.HabboWeapon;
 
 public class AttackCommand extends Command {
     public AttackCommand() {
-        super("attack");
+        super("cmd_attack");
     }
     @Override
     public boolean handle(GameClient gameClient, String[] params) {

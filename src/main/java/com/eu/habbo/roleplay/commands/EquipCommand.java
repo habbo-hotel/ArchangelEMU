@@ -8,7 +8,7 @@ import com.eu.habbo.roleplay.users.HabboWeapon;
 
 public class EquipCommand extends Command {
     public EquipCommand() {
-        super("equip");
+        super("cmd_equip");
     }
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
