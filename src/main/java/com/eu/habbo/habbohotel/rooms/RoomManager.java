@@ -351,25 +351,35 @@ public class RoomManager {
             log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
-
     public void unloadRoomsForHabbo(Habbo habbo) {
         List<Room> roomsToDispose = new ArrayList<>();
+
         for (Room room : this.activeRooms.values()) {
-            if (!room.getRoomInfo().isPublicRoom()) {
-                if (!room.getRoomInfo().isStaffPicked() && room.getRoomInfo().getOwnerInfo().getId() == habbo.getHabboInfo().getId()) {
-                    if (room.getRoomUnitManager().getRoomHabbosCount() == 0 && (this.roomCategories.get(room.getRoomInfo().getCategory().getId()) == null || !this.roomCategories.get(room.getRoomInfo().getCategory().getId()).isPublic())) {
-                        roomsToDispose.add(room);
-                    }
-                }
-            }
+            RoomInfo roomInfo = room.getRoomInfo();
+            RoomUnitManager roomUnitManager = room.getRoomUnitManager();
+            RoomCategory roomCategory = roomInfo.getCategory();
+
+            if (roomInfo.isPublicRoom() || roomInfo.isStaffPicked())
+                continue;
+
+            if (roomInfo.getOwnerInfo().getId() != habbo.getHabboInfo().getId())
+                continue;
+
+            if (roomUnitManager.getRoomHabbosCount() != 0)
+                continue;
+
+            if (!roomCategories.containsKey(roomCategory) ||
+                    (roomCategories.get(roomCategory.getId()) != null && roomCategories.get(roomCategory.getId()).isPublic()))
+                continue;
+
+            roomsToDispose.add(room);
         }
 
         for (Room room : roomsToDispose) {
-            if (Emulator.getPluginManager().fireEvent(new RoomUncachedEvent(room)).isCancelled())
-                continue;
-
-            room.dispose();
-            this.activeRooms.remove(room.getRoomInfo().getId());
+            if (!Emulator.getPluginManager().fireEvent(new RoomUncachedEvent(room)).isCancelled()) {
+                room.dispose();
+                this.activeRooms.remove(room.getRoomInfo().getId());
+            }
         }
     }
 

@@ -34,6 +34,7 @@ import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
+import com.eu.habbo.roleplay.commands.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -305,6 +306,11 @@ public class CommandsManager {
         addCommand(new UpdateYoutubePlaylistsCommand());
         addCommand(new UserInfoCommand());
         addCommand(new WordQuizCommand());
+        addCommand(new AttackCommand());
+        addCommand(new EquipCommand());
+        addCommand(new OfferJobCommand());
+        addCommand(new StartWorkCommand());
+        addCommand(new StopWorkCommand());
     }
 
     public void dispose() {

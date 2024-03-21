@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class Habbo extends Avatar implements Runnable {
+
     @Getter
     private RoomHabbo roomUnit;
     @Getter

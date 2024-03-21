@@ -55,14 +55,10 @@ public class HabboRoleplayStats implements Runnable {
         return stats;
     }
 
-    protected Habbo habbo;
+    private Habbo habbo;
 
-    protected int currentHealth;
-
-    public int getCurrentHealth() {
-        return this.currentHealth;
-    }
-
+    @Getter
+    private int currentHealth;
     public void setCurrentHealth(int currentHealth) {
         this.setCurrentHealth(currentHealth, false);
     }
@@ -94,28 +90,19 @@ public class HabboRoleplayStats implements Runnable {
         }
     }
 
-    protected int maximumHealth;
-
-    public int getMaximumHealth() {
-        return this.maximumHealth;
-    }
-
-    public void setMaximumHealth(int healthPoints) {
-        this.maximumHealth = healthPoints;
-    }
-
-
+    @Getter
+    @Setter
+    private int maximumHealth;
     @Getter
     @Setter
     private int corporationID;
-
     @Getter
     @Setter
     private int corporationPositionID;
 
 
     @Getter
-    protected boolean isDead;
+    private boolean isDead;
     public void setIsDead(boolean isDead) {
         this.isDead = isDead;
 

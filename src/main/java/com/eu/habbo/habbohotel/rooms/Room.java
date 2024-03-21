@@ -416,7 +416,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         message.appendInt(this.roomInfo.getTradeMode());
         message.appendInt(this.roomInfo.getScore());
         message.appendInt(0);
-        message.appendInt(this.roomInfo.getCategory().getId());
+        message.appendInt(this.roomInfo.getCategory() != null ? this.roomInfo.getCategory().getId() : 0);
 
         String[] tags = Arrays.stream(this.roomInfo.getTags().split(";")).filter(t -> !t.isEmpty()).toArray(String[]::new);
         message.appendInt(tags.length);
