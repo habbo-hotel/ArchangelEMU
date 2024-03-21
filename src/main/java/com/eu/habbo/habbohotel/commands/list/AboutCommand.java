@@ -52,7 +52,7 @@ public class AboutCommand extends Command {
         Emulator.getRuntime().gc();
 
         StringBuilder message = new StringBuilder();
-        
+
         message.append("<b>Roleplay Edition</b>\nBy LeChris\n\n");
 
         message.append("<b>Morningstar Contributors</b>\n");

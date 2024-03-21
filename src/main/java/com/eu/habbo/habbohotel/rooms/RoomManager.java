@@ -966,6 +966,9 @@ public class RoomManager {
 
         for (Room room : this.activeRooms.values()) {
             if (!room.getRoomInfo().isPublicRoom()) {
+                if (room.getRoomInfo().getCategory() == null) {
+                    continue;
+                }
                 if (!rooms.containsKey(room.getRoomInfo().getCategory().getId())) {
                     rooms.put(room.getRoomInfo().getCategory().getId(), new ArrayList<>());
                 }
