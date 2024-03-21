@@ -48,7 +48,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration.CAUGHT_EXCEPTION;
-import static com.eu.habbo.habbohotel.rooms.utils.cycle.CycleFunctions.cycleIdle;
 
 @Slf4j
 @Getter
@@ -292,10 +291,6 @@ public class RoomUnitManager extends IRoomManager {
                         room.scheduledTasks.add(() -> Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room));
                         continue;
                     }
-                }
-
-                if (Emulator.getConfig().getBoolean("hotel.rooms.auto.idle")) {
-                    cycleIdle(room, habbo, toKick);
                 }
 
                 if (Emulator.getConfig().getBoolean("hotel.rooms.deco_hosting") && room.getRoomInfo().getOwnerInfo().getId() != habbo.getHabboInfo().getId()) {
