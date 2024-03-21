@@ -36,7 +36,7 @@ public class SetHealthCommand extends Command {
 
         String healthGivenMessage = Emulator.getTexts().getValue("roleplay.set_health_gave")
                 .replace("%username%", targetedUsername)
-                .replace("%currentHealth%", Integer.toString(updatedHealth));
+                .replace("%healthRestored%", Integer.toString(updatedHealth));
 
         gameClient.getHabbo().shout(healthGivenMessage);
 
