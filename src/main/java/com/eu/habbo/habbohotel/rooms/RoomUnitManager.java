@@ -252,7 +252,7 @@ public class RoomUnitManager extends IRoomManager {
 
     public void dispose() {
         for (Habbo habbo : this.currentHabbos.values()) {
-            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room, true);
+            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
         }
         this.currentHabbos.clear();
 

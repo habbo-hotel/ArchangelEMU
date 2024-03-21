@@ -875,17 +875,9 @@ public class RoomManager {
     }
 
     public void leaveRoom(Habbo habbo, Room room) {
-        this.leaveRoom(habbo, room, true);
-    }
-
-    public void leaveRoom(Habbo habbo, Room room, boolean redirectToHotelView) {
         if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().equals(room)) {
             this.logExit(habbo);
             room.getRoomUnitManager().removeHabbo(habbo, true);
-
-            if (redirectToHotelView) {
-                habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
-            }
 
             habbo.getRoomUnit().setPreviousRoom(room);
 
