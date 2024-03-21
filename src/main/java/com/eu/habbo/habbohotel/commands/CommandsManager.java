@@ -311,6 +311,7 @@ public class CommandsManager {
         addCommand(new OfferJobCommand());
         addCommand(new StartWorkCommand());
         addCommand(new StopWorkCommand());
+        addCommand(new SetHealthCommand());
     }
 
     public void dispose() {
