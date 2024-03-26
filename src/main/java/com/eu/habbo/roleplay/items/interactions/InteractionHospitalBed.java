@@ -22,8 +22,8 @@ public class InteractionHospitalBed extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionHospitalBed(int id, HabboInfo habboInfo, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, habboInfo, item, extradata, limitedStack, limitedSells);
+    public InteractionHospitalBed(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override

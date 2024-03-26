@@ -61,7 +61,7 @@ public class AttackCommand extends Command {
         if (equippedWeapon != null) {
             String hitSuccessMessage = equippedWeapon.getWeapon().getAttackMessage()
                     .replace("%username%", targetedUsername)
-                    .replace("%totalDamage%", Integer.toString(totalDamage));
+                    .replace("%damage%", Integer.toString(totalDamage));
             gameClient.getHabbo().shout(hitSuccessMessage);
         }
 
@@ -69,7 +69,7 @@ public class AttackCommand extends Command {
             String hitSuccessMessage = Emulator.getTexts()
                     .getValue("commands.roleplay.cmd_hit_success")
                     .replace("%username%", targetedUsername)
-                    .replace("%totalDamage%", Integer.toString(totalDamage));
+                    .replace("%damage%", Integer.toString(totalDamage));
 
             gameClient.getHabbo().shout(hitSuccessMessage);
         }

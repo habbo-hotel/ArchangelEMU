@@ -21,14 +21,14 @@ public class EquipCommand extends Command {
         String weaponUniqueName = params[1];
 
         if (weaponUniqueName == null) {
-            gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_equip_no_weapon_specified"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_equip_no_weapon_specified"));
             return true;
         }
 
         HabboWeapon matchingWeapon = gameClient.getHabbo().getInventory().getWeaponsComponent().getWeaponByUniqueName(weaponUniqueName);
 
         if (matchingWeapon == null) {
-            gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_equip_weapon_not_found").replace("%uniqueName%", weaponUniqueName));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_equip_weapon_not_found").replace("%uniqueName%", weaponUniqueName));
             return true;
         }
 
