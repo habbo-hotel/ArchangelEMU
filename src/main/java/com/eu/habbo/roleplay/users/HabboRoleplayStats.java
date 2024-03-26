@@ -10,6 +10,9 @@ import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import com.eu.habbo.roleplay.corporations.CorporationsManager;
 import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
+import com.eu.habbo.roleplay.gangs.Gang;
+import com.eu.habbo.roleplay.gangs.GangPosition;
+import com.eu.habbo.roleplay.gangs.GangsManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import gnu.trove.set.hash.THashSet;
@@ -110,6 +113,28 @@ public class HabboRoleplayStats implements Runnable {
 
     public CorporationPosition getCorporationPosition() {
         return this.getCorporation().getPositionByID(this.corporationPositionID);
+    }
+
+    @Getter
+    @Setter
+    private Integer gangID;
+
+    public Gang getGang() {
+        if (this.gangID == null) {
+            return null;
+        }
+        return GangsManager.getInstance().getGangById(this.gangID);
+    }
+
+    @Getter
+    @Setter
+    private Integer gangPositionID;
+
+    public GangPosition getGangPosition() {
+        if (this.gangPositionID == null) {
+            return null;
+        }
+        return this.getGang().getPositionByID(this.gangPositionID);
     }
 
 

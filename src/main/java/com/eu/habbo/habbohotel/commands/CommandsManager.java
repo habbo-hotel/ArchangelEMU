@@ -38,6 +38,7 @@ import com.eu.habbo.roleplay.commands.combat.AttackCommand;
 import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
 import com.eu.habbo.roleplay.commands.corporation.*;
+import com.eu.habbo.roleplay.commands.gang.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -309,17 +310,28 @@ public class CommandsManager {
         addCommand(new UpdateYoutubePlaylistsCommand());
         addCommand(new UserInfoCommand());
         addCommand(new WordQuizCommand());
+
+        // Combat
         addCommand(new AttackCommand());
-        addCommand(new DemoteCommand());
         addCommand(new EquipCommand());
+        addCommand(new SetHealthCommand());
+
+        // Corporation
+        addCommand(new DemoteCommand());
         addCommand(new FireCommand());
         addCommand(new HireCommand());
         addCommand(new PromoteCommand());
         addCommand(new QuitJobCommand());
         addCommand(new StartWorkCommand());
         addCommand(new StopWorkCommand());
-        addCommand(new SetHealthCommand());
         addCommand(new SuperHireCommand());
+
+        // Gang
+        addCommand(new CreateCommand());
+        addCommand(new DisbandCommand());
+        addCommand(new InviteCommand());
+        addCommand(new KickCommand());
+        addCommand(new LeaveCommand());
     }
 
     public void dispose() {

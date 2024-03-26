@@ -1,7 +1,6 @@
 package com.eu.habbo.roleplay.gangs;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import java.sql.*;
 
 public class Gang {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationPosition.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GangPosition.class);
 
     @Getter
     private int id;
@@ -28,9 +27,9 @@ public class Gang {
     @Setter
     private String description;
     @Getter
-    private TIntObjectHashMap<CorporationPosition> positions;
+    private TIntObjectHashMap<GangPosition> positions;
 
-    public CorporationPosition getPositionByID(int positionID) {
+    public GangPosition getPositionByID(int positionID) {
         return this.positions.get(positionID);
     }
 
@@ -54,9 +53,9 @@ public class Gang {
                 statement.setInt(1, this.getId());
                 ResultSet set = statement.executeQuery();
                 while (set.next()) {
-                    CorporationPosition position = null;
+                    GangPosition position = null;
                     if (!this.positions.containsKey(set.getInt("id"))) {
-                        position = new CorporationPosition(set);
+                        position = new GangPosition(set);
                         this.positions.put(set.getInt("id"), position);
                     } else {
                         position = this.positions.get(set.getInt("id"));

@@ -2,10 +2,7 @@ package com.eu.habbo.roleplay.gangs;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.roleplay.corporations.Corporation;
-import com.eu.habbo.roleplay.corporations.CorporationsShiftsManager;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import lombok.Getter;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +10,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GangsManager {
 
@@ -25,43 +24,49 @@ public class GangsManager {
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(com.eu.habbo.roleplay.corporations.CorporationsManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GangsManager.class);
 
-    private TIntObjectHashMap<Corporation> corporations;
+    private TIntObjectHashMap<Gang> gangs;
 
-    public Corporation getGangById(int corporationID) {
-        return this.corporations.get(corporationID);
+    public Gang getGangById(int gangID) {
+        return this.gangs.get(gangID);
     }
 
-    @Getter
-    @Setter
-    private CorporationsShiftsManager corporationsShiftManager;
+    public Gang getGangByName(String gangName) {
+        int[] keys = this.gangs.keys();
+        for (int key : keys) {
+            Gang gang = this.gangs.get(key);
+            if (gang.getName().equalsIgnoreCase(gangName)) {
+                return gang;
+            }
+        }
+        return null;
+    }
 
 
     private GangsManager() {
         long millis = System.currentTimeMillis();
-        this.corporations = new TIntObjectHashMap<>();
-        this.corporationsShiftManager = CorporationsShiftsManager.getInstance();
+        this.gangs = new TIntObjectHashMap<>();
 
         this.reload();
 
-        LOGGER.info("Corporations Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Gangs Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
     public void reload() {
-        this.loadCorporations();
+        this.loadGangs();
     }
 
-    private void loadCorporations() {
-        this.corporations.clear();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_corporations ORDER BY id ASC")) {
+    private void loadGangs() {
+        this.gangs.clear();
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_gangs ORDER BY id ASC")) {
             while (set.next()) {
-                Corporation corporation = null;
-                if (!this.corporations.containsKey(set.getInt("id"))) {
-                    corporation = new Corporation(set);
-                    this.corporations.put(set.getInt("id"), corporation);
+                Gang gang = null;
+                if (!this.gangs.containsKey(set.getInt("id"))) {
+                    gang = new Gang(set);
+                    this.gangs.put(set.getInt("id"), gang);
                 } else {
-                    corporation = this.corporations.get(set.getInt("id"));
-                    corporation.load(set);
+                    gang = this.gangs.get(set.getInt("id"));
+                    gang.load(set);
                 }
             }
         } catch (SQLException e) {
@@ -70,6 +75,6 @@ public class GangsManager {
     }
 
     public void dispose() {
-        this.corporations = null;
+        this.gangs = null;
     }
 }
