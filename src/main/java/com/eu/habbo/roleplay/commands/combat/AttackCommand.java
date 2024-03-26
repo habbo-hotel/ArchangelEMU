@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.commands;
+package com.eu.habbo.roleplay.commands.combat;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
@@ -28,7 +28,7 @@ public class AttackCommand extends Command {
         Habbo targetedHabbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(targetedUsername);
 
         if (targetedHabbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_user_not_found").replace("%username%", targetedUsername));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found").replace("%username%", targetedUsername));
             return true;
         }
 

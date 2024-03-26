@@ -6,6 +6,9 @@ import com.eu.habbo.habbohotel.rooms.RoomSpecialTypes;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.corporations.Corporation;
+import com.eu.habbo.roleplay.corporations.CorporationPosition;
+import com.eu.habbo.roleplay.corporations.CorporationsManager;
 import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.weapons.Weapon;
@@ -96,9 +99,21 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     @Setter
     private int corporationID;
+
+    public Corporation getCorporation() {
+        return CorporationsManager.getInstance().getCorporationByID(this.corporationID);
+    }
+
     @Getter
     @Setter
     private int corporationPositionID;
+
+    public CorporationPosition getCorporationPosition() {
+        if (this.getCorporation() == null) {
+            return null;
+        }
+        return this.getCorporation().getPositionByID(this.corporationPositionID);
+    }
 
 
     @Getter

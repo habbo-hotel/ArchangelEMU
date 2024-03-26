@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.commands;
+package com.eu.habbo.roleplay.commands.combat;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;

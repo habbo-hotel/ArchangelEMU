@@ -34,7 +34,10 @@ import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
-import com.eu.habbo.roleplay.commands.*;
+import com.eu.habbo.roleplay.commands.combat.AttackCommand;
+import com.eu.habbo.roleplay.commands.combat.EquipCommand;
+import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
+import com.eu.habbo.roleplay.commands.corporation.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -307,11 +310,15 @@ public class CommandsManager {
         addCommand(new UserInfoCommand());
         addCommand(new WordQuizCommand());
         addCommand(new AttackCommand());
+        addCommand(new DemoteCommand());
         addCommand(new EquipCommand());
-        addCommand(new OfferJobCommand());
+        addCommand(new FireCommand());
+        addCommand(new HireCommand());
+        addCommand(new PromoteCommand());
         addCommand(new StartWorkCommand());
         addCommand(new StopWorkCommand());
         addCommand(new SetHealthCommand());
+        addCommand(new SuperHireCommand());
     }
 
     public void dispose() {

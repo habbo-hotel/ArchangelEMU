@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 public class Corporation {
@@ -23,6 +25,20 @@ public class Corporation {
     private String description;
     private TIntObjectHashMap<CorporationPosition> positions;
 
+    public CorporationPosition getPositionByOrderID(int orderID) {
+        int[] keys = positions.keys();
+        for (int key : keys) {
+            CorporationPosition position = positions.get(key);
+            if (position.getOrderID() == orderID) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+    @Getter
+    private List<String> tags;
+
     public CorporationPosition getPositionByID(int positionID) {
         return this.positions.get(positionID);
     }
@@ -37,6 +53,7 @@ public class Corporation {
         this.name = set.getString("name");
         this.description = set.getString("description");
         this.positions = new TIntObjectHashMap<>();
+        this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
         this.loadPositions();
     }
 
