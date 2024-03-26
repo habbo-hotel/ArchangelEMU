@@ -109,9 +109,6 @@ public class HabboRoleplayStats implements Runnable {
     private int corporationPositionID;
 
     public CorporationPosition getCorporationPosition() {
-        if (this.getCorporation() == null) {
-            return null;
-        }
         return this.getCorporation().getPositionByID(this.corporationPositionID);
     }
 

@@ -1,6 +1,7 @@
 package com.eu.habbo.roleplay.corporations;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.Room;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
 
 @Getter
 public class Corporation {
@@ -40,7 +43,14 @@ public class Corporation {
     private List<String> tags;
 
     public CorporationPosition getPositionByID(int positionID) {
-        return this.positions.get(positionID);
+        int[] keys = positions.keys();
+        for (int key : keys) {
+            CorporationPosition position = positions.get(key);
+            if (position.getId() == positionID) {
+                return position;
+            }
+        }
+        return null;
     }
 
     public Corporation(ResultSet set) throws SQLException {
@@ -59,23 +69,16 @@ public class Corporation {
 
     private void loadPositions() {
         this.positions.clear();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporation_positions WHERE corporation_id = ? LIMIT 1")) {
-                statement.setInt(1, this.getId());
-                ResultSet set = statement.executeQuery();
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations_positions WHERE corporation_id = ?")) {
+            statement.setInt(1, this.id);
+            try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    CorporationPosition position = null;
-                    if (!this.positions.containsKey(set.getInt("id"))) {
-                        position = new CorporationPosition(set);
-                        this.positions.put(set.getInt("id"), position);
-                    } else {
-                        position = this.positions.get(set.getInt("id"));
-                        position.load(set);
-                    }
+                    if (!this.positions.containsKey(set.getInt("id")))
+                        this.positions.put(set.getInt("id"), new CorporationPosition(set));
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            Corporation.LOGGER.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 

@@ -43,7 +43,7 @@ public class FireCommand extends Command {
         }
 
         gameClient.getHabbo().getHabboRoleplayStats().setCorporationID(GovernmentManager.getInstance().getWelfareCorp().getId());
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporationPositionID(GovernmentManager.getInstance().getWelfareCorp().getPositionByOrderID(1).getId());
+        gameClient.getHabbo().getHabboRoleplayStats().setCorporationPositionID(GovernmentManager.getInstance().getWelfareCorp().getPositionByOrderID(0).getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_fire_success").replace("%username%", targetedHabbo.getHabboInfo().getUsername()));
         targetedHabbo.shout(Emulator.getTexts().getValue("commands.roleplay.cmd_fire_impacted"));

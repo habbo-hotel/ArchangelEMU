@@ -50,7 +50,7 @@ public class Gang {
     private void loadPositions() {
         this.positions.clear();
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_gang_positions WHERE corporation_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_gang_positions WHERE gang_id = ?")) {
                 statement.setInt(1, this.getId());
                 ResultSet set = statement.executeQuery();
                 while (set.next()) {

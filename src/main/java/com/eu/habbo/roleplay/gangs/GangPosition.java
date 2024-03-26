@@ -23,7 +23,7 @@ public class GangPosition {
 
     public void load(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
-        this.gangID = set.getInt("corporation_id");
+        this.gangID = set.getInt("gang_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
     }

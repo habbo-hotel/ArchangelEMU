@@ -315,6 +315,7 @@ public class CommandsManager {
         addCommand(new FireCommand());
         addCommand(new HireCommand());
         addCommand(new PromoteCommand());
+        addCommand(new QuitJobCommand());
         addCommand(new StartWorkCommand());
         addCommand(new StopWorkCommand());
         addCommand(new SetHealthCommand());
