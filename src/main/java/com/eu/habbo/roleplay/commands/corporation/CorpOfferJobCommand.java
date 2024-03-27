@@ -39,6 +39,13 @@ public class CorpOfferJobCommand extends Command {
             return true;
         }
 
+
+        gameClient.getHabbo().getHabboRoleplayStats().getCorporation().addInvitedUser(targetedHabbo);
+
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_sent").replace("%user%", targetedHabbo.getHabboInfo().getUsername()));
+
+        targetedHabbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_received").replace("%corp%",gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getName()));
+
         return true;
     }
 }

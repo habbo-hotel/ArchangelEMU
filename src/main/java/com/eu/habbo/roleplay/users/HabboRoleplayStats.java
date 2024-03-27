@@ -201,8 +201,13 @@ public class HabboRoleplayStats implements Runnable {
                 statement.setInt(2, this.maximumHealth);
                 statement.setInt(3, this.corporationID);
                 statement.setInt(4, this.corporationPositionID);
-                statement.setInt(5, this.gangID);
-                statement.setInt(6, this.gangPositionID);
+
+                if (this.gangID != null) statement.setInt(5, this.gangID);
+                if (this.gangID == null) statement.setNull(5, Types.INTEGER);
+
+                if (this.gangPositionID != null) statement.setInt(6, this.gangPositionID);
+                if (this.gangPositionID == null) statement.setNull(6, Types.INTEGER);
+
                 statement.setInt(7, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
             }

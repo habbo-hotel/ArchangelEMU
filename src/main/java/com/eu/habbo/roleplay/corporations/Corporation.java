@@ -78,6 +78,7 @@ public class Corporation {
         this.description = set.getString("description");
         this.positions = new TIntObjectHashMap<>();
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
+        this.invitedUsers = new TIntObjectHashMap<>();
         this.loadPositions();
     }
 
