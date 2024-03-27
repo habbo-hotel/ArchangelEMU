@@ -1,5 +1,6 @@
 package com.eu.habbo.roleplay.corporations;
 
+import com.eu.habbo.roleplay.database.CorporationPositionRepository;
 import lombok.Getter;
 import lombok.Setter;
 

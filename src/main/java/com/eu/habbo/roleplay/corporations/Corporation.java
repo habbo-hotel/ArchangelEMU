@@ -1,6 +1,8 @@
 package com.eu.habbo.roleplay.corporations;
 
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.database.CorporationPositionRepository;
+import com.eu.habbo.roleplay.database.CorporationRepository;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;

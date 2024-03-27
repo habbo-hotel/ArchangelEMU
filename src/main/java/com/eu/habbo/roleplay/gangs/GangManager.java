@@ -1,5 +1,6 @@
 package com.eu.habbo.roleplay.gangs;
 
+import com.eu.habbo.roleplay.database.GangRepository;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
