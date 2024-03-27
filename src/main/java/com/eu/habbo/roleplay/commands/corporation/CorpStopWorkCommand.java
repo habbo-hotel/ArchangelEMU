@@ -5,9 +5,9 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.roleplay.corporations.CorporationShift;
 
-public class StopWorkCommand extends Command {
-    public StopWorkCommand() {
-        super("cmd_stopwork");
+public class CorpStopWorkCommand extends Command {
+    public CorpStopWorkCommand() {
+        super("cmd_corp_stopwork");
     }
 
     @Override

@@ -7,9 +7,9 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 
-public class StartWorkCommand extends Command {
-    public StartWorkCommand() {
-        super("cmd_startwork");
+public class CorpStartWorkCommand extends Command {
+    public CorpStartWorkCommand() {
+        super("cmd_corp_startwork");
     }
 
     @Override

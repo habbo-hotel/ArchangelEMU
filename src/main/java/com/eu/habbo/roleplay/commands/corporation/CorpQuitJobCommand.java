@@ -5,9 +5,9 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 
-public class QuitJobCommand extends Command {
-    public QuitJobCommand() {
-        super("cmd_quitjob");
+public class CorpQuitJobCommand extends Command {
+    public CorpQuitJobCommand() {
+        super("cmd_corp_quitjob");
     }
 
     @Override

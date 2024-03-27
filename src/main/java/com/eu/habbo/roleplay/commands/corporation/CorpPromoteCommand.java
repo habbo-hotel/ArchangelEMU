@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 
-public class PromoteCommand extends Command {
-    public PromoteCommand() {
-        super("cmd_promote");
+public class CorpPromoteCommand extends Command {
+    public CorpPromoteCommand() {
+        super("cmd_corp_promote");
     }
 
     @Override

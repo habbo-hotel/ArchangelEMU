@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 
-public class DemoteCommand extends Command {
-    public DemoteCommand() {
-        super("cmd_demote");
+public class CorpDemoteCommand extends Command {
+    public CorpDemoteCommand() {
+        super("cmd_corp_demote");
     }
 
     @Override

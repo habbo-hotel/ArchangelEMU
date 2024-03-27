@@ -8,9 +8,9 @@ import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import com.eu.habbo.roleplay.corporations.CorporationManager;
 
-public class SuperHireCommand extends Command {
-    public SuperHireCommand() {
-        super("cmd_superhire");
+public class CorpSuperHireCommand extends Command {
+    public CorpSuperHireCommand() {
+        super("cmd_corp_superhire");
     }
 
     @Override

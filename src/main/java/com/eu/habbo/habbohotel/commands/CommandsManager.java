@@ -317,14 +317,14 @@ public class CommandsManager {
         addCommand(new SetHealthCommand());
 
         // Corporation
-        addCommand(new DemoteCommand());
-        addCommand(new FireCommand());
-        addCommand(new HireCommand());
-        addCommand(new PromoteCommand());
-        addCommand(new QuitJobCommand());
-        addCommand(new StartWorkCommand());
-        addCommand(new StopWorkCommand());
-        addCommand(new SuperHireCommand());
+        addCommand(new CorpDemoteCommand());
+        addCommand(new CorpFireCommand());
+        addCommand(new CorpOfferJobCommand());
+        addCommand(new CorpPromoteCommand());
+        addCommand(new CorpQuitJobCommand());
+        addCommand(new CorpStartWorkCommand());
+        addCommand(new CorpStopWorkCommand());
+        addCommand(new CorpSuperHireCommand());
 
         // Gang
         addCommand(new GangCreateCommand());

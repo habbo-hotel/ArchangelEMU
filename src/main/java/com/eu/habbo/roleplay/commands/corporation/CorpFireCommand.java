@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 
-public class FireCommand extends Command {
-    public FireCommand() {
-        super("cmd_fire");
+public class CorpFireCommand extends Command {
+    public CorpFireCommand() {
+        super("cmd_corp_fire");
     }
 
     @Override

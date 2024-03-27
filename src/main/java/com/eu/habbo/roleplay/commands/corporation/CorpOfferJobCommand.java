@@ -5,9 +5,9 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class HireCommand extends Command {
-    public HireCommand() {
-        super("cmd_hire");
+public class CorpOfferJobCommand extends Command {
+    public CorpOfferJobCommand() {
+        super("cmd_corp_offerjob");
     }
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
