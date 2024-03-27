@@ -77,5 +77,22 @@ public class GangRepository {
             return null;
         }
     }
+    public void deleteGangByID(int gangID) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement deleteGangStatement = connection.prepareStatement("DELETE FROM rp_gangs WHERE id = ?")) {
+                deleteGangStatement.setInt(1, gangID);
+                int affectedRows = deleteGangStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Deleting gang failed, no rows affected.");
+                }
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+    }
 
 }

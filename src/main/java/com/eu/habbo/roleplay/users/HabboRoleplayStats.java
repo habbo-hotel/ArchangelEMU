@@ -13,6 +13,7 @@ import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
 import com.eu.habbo.roleplay.gangs.Gang;
 import com.eu.habbo.roleplay.gangs.GangPosition;
 import com.eu.habbo.roleplay.gangs.GangManager;
+import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import gnu.trove.set.hash.THashSet;
@@ -30,8 +31,10 @@ public class HabboRoleplayStats implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(HabboRoleplayStats.class);
 
     private static HabboRoleplayStats createNewStats(Habbo habbo) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_users_stats (user_id) VALUES (?)")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_users_stats (user_id, corporation_id, corporation_position_id) VALUES (?, ?, ?)")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
+            statement.setInt(2, GovernmentManager.getInstance().getWelfareCorp().getId());
+            statement.setInt(3,GovernmentManager.getInstance().getWelfareCorp().getPositionByOrderID(1).getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);

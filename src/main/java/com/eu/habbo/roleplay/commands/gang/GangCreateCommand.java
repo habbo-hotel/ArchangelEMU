@@ -15,7 +15,7 @@ public class GangCreateCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboRoleplayStats().getGangPositionID() != null) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getGangID() != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_create_already_in_gang"));
             return true;
         }
