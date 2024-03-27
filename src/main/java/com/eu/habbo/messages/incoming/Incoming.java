@@ -928,7 +928,11 @@ public enum Incoming {
     // Roleplay
     attackUserEvent(Outgoing.roleplayAttackUserComposer, AttackUserEvent.class),
 
+    corpAcceptJobOfferEvent(Outgoing.roleplayCorpAcceptJobComposer, CorpAcceptJobEvent.class),
+
     corpDeclineJobOfferEvent(Outgoing.roleplayCorpDeclineJobOfferComposer, CorpDeclineOfferEvent.class),
+
+    corpDemoteUserEvent(Outgoing.roleplayCorpDemoteUserComposer, CorpDemoteUserEvent.class),
 
     corpFireUserEvent(Outgoing.roleplayCorpFireUserComposer, CorpFireUserEvent.class),
 
