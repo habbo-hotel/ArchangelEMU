@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class GangInviteCommand extends Command {
-    public GangInviteCommand() {
+public class GangInviteUserCommand extends Command {
+    public GangInviteUserCommand() {
         super("cmd_gang_invite");
     }
 

@@ -320,8 +320,8 @@ public class CommandsManager {
         addCommand(new CorpAcceptJobCommand());
         addCommand(new CorpDeclineJobCommand());
         addCommand(new CorpDemoteCommand());
-        addCommand(new CorpFireCommand());
-        addCommand(new CorpOfferJobCommand());
+        addCommand(new CorpFireUserCommand());
+        addCommand(new CorpOfferUserJobCommand());
         addCommand(new CorpPromoteCommand());
         addCommand(new CorpQuitJobCommand());
         addCommand(new CorpStartWorkCommand());
@@ -332,7 +332,7 @@ public class CommandsManager {
         addCommand(new GangCreateCommand());
         addCommand(new GangDisbandCommand());
         addCommand(new GangInviteAcceptCommand());
-        addCommand(new GangInviteCommand());
+        addCommand(new GangInviteUserCommand());
         addCommand(new GangInviteDeclineCommand());
         addCommand(new GangKickCommand());
         addCommand(new GangLeaveCommand());

@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 
-public class CorpFireCommand extends Command {
-    public CorpFireCommand() {
+public class CorpFireUserCommand extends Command {
+    public CorpFireUserCommand() {
         super("cmd_corp_fire");
     }
 

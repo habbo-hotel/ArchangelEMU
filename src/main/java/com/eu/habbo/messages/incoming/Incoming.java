@@ -62,7 +62,7 @@ import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.messages.incoming.AttackUserEvent;
+import com.eu.habbo.roleplay.messages.incoming.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -926,7 +926,21 @@ public enum Incoming {
     welcomeGiftChangeEmailEvent(66, UnknownEvent2.class),
 
     // Roleplay
-    attackUserEvent(Outgoing.roleplayAttackUserComposer, AttackUserEvent.class);
+    attackUserEvent(Outgoing.roleplayAttackUserComposer, AttackUserEvent.class),
+
+    corpDeclineJobOfferEvent(Outgoing.roleplayCorpDeclineJobOfferComposer, CorpDeclineOfferEvent.class),
+
+    corpFireUserEvent(Outgoing.roleplayCorpFireUserComposer, CorpFireUserEvent.class),
+
+    corpAcceptJobEvent(Outgoing.roleplayCorpOfferUserJobComposer, CorpOfferUserJobEvent.class),
+
+    corpPromoteUserEvent(Outgoing.roleplayCorpPromoteUserComposer, CorpPromoteUserEvent.class),
+
+    gangDeclineInviteEvent(Outgoing.roleplayGangDeclineInviteComposer, GangDeclineInviteEvent.class),
+
+    gangInviteAcceptEvent(Outgoing.roleplayGangInviteAcceptComposer, GangInviteAcceptEvent.class),
+
+    gangInviteUserEvent(Outgoing.roleplayGangInviteUserComposer, GangInviteUserEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

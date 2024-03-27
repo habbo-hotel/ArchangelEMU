@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class CorpOfferJobCommand extends Command {
-    public CorpOfferJobCommand() {
+public class CorpOfferUserJobCommand extends Command {
+    public CorpOfferUserJobCommand() {
         super("cmd_corp_offerjob");
     }
     @Override

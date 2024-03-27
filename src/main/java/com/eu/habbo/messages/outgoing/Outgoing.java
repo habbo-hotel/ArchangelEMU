@@ -433,5 +433,22 @@ public class Outgoing {
     
     // Roleplay
     public static final int roleplayAttackUserComposer = 8001;
+    public static final int roleplayCorpAcceptJobComposer = 8002;
+
+    public static final int roleplayCorpDeclineJobOfferComposer = 8003;
+
+    public static final int roleplayCorpDemoteUserComposer = 8004;
+
+    public static final int roleplayCorpFireUserComposer = 8005;
+
+    public static final int roleplayCorpOfferUserJobComposer = 8006;
+
+    public static final int roleplayCorpPromoteUserComposer = 8007;
+
+    public static final int roleplayGangDeclineInviteComposer = 8008;
+
+    public static final int roleplayGangInviteAcceptComposer = 8009;
+
+    public static final int roleplayGangInviteUserComposer = 8010;
 
 }
