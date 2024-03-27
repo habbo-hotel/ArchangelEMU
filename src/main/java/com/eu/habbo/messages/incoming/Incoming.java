@@ -940,11 +940,19 @@ public enum Incoming {
 
     corpPromoteUserEvent(Outgoing.roleplayCorpPromoteUserComposer, CorpPromoteUserEvent.class),
 
+    corpStartWorkEvent(Outgoing.roleplayCorpStartWorkComposer, CorpStartWorkEvent.class),
+
+    corpStopWorkEvent(Outgoing.roleplayCorpStopWorkComposer, CorpStopWorkEvent.class),
+
     gangDeclineInviteEvent(Outgoing.roleplayGangDeclineInviteComposer, GangDeclineInviteEvent.class),
+
+    gangDisbandEvent(Outgoing.roleplayGangDisbandComposer, GangDisbandEvent.class),
 
     gangInviteAcceptEvent(Outgoing.roleplayGangInviteAcceptComposer, GangInviteAcceptEvent.class),
 
-    gangInviteUserEvent(Outgoing.roleplayGangInviteUserComposer, GangInviteUserEvent.class);
+    gangInviteUserEvent(Outgoing.roleplayGangInviteUserComposer, GangInviteUserEvent.class),
+
+    gangLeaveEvent(Outgoing.roleplayGangLeaveComposer, GangLeaveEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

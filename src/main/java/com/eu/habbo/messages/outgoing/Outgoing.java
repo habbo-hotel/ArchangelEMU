@@ -445,10 +445,19 @@ public class Outgoing {
 
     public static final int roleplayCorpPromoteUserComposer = 8007;
 
+    public static final int roleplayCorpStartWorkComposer = 8011;
+
+    public static final int roleplayCorpStopWorkComposer = 8012;
+
     public static final int roleplayGangDeclineInviteComposer = 8008;
+
+    public static final int roleplayGangDisbandComposer = 8013;
 
     public static final int roleplayGangInviteAcceptComposer = 8009;
 
     public static final int roleplayGangInviteUserComposer = 8010;
+
+    public static final int roleplayGangLeaveComposer = 8014;
+
 
 }

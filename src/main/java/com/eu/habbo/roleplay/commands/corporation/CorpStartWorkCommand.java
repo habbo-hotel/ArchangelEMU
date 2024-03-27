@@ -40,8 +40,8 @@ public class CorpStartWorkCommand extends Command {
         // Trigger user look changed
 
         String userStartedWorkMessage = Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_success")
-                .replace("%companyName%", userEmployer.getName())
-                .replace("%positionName%", userPosition.getName());
+                .replace("%corp%", userEmployer.getName())
+                .replace("%position%", userPosition.getName());
 
         gameClient.getHabbo().shout(userStartedWorkMessage);
 
