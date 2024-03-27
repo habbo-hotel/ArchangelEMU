@@ -12,7 +12,7 @@ public class GangDisbandCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboRoleplayStats().getGangID() == null) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getGang() == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.not_in_a_gang"));
             return true;
         }
@@ -22,10 +22,9 @@ public class GangDisbandCommand extends Command {
             return true;
         }
 
-        GangRepository.getInstance().deleteGangByID(gameClient.getHabbo().getHabboRoleplayStats().getGangID());
+        GangRepository.getInstance().deleteGangByID(gameClient.getHabbo().getHabboRoleplayStats().getGang().getId());
 
-        gameClient.getHabbo().getHabboRoleplayStats().setGangID(null);
-        gameClient.getHabbo().getHabboRoleplayStats().setGangPositionID(null);
+        gameClient.getHabbo().getHabboRoleplayStats().setGang(null, null);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_disband_success"));
 

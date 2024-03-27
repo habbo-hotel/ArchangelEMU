@@ -34,7 +34,7 @@ public class CorpOfferJobCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporationID() == targetedHabbo.getHabboRoleplayStats().getCorporationID()) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getId() == targetedHabbo.getHabboRoleplayStats().getCorporation().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hire_user_has_same_employer"));
             return true;
         }

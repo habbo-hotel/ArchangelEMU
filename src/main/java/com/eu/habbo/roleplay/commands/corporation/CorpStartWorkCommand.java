@@ -14,24 +14,19 @@ public class CorpStartWorkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporationID() == 0) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_user_is_unemployed"));
-            return true;
-        }
-
         if (Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().isUserWorking(gameClient.getHabbo())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_user_is_already_working"));
             return true;
         }
 
-        Corporation userEmployer = Emulator.getGameEnvironment().getCorporationManager().getCorporationByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporationID());
+        Corporation userEmployer = Emulator.getGameEnvironment().getCorporationManager().getCorporationByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getId());
 
         if (userEmployer == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_company_does_not_exist"));
             return true;
         }
 
-        CorporationPosition userPosition = userEmployer.getPositionByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporationPositionID());
+        CorporationPosition userPosition = userEmployer.getPositionByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporationPosition().getId());
 
         if (userPosition == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_position_does_not_exist"));

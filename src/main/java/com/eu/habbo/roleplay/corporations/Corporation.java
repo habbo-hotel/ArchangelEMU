@@ -56,14 +56,7 @@ public class Corporation  implements Runnable {
     private List<String> tags;
 
     public CorporationPosition getPositionByID(int positionID) {
-        int[] keys = positions.keys();
-        for (int key : keys) {
-            CorporationPosition position = positions.get(key);
-            if (position.getId() == positionID) {
-                return position;
-            }
-        }
-        return null;
+        return this.positions.get(positionID);
     }
 
     public Corporation(ResultSet set) throws SQLException {
@@ -75,14 +68,9 @@ public class Corporation  implements Runnable {
         this.userID = set.getInt("user_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
-        this.positions = new TIntObjectHashMap<>();
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
-        this.invitedUsers = new TIntObjectHashMap<>();
-        this.loadPositions();
-    }
-
-    private void loadPositions() {
         this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions();
+        this.invitedUsers = new TIntObjectHashMap<>();
     }
 
     @Override
@@ -94,7 +82,6 @@ public class Corporation  implements Runnable {
             CorporationPosition position = iterator.value();
             position.run();
         }
-
     }
 
 

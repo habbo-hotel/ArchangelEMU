@@ -36,7 +36,7 @@ public class CorpDemoteCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporationID() != targetedHabbo.getHabboRoleplayStats().getCorporationID()) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getId() != targetedHabbo.getHabboRoleplayStats().getCorporation().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_demote_not_allowed"));
             return true;
         }
@@ -68,8 +68,7 @@ public class CorpDemoteCommand extends Command {
             return true;
         }
 
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporationPositionID(newPosition.getId());
-        gameClient.getHabbo().getHabboRoleplayStats().run();
+        gameClient.getHabbo().getHabboRoleplayStats().setCorporation(targetedHabbo.getHabboRoleplayStats().getCorporation().getId(), newPosition.getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_demote_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())

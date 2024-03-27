@@ -46,10 +46,7 @@ public class GangKickCommand extends Command {
             return true;
         }
 
-        targetedHabbo.getHabboRoleplayStats().setGangID(null);
-        targetedHabbo.getHabboRoleplayStats().setGangPositionID(null);
-
-        targetedHabbo.getHabboRoleplayStats().run();
+        targetedHabbo.getHabboRoleplayStats().setGang(null, null);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_kick_success").replace("%user%", targetedHabbo.getHabboInfo().getUsername()));
         targetedHabbo.shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_kick_received").replace("%gang%", gang.getName()));

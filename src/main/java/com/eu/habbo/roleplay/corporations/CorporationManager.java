@@ -73,5 +73,6 @@ public class CorporationManager {
 
     public void dispose() {
         this.corporations = null;
+        CorporationManager.LOGGER.info("Corporation Manager -> Disposed!");
     }
 }

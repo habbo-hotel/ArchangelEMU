@@ -50,12 +50,12 @@ public class CorporationsShiftManager {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_no_shift"));
             return;
         }
-        Corporation userEmployer = CorporationManager.getInstance().getCorporationByID(habbo.getHabboRoleplayStats().getCorporationID());
+        Corporation userEmployer = habbo.getHabboRoleplayStats().getCorporation();
         if (userEmployer == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;
         }
-        CorporationPosition userPosition =  userEmployer.getPositionByID(habbo.getHabboRoleplayStats().getCorporationPositionID());
+        CorporationPosition userPosition =  habbo.getHabboRoleplayStats().getCorporationPosition();
         if (userPosition == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;

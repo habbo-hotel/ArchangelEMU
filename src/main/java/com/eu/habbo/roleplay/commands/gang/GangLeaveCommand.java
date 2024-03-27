@@ -21,10 +21,7 @@ public class GangLeaveCommand extends Command {
             return true;
         }
 
-        gameClient.getHabbo().getHabboRoleplayStats().setGangID(null);
-        gameClient.getHabbo().getHabboRoleplayStats().setGangPositionID(null);
-
-        gameClient.getHabbo().getHabboRoleplayStats().run();
+        gameClient.getHabbo().getHabboRoleplayStats().setGang(null, null);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_leave_success"));
 

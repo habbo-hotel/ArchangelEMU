@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 
 public class CorpFireCommand extends Command {
@@ -46,10 +47,9 @@ public class CorpFireCommand extends Command {
             return true;
         }
 
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporationID(GovernmentManager.getInstance().getWelfareCorp().getId());
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporationPositionID(GovernmentManager.getInstance().getWelfareCorp().getPositionByOrderID(0).getId());
+        Corporation welfareCorp = GovernmentManager.getInstance().getWelfareCorp();
 
-        gameClient.getHabbo().getHabboRoleplayStats().run();
+        gameClient.getHabbo().getHabboRoleplayStats().setCorporation(welfareCorp.getId(), welfareCorp.getPositionByOrderID(1).getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_fire_success").replace("%username%", targetedHabbo.getHabboInfo().getUsername()));
         targetedHabbo.shout(Emulator.getTexts().getValue("commands.roleplay.cmd_fire_impacted"));

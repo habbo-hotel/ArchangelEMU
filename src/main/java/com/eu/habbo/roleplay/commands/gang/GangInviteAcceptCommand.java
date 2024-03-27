@@ -37,8 +37,7 @@ public class GangInviteAcceptCommand extends Command {
         }
 
 
-        gameClient.getHabbo().getHabboRoleplayStats().setGangID(targetedGang.getId());
-        gameClient.getHabbo().getHabboRoleplayStats().setGangPositionID(targetedGang.getPositionByOrderID(1).getId());
+        gameClient.getHabbo().getHabboRoleplayStats().setGang(targetedGang.getId(), targetedGang.getPositionByOrderID(1).getId());
 
         gameClient.getHabbo().getHabboRoleplayStats().getGang().removeInvitedUser(gameClient.getHabbo());
 

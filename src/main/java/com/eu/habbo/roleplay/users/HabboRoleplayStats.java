@@ -102,24 +102,24 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     @Setter
     private int maximumHealth;
-    @Getter
-    @Setter
     private int corporationID;
 
     public Corporation getCorporation() {
         return CorporationManager.getInstance().getCorporationByID(this.corporationID);
     }
 
-    @Getter
-    @Setter
+    public void setCorporation(int corporationID, int corporationPositionID) {
+        this.corporationID = corporationID;
+        this.corporationPositionID = corporationPositionID;
+        this.run();
+    }
+
     private int corporationPositionID;
 
     public CorporationPosition getCorporationPosition() {
         return this.getCorporation().getPositionByID(this.corporationPositionID);
     }
 
-    @Getter
-    @Setter
     private Integer gangID;
 
     public Gang getGang() {
@@ -127,6 +127,12 @@ public class HabboRoleplayStats implements Runnable {
             return null;
         }
         return GangManager.getInstance().getGangById(this.gangID);
+    }
+
+    public void setGang(Integer gangID, Integer gangPositionID) {
+        this.gangID = gangID;
+        this.gangPositionID = gangPositionID;
+        this.run();
     }
 
     @Getter
