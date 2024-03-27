@@ -65,6 +65,7 @@ public class DemoteCommand extends Command {
         }
 
         gameClient.getHabbo().getHabboRoleplayStats().setCorporationPositionID(newPosition.getId());
+        gameClient.getHabbo().getHabboRoleplayStats().run();
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_demote_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())

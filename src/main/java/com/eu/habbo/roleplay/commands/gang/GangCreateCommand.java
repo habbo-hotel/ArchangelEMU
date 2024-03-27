@@ -48,6 +48,8 @@ public class GangCreateCommand extends Command {
         gameClient.getHabbo().getHabboRoleplayStats().setGangID(createdGang.getId());
         gameClient.getHabbo().getHabboRoleplayStats().setGangPositionID(createdPosition.getId());
 
+        gameClient.getHabbo().getHabboRoleplayStats().run();
+
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_create_success").replace("%gang%", createdGang.getName()));
         return true;
     }

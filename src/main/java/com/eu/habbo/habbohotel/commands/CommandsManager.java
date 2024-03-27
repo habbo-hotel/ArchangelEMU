@@ -329,7 +329,9 @@ public class CommandsManager {
         // Gang
         addCommand(new GangCreateCommand());
         addCommand(new GangDisbandCommand());
+        addCommand(new GangInviteAcceptCommand());
         addCommand(new GangInviteCommand());
+        addCommand(new GangInviteDeclineCommand());
         addCommand(new GangKickCommand());
         addCommand(new GangLeaveCommand());
     }

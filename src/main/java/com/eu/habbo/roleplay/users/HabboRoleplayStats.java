@@ -196,13 +196,14 @@ public class HabboRoleplayStats implements Runnable {
     public void run() {
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET current_health = ?, maximum_health = ?, corporation_id = ?, corporation_position_id = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET current_health = ?, maximum_health = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, gang_position_id = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.currentHealth);
                 statement.setInt(2, this.maximumHealth);
                 statement.setInt(3, this.corporationID);
                 statement.setInt(4, this.corporationPositionID);
-                statement.setInt(5, this.habbo.getHabboInfo().getId());
-
+                statement.setInt(5, this.gangID);
+                statement.setInt(6, this.gangPositionID);
+                statement.setInt(7, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

@@ -59,7 +59,8 @@ public class PromoteCommand extends Command {
             return true;
         }
 
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporationPositionID(newPosition.getId());
+        targetedHabbo.getHabboRoleplayStats().setCorporationPositionID(newPosition.getId());
+        targetedHabbo.getHabboRoleplayStats().run();
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_promote_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())

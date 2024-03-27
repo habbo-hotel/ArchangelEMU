@@ -60,6 +60,7 @@ public class SuperHireCommand extends Command {
 
         targetedHabbo.getHabboRoleplayStats().setCorporationID(corporationId);
         targetedHabbo.getHabboRoleplayStats().setCorporationPositionID(positionId);
+        targetedHabbo.getHabboRoleplayStats().run();
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_superhire_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())

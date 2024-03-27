@@ -1,6 +1,7 @@
 package com.eu.habbo.roleplay.gangs;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
@@ -29,6 +30,19 @@ public class Gang {
     private String description;
     @Getter
     private TIntObjectHashMap<GangPosition> positions;
+    private TIntObjectHashMap<Habbo> invitedUsers;
+
+    public void addInvitedUser(Habbo habbo) {
+        this.invitedUsers.put(habbo.getHabboInfo().getId(), habbo);
+    }
+
+    public Habbo getInvitedUser(Habbo habbo) {
+        return this.invitedUsers.get(habbo.getHabboInfo().getId());
+    }
+
+    public void removeInvitedUser(Habbo habbo) {
+        this.invitedUsers.remove(habbo.getHabboInfo().getId());
+    }
 
     public GangPosition getPositionByID(int positionID) {
         return this.positions.get(positionID);
@@ -59,6 +73,7 @@ public class Gang {
         this.name = set.getString("name");
         this.description = set.getString("description");
         this.positions = new TIntObjectHashMap<>();
+        this.invitedUsers = new TIntObjectHashMap<>();
         this.loadPositions();
     }
 
