@@ -4,9 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 
-public class KickCommand extends Command {
-    public KickCommand() {
-        super("cmd_gang_kick");
+public class GangDisbandCommand extends Command {
+    public GangDisbandCommand() {
+        super("cmd_gang_disband");
     }
 
     @Override
@@ -15,6 +15,12 @@ public class KickCommand extends Command {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.not_in_a_gang"));
             return true;
         }
+
+        if (gameClient.getHabbo().getHabboInfo().getId() != gameClient.getHabbo().getHabboRoleplayStats().getGang().getUserID()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_disband_not_allowed"));
+            return true;
+        }
+
         return true;
     }
 }

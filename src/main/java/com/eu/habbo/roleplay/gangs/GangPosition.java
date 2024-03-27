@@ -10,6 +10,9 @@ public class GangPosition {
 
     private int id;
     private int gangID;
+    @Getter
+    @Setter
+    private int orderID;
     @Setter
     private int roomID;
     @Setter
@@ -30,6 +33,7 @@ public class GangPosition {
     public void load(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.gangID = set.getInt("gang_id");
+        this.orderID = set.getInt("order_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
         this.canKick = set.getInt("can_kick") == 1;

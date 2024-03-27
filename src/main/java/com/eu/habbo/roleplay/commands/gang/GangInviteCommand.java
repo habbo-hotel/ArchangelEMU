@@ -4,17 +4,18 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 
-public class LeaveCommand extends Command {
-    public LeaveCommand() {
-        super("cmd_gang_leave");
+public class GangInviteCommand extends Command {
+    public GangInviteCommand() {
+        super("cmd_gang_invite");
     }
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboRoleplayStats().getGangPositionID() == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.not_in_a_gang"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_not_in_a_gang"));
             return true;
         }
+
         return true;
     }
 }

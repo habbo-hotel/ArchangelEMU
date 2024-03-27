@@ -1,6 +1,7 @@
 package com.eu.habbo.roleplay.gangs;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +34,21 @@ public class Gang {
         return this.positions.get(positionID);
     }
 
+    public GangPosition getPositionByOrderID(int orderID) {
+        int[] keys = positions.keys();
+        for (int key : keys) {
+            GangPosition position = positions.get(key);
+            if (position.getOrderID() == orderID) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+    public void addPosition(GangPosition position) {
+        this.positions.put(position.getId(), position);
+    }
+
     public Gang(ResultSet set) throws SQLException {
         this.load(set);
     }
@@ -49,7 +65,7 @@ public class Gang {
     private void loadPositions() {
         this.positions.clear();
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_gang_positions WHERE gang_id = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_gangs_positions WHERE gang_id = ?")) {
                 statement.setInt(1, this.getId());
                 ResultSet set = statement.executeQuery();
                 while (set.next()) {

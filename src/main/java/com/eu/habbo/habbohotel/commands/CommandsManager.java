@@ -327,11 +327,11 @@ public class CommandsManager {
         addCommand(new SuperHireCommand());
 
         // Gang
-        addCommand(new CreateCommand());
-        addCommand(new DisbandCommand());
-        addCommand(new InviteCommand());
-        addCommand(new KickCommand());
-        addCommand(new LeaveCommand());
+        addCommand(new GangCreateCommand());
+        addCommand(new GangDisbandCommand());
+        addCommand(new GangInviteCommand());
+        addCommand(new GangKickCommand());
+        addCommand(new GangLeaveCommand());
     }
 
     public void dispose() {

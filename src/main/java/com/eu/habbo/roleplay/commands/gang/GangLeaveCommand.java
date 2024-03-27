@@ -4,9 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 
-public class DisbandCommand extends Command {
-    public DisbandCommand() {
-        super("cmd_gang_disband");
+public class GangLeaveCommand extends Command {
+    public GangLeaveCommand() {
+        super("cmd_gang_leave");
     }
 
     @Override
