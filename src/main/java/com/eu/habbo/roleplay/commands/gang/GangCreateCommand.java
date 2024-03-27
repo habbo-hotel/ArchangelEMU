@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.roleplay.gangs.Gang;
 import com.eu.habbo.roleplay.gangs.GangPosition;
-import com.eu.habbo.roleplay.gangs.GangsManager;
+import com.eu.habbo.roleplay.gangs.GangManager;
 
 public class GangCreateCommand extends Command {
     public GangCreateCommand() {
@@ -27,7 +27,7 @@ public class GangCreateCommand extends Command {
             return true;
         }
 
-        Gang matchingGangByName = GangsManager.getInstance().getGangByName(gangName);
+        Gang matchingGangByName = GangManager.getInstance().getGangByName(gangName);
 
         if (matchingGangByName != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_create_name_is_taken"));
@@ -41,7 +41,7 @@ public class GangCreateCommand extends Command {
             return true;
         }
 
-        Gang createdGang = GangsManager.getInstance().createGangWithDefaultPosition(gangName, gameClient.getHabbo().getHabboInfo().getId(), currentRoom.getRoomInfo().getId());
+        Gang createdGang = GangManager.getInstance().createGangWithDefaultPosition(gangName, gameClient.getHabbo().getHabboInfo().getId(), currentRoom.getRoomInfo().getId());
 
         GangPosition createdPosition = createdGang.getPositionByOrderID(1);
 

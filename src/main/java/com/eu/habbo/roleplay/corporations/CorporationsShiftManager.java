@@ -11,23 +11,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CorporationsShiftsManager {
+public class CorporationsShiftManager {
 
-    private static CorporationsShiftsManager instance;
+    private static CorporationsShiftManager instance;
 
-    public static CorporationsShiftsManager getInstance() {
+    public static CorporationsShiftManager getInstance() {
         if (instance == null) {
-            instance = new CorporationsShiftsManager();
+            instance = new CorporationsShiftManager();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationsShiftsManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationsShiftManager.class);
 
     private final Map<Integer, CorporationShift> activeUserShifts;
     private final ScheduledExecutorService scheduler;
 
-    private CorporationsShiftsManager() {
+    private CorporationsShiftManager() {
         long millis = System.currentTimeMillis();
         this.activeUserShifts = new HashMap<>();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -50,7 +50,7 @@ public class CorporationsShiftsManager {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_no_shift"));
             return;
         }
-        Corporation userEmployer = CorporationsManager.getInstance().getCorporationByID(habbo.getHabboRoleplayStats().getCorporationID());
+        Corporation userEmployer = CorporationManager.getInstance().getCorporationByID(habbo.getHabboRoleplayStats().getCorporationID());
         if (userEmployer == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;

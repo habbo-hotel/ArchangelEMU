@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.government;
 
 import com.eu.habbo.roleplay.corporations.Corporation;
-import com.eu.habbo.roleplay.corporations.CorporationsManager;
+import com.eu.habbo.roleplay.corporations.CorporationManager;
 import lombok.Getter;
 
 @Getter
@@ -21,7 +21,7 @@ public class GovernmentManager {
     private Corporation welfareCorp;
 
     private GovernmentManager() {
-        this.welfareCorp = CorporationsManager.getInstance().getCorporationsWithTag(GovernmentManager.WELFARE_CORP_TAG).get(0);
+        this.welfareCorp = CorporationManager.getInstance().getCorporationsWithTag(GovernmentManager.WELFARE_CORP_TAG).get(0);
         if (this.welfareCorp == null) {
            throw new RuntimeException("GovernmentManager expected a welfare corp to exist.  Please create one in rp_corporations");
         }

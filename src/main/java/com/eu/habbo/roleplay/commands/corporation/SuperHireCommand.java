@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
-import com.eu.habbo.roleplay.corporations.CorporationsManager;
+import com.eu.habbo.roleplay.corporations.CorporationManager;
 
 public class SuperHireCommand extends Command {
     public SuperHireCommand() {
@@ -36,7 +36,7 @@ public class SuperHireCommand extends Command {
             return true;
         }
 
-        Corporation matchingCorp = CorporationsManager.getInstance().getCorporationByID(corporationId);
+        Corporation matchingCorp = CorporationManager.getInstance().getCorporationByID(corporationId);
 
         if (matchingCorp == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_superhire_invalid_corp"));

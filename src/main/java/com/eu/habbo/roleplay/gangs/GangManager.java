@@ -1,28 +1,25 @@
 package com.eu.habbo.roleplay.gangs;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.corporations.Corporation;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
-public class GangsManager {
+public class GangManager {
 
-    private static GangsManager instance;
+    private static GangManager instance;
 
-    public static GangsManager getInstance() {
+    public static GangManager getInstance() {
         if (instance == null) {
-            instance = new GangsManager();
+            instance = new GangManager();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GangsManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GangManager.class);
 
     private TIntObjectHashMap<Gang> gangs;
 
@@ -139,7 +136,7 @@ public class GangsManager {
         }
     }
 
-    private GangsManager() {
+    private GangManager() {
         long millis = System.currentTimeMillis();
         this.gangs = new TIntObjectHashMap<>();
 

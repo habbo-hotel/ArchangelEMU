@@ -14,18 +14,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CorporationsManager {
+public class CorporationManager {
 
-    private static CorporationsManager instance;
+    private static CorporationManager instance;
 
-    public static CorporationsManager getInstance() {
+    public static CorporationManager getInstance() {
         if (instance == null) {
-            instance = new CorporationsManager();
+            instance = new CorporationManager();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationsManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationManager.class);
 
     private TIntObjectHashMap<Corporation> corporations;
 
@@ -49,13 +49,13 @@ public class CorporationsManager {
 
     @Getter
     @Setter
-    private CorporationsShiftsManager corporationsShiftManager;
+    private CorporationsShiftManager corporationsShiftManager;
 
 
-    private CorporationsManager() {
+    private CorporationManager() {
         long millis = System.currentTimeMillis();
         this.corporations = new TIntObjectHashMap<>();
-        this.corporationsShiftManager = CorporationsShiftsManager.getInstance();
+        this.corporationsShiftManager = CorporationsShiftManager.getInstance();
 
         this.reload();
 

@@ -8,11 +8,11 @@ import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
-import com.eu.habbo.roleplay.corporations.CorporationsManager;
+import com.eu.habbo.roleplay.corporations.CorporationManager;
 import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
 import com.eu.habbo.roleplay.gangs.Gang;
 import com.eu.habbo.roleplay.gangs.GangPosition;
-import com.eu.habbo.roleplay.gangs.GangsManager;
+import com.eu.habbo.roleplay.gangs.GangManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import gnu.trove.set.hash.THashSet;
@@ -104,7 +104,7 @@ public class HabboRoleplayStats implements Runnable {
     private int corporationID;
 
     public Corporation getCorporation() {
-        return CorporationsManager.getInstance().getCorporationByID(this.corporationID);
+        return CorporationManager.getInstance().getCorporationByID(this.corporationID);
     }
 
     @Getter
@@ -123,7 +123,7 @@ public class HabboRoleplayStats implements Runnable {
         if (this.gangID == null) {
             return null;
         }
-        return GangsManager.getInstance().getGangById(this.gangID);
+        return GangManager.getInstance().getGangById(this.gangID);
     }
 
     @Getter

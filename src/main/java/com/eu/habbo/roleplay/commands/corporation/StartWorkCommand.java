@@ -19,12 +19,12 @@ public class StartWorkCommand extends Command {
             return true;
         }
 
-        if (Emulator.getGameEnvironment().getCorporationsManager().getCorporationsShiftManager().isUserWorking(gameClient.getHabbo())) {
+        if (Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().isUserWorking(gameClient.getHabbo())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_user_is_already_working"));
             return true;
         }
 
-        Corporation userEmployer = Emulator.getGameEnvironment().getCorporationsManager().getCorporationByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporationID());
+        Corporation userEmployer = Emulator.getGameEnvironment().getCorporationManager().getCorporationByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporationID());
 
         if (userEmployer == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_company_does_not_exist"));
@@ -38,7 +38,7 @@ public class StartWorkCommand extends Command {
             return true;
         }
 
-        Emulator.getGameEnvironment().getCorporationsManager().getCorporationsShiftManager().startUserShift(gameClient.getHabbo());
+        Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().startUserShift(gameClient.getHabbo());
 
         String jobUniform = gameClient.getHabbo().getHabboInfo().getGender() == HabboGender.M ? userPosition.getMaleFigure() : userPosition.getFemaleFigure();
         gameClient.getHabbo().getHabboInfo().setLook(jobUniform);

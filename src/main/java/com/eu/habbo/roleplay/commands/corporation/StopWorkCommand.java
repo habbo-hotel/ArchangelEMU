@@ -12,7 +12,7 @@ public class StopWorkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        CorporationShift userShift = Emulator.getGameEnvironment().getCorporationsManager().getCorporationsShiftManager().getUserShift(gameClient.getHabbo());
+        CorporationShift userShift = Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().getUserShift(gameClient.getHabbo());
 
 
         if (userShift == null) {
@@ -20,7 +20,7 @@ public class StopWorkCommand extends Command {
             return true;
         }
 
-        Emulator.getGameEnvironment().getCorporationsManager().getCorporationsShiftManager().stopUserShift(gameClient.getHabbo());
+        Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().stopUserShift(gameClient.getHabbo());
         gameClient.getHabbo().getHabboInfo().setLook(userShift.getOldLook());
         // Trigger user look changed
         return true;
