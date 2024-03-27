@@ -183,8 +183,8 @@ public class HabboRoleplayStats implements Runnable {
         this.maximumHealth = set.getInt("maximum_health");
         this.corporationID = set.getInt("corporation_id");
         this.corporationPositionID = set.getInt("corporation_position_id");
-        this.gangID = set.getInt("gang_id");
-        this.gangPositionID = set.getInt("gang_position_id");
+        this.gangID = set.getInt("gang_id") != 0 ? set.getInt("gang_id") : null;
+        this.gangPositionID = set.getInt("gang_position_id") != 0 ? set.getInt("gang_position_id") : null;
     }
 
     public void dispose() {
