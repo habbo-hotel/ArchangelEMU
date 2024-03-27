@@ -61,7 +61,8 @@ import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
-import io.netty.channel.ChannelHandlerContext;
+import com.eu.habbo.messages.outgoing.Outgoing;
+import com.eu.habbo.roleplay.messages.incoming.AttackUserEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -924,59 +925,8 @@ public enum Incoming {
 
     welcomeGiftChangeEmailEvent(66, UnknownEvent2.class),
 
-    unknownSnowStormEvent_6000(6000, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6001(6001, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6002(6002, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6003(6003, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6004(6004, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6005(6005, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6006(6006, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6007(6007, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6008(6008, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6009(6009, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6010(6010, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6011(6011, UnknownEvent2.class),
-
-    snowStormJoinQueueEvent(6012, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6013(6013, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6014(6014, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6015(6015, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6016(6016, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6017(6017, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6018(6018, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6019(6019, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6020(6020, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6021(6021, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6022(6022, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6023(6023, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6024(6024, UnknownEvent2.class),
-
-    unknownSnowStormEvent_6025(6025, UnknownEvent2.class),
-
-    snowStormUserPickSnowballEvent(6026, UnknownEvent2.class);
+    // Roleplay
+    attackUserEvent(Outgoing.roleplayAttackUserComposer, AttackUserEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

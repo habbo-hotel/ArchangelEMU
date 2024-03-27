@@ -2,12 +2,6 @@ package com.eu.habbo.messages.outgoing;
 
 public class Outgoing {
 
-    /**
-     * Outgoing Emulator Packets which are currently implemented.
-     * Named 1:1 based on outgoing client packet names from PRODUCTION-201611291003-338511768
-     * TODO: Implement the missing ones.
-     */
-
     public static final int acceptFriendResultComposer = 896;
     public static final int accountPreferencesComposer = 513;
     public static final int accountSafetyLockStatusChangeMessageComposer = 1243;
@@ -21,7 +15,6 @@ public class Outgoing {
     public static final int approveNameMessageComposer = 1503;
     public static final int authenticationOKMessageComposer = 2491;
     public static final int availabilityStatusMessageComposer = 2033;
-    public static final int availabilityTimeMessageComposer = 600;//todo?
     public static final int avatarEffectActivatedMessageComposer = 1959;
     public static final int avatarEffectAddedMessageComposer = 2867;
     public static final int avatarEffectExpiredMessageComposer = 2228;
@@ -38,7 +31,6 @@ public class Outgoing {
     public static final int botErrorComposer = 639;
     public static final int botForceOpenContextMenuComposer = 296;
     public static final int botInventoryComposer = 3086;
-    public static final int botReceivedMessageComposer = 3684; //todo?
     public static final int botRemovedFromInventoryComposer = 233;
     public static final int botSkillListUpdateComposer = 69;
     public static final int buildersClubFurniCountMessageComposer = 3828;
@@ -51,7 +43,6 @@ public class Outgoing {
     public static final int callForHelpResultMessageComposer = 3635;
     public static final int cameraPublishStatusMessageComposer = 2057;
     public static final int cameraPurchaseOKMessageComposer = 2783;
-    public static final int cameraSnapshotMessageComposer = 463; // todo?
     public static final int cameraStorageUrlMessageComposer = 3696;
     public static final int campaignCalendarDataMessageComposer = 2531;
     public static final int campaignCalendarDoorOpenedMessageComposer = 2551;
@@ -59,7 +50,6 @@ public class Outgoing {
     public static final int canCreateRoomEventComposer = 2599;
     public static final int cantConnectMessageComposer = 899;
     public static final int carryObjectMessageComposer = 1474;
-    public static final int catalogPageExpirationComposer = 2668;//todo?
     public static final int catalogPageMessageComposer = 804;
     public static final int catalogPagesListComposer = 1032;
     public static final int catalogPageWithEarliestExpiryMessageComposer = 2515;
@@ -83,12 +73,10 @@ public class Outgoing {
     public static final int clubGiftNotificationComposer = 2188;
     public static final int clubGiftSelectedComposer = 659;
     public static final int collapsedCategoriesComposer = 1543;
-    public static final int communityGoalEarnedPrizesMessageComposer = 3319;//todo?
     public static final int communityGoalHallOfFameMessageComposer = 3005;
     public static final int communityGoalProgressMessageComposer = 2525;
     public static final int communityGoalVoteMessageComposer = 1435;
     public static final int competitionEntrySubmitResultComposer = 1177;
-    public static final int competitionRoomsDataMessageComposer = 3954;//todo?
     public static final int competitionStatusMessageComposer = 133;
     public static final int competitionVotingInfoMessageComposer = 3506;
     public static final int completeDiffieHandshakeComposer = 3885;
@@ -105,7 +93,6 @@ public class Outgoing {
     public static final int customUserNotificationMessageComposer = 909;
     public static final int danceMessageComposer = 2233;
     public static final int diceValueMessageComposer = 3431;
-    public static final int directSMSClubBuyAvailableMessageComposer = 195; // todo?
     public static final int disconnectReasonComposer = 4000;
     public static final int doorbellMessageComposer = 2309;
     public static final int elementPointerMessageComposer = 1787;
@@ -115,11 +102,6 @@ public class Outgoing {
     public static final int expressionMessageComposer = 1631;
     public static final int extendedProfileChangedMessageComposer = 876;
     public static final int extendedProfileMessageComposer = 3898;
-    public static final int faqCategoriesMessageComposer = 2756; //todo?
-    public static final int faqCategoryMessageComposer = 2819; //todo?
-    public static final int faqClientFaqsMessageComposer = 2492; //todo?
-    public static final int faqSearchResultsMessageComposer = 1551;  //todo?
-    public static final int faqTextMessageComposer = 3292;//todo?
     public static final int favoriteMembershipUpdateMessageComposer = 3403;
     public static final int favouriteChangedComposer = 2524;
     public static final int favouritesComposer = 151;
@@ -151,15 +133,6 @@ public class Outgoing {
     public static final int furniRentOrBuyoutOfferMessageComposer = 35;
     public static final int furnitureAliasesMessageComposer = 1723;
     public static final int game2AccountGameStatusMessageComposer = 2893;
-    public static final int game2GameDirectoryStatusMessageComposer = 2246;  //todo?
-    public static final int game2InArenaQueueMessageComposer = 872;//todo?
-    public static final int game2JoiningGameFailedMessageComposer = 1730; // todo?
-    public static final int game2StopCounterMessageComposer = -1; //todo?
-    public static final int game2UserLeftGameMessageComposer = 2383;//todo?
-    public static final int game2WeeklyFriendsLeaderboardComposer = 2270;//todo?
-    public static final int game2WeeklyLeaderboardComposer = 2196; //todo?
-    public static final int gameAchievementsMessageComposer = 1689;//todo?
-    public static final int gameInviteMessageComposer = 904; //todo?
     public static final int gameListMessageComposer = 222;
     public static final int gamePlayerValueMessageComposer = 2324;
     public static final int gameStatusMessageComposer = 3805;
@@ -170,7 +143,6 @@ public class Outgoing {
     public static final int gotMysteryBoxPrizeMessageComposer = 3712;
     public static final int goToBreedingNestFailureComposer = 2621;
     public static final int groupDetailsChangedMessageComposer = 1459;
-    public static final int groupMembershipRequestedMessageComposer = 1180;//todo?
     public static final int guestRoomSearchResultComposer = 52;
     public static final int guideOnDutyStatusMessageComposer = 1548;
     public static final int guideReportingStatusMessageComposer = 3463;
@@ -214,7 +186,6 @@ public class Outgoing {
     public static final int heightMapUpdateMessageComposer = 558;
     public static final int hotelClosedAndOpensComposer = 3728;
     public static final int hotelClosesAndWillOpenAtComposer = 2771;
-    public static final int hotelMergeNameChangeComposer = 1663;//todo?
     public static final int hotelViewCatalogPageExpiringComposer = 690;
     public static final int hotelViewCustomTimerComposer = -1;
     public static final int hotelWillCloseInMinutesComposer = 1050;
@@ -229,19 +200,16 @@ public class Outgoing {
     public static final int interstitialMessageComposer = 1808;
     public static final int isBadgeRequestFulfilledComposer = 2998;
     public static final int isFirstLoginOfDayComposer = 793;
-    public static final int isOfferGiftableMessageComposer = 761;//todo?
     public static final int issueCloseNotificationMessageComposer = 934;
     public static final int issueDeletedMessageComposer = 3192;
     public static final int issueInfoMessageComposer = 3609;
     public static final int issuePickFailedMessageComposer = 3150;
-    public static final int isUserPartOfCompetitionMessageComposer = 3841;//todo?
     public static final int itemAddMessageComposer = 2187;
     public static final int itemDataUpdateMessageComposer = 2202;
     public static final int itemRemoveMessageComposer = 3208;
     public static final int itemsComposer = 1369;
     public static final int itemUpdateMessageComposer = 2009;
     public static final int joinedQueueMessageComposer = 2260;
-    public static final int joiningQueueFailedMessageComposer = 3035;//todo?
     public static final int jukeBoxPlaylistFullMessageComposer = 105;
     public static final int jukeboxSongDisksMessageComposer = 34;
     public static final int latencyPingResponseMessageComposer = 10;
@@ -263,7 +231,6 @@ public class Outgoing {
     public static final int messengerInitComposer = 1605;
     public static final int miniMailNewMessageComposer = 1911;
     public static final int miniMailUnreadCountComposer = 2803;
-    public static final int moderatorActionResultMessageComposer = 2335;//todo?
     public static final int moderatorCautionComposer = 1890;
     public static final int moderatorInitMessageComposer = 2696;
     public static final int moderatorMessageComposer = 2030;
@@ -299,7 +266,6 @@ public class Outgoing {
     public static final int objectsMessageComposer = 1778;
     public static final int objectUpdateMessageComposer = 3776;
     public static final int offerRewardDeliveredMessageComposer = 2125;
-    public static final int officialRoomsComposer = 2726;//todo?
     public static final int officialSongIdMessageComposer = 1381;
     public static final int oneWayDoorStatusMessageComposer = 2376;
     public static final int openComposer = 1830;
@@ -309,7 +275,6 @@ public class Outgoing {
     public static final int perkAllowancesComposer = 2586;
     public static final int petAddedToInventoryComposer = 2101;
     public static final int petBreedingComposer = 1746;
-    public static final int petBreedingResultComposer = 1553;  //todo?
     public static final int petExperienceComposer = 2156;
     public static final int petFigureUpdateComposer = 1924;
     public static final int petInfoMessageComposer = 2901;
@@ -343,7 +308,6 @@ public class Outgoing {
     public static final int purchaseOKMessageComposer = 869;
     public static final int questCancelledMessageComposer = 3027;
     public static final int questCompletedMessageComposer = 949;
-    public static final int questDailyMessageComposer = 1878;  //todo?
     public static final int questionAnsweredComposer = 2589;
     public static final int questionComposer = 2665;
     public static final int questionFinishedComposer = 1066;
@@ -385,10 +349,8 @@ public class Outgoing {
     public static final int roomRatingComposer = 482;
     public static final int roomReadyMessageComposer = 2031;
     public static final int roomSettingsDataComposer = 1498;
-    public static final int roomSettingsErrorComposer = 2897;//todo?
     public static final int roomSettingsSavedComposer = 948;
     public static final int roomSettingsSaveErrorComposer = 1555;
-    public static final int roomThumbnailUpdateResultComposer = 1927;  //todo?
     public static final int roomUserQuestionAnsweredComposer = -1;
     public static final int roomUserRespectComposer = 2815;
     public static final int roomVisitsComposer = 1752;
@@ -397,16 +359,12 @@ public class Outgoing {
     public static final int scrSendKickbackInfoMessageComposer = 3277;
     public static final int scrSendUserInfoComposer = 954;
     public static final int seasonalCalendarDailyOfferMessageComposer = 1889;
-    public static final int seasonalQuestsMessageComposer = 1122;  //todo?
     public static final int secondsUntilMessageComposer = 3926;
     public static final int sellablePetPalettesMessageComposer = 3331;
     public static final int shoutMessageComposer = 1036;
     public static final int showEnforceRoomCategoryDialogComposer = 3896;
     public static final int sleepMessageComposer = 1797;
     public static final int slideObjectBundleMessageComposer = 3207;
-    public static final int _str_16258_composer = 1660; //todo?
-    public static final int _str_16667_composer = 3099; //todo?
-    public static final int _str_17054_composer = 416; //todo?
     public static final int talentLevelUpComposer = 638;
     public static final int talentTrackLevelMessageEvent = 1203;
     public static final int talentTrackMessageComposer = 3406;
@@ -415,12 +373,10 @@ public class Outgoing {
     public static final int threadMessagesMessageComposer = 509;
     public static final int thumbnailStatusMessageComposer = 3595;
     public static final int tradeCloseWindowComposer = 1001;
-    public static final int tradeCompleteComposer = 2369;
     public static final int tradingAcceptComposer = 2568;
     public static final int tradingCloseComposer = 1373;
     public static final int tradingConfirmationComposer = 2720;
     public static final int tradingItemListComposer = 2024;
-    public static final int tradingNoSuchItemComposer = 2873;//todo?
     public static final int tradingNotOpenComposer = 3128;
     public static final int tradingOpenComposer = 2505;
     public static final int tradingOpenFailedComposer = 217;
@@ -430,14 +386,12 @@ public class Outgoing {
     public static final int tryPhoneNumberResultMessageComposer = 800;
     public static final int tryVerificationCodeResultMessageComposer = 91;
     public static final int uniqueMachineIDComposer = 1488;
-    public static final int unknowncomposer_1188 = 1437;  //todo?
     public static final int unloadGameMessageComposer = 1715;
     public static final int unreadForumsCountMessageComposer = 2379;
     public static final int unseenItemsComposer = 2103;
     public static final int updateMessageMessageComposer = 324;
     public static final int updateStackHeightTileHeightComposer = 2816;
     public static final int updateThreadMessageComposer = 2528;
-    public static final int useObjectMessageComposer = 1774;  //todo?
     public static final int userBadgesComposer = 1087;
     public static final int userBannedMessageComposer = 1683;
     public static final int userBCLimitsComposer = -1;
@@ -446,7 +400,6 @@ public class Outgoing {
     public static final int userClassificationMessageComposer = 966;
     public static final int userEventCatsComposer = 3244;
     public static final int userFlatCatsComposer = 1562;
-    public static final int userGameAchievementsMessageComposer = 2265;
     public static final int userNameChangedMessageComposer = 2182;
     public static final int userObjectComposer = 2725;
     public static final int userRemoveMessageComposer = 2661;
@@ -460,10 +413,6 @@ public class Outgoing {
     public static final int voucherRedeemErrorMessageComposer = 714;
     public static final int voucherRedeemOkMessageComposer = 3336;
     public static final int wardrobeMessageComposer = 3315;
-    public static final int weeklyCompetitiveFriendsLeaderboardComposer = 3560;//todo?
-    public static final int weeklyCompetitiveLeaderboardComposer = 3512;//todo?
-    public static final int weeklyGameRewardComposer = 2641;//todo?
-    public static final int weeklyGameRewardWinnersComposer = 3097;//todo?
     public static final int welcomeGiftChangeEmailResultComposer = 2293;
     public static final int welcomeGiftStatusComposer = 2707;
     public static final int whisperMessageComposer = 2704;
@@ -481,40 +430,8 @@ public class Outgoing {
     public static final int youtubeControlVideoMessageComposer = 1554;
     public static final int youtubeDisplayPlaylistsComposer = 1112;
     public static final int youtubeDisplayVideoMessageComposer = 1411;
-
-    /**
-     * Snowstorm incoming packets, which are not from PRODUCTION-201611291003-338511768, but are in the OpenSource SWF.
-     * */
-
-    public static final int snowStormGameStartedComposer = 5000;
-    public static final int snowStormQuePositionComposer = 5001;
-    public static final int snowStormStartBlockTickerComposer = 5002;
-    public static final int snowStormStartLobbyCounterComposer = 5003;
-    public static final int snowStormUnusedAlertGenericComposer = 5004;
-    public static final int snowStormLongDataComposer = 5005;
-    public static final int snowStormGameEndedComposer = 5006;
-    public static final int snowStormQuePlayerAddedComposer = 5008;
-    public static final int snowStormPlayAgainComposer = 5009;
-    public static final int snowStormGamesLeftComposer = 5010;
-    public static final int snowStormQuePlayerRemovedComposer = 5011;
-    public static final int snowStormGamesInformationComposer = 5012;
-    public static final int snowStormLongData2Composer = 5013;
-    public static final int unused_snowstorm_5014 = 5014;
-    public static final int snowStormGameStatusComposer = 5015;
-    public static final int snowStormFullGameStatusComposer = 5016;
-    public static final int snowStormOnStageStartComposer = 5017;
-    public static final int snowStormIntializeGameArenaViewComposer = 5018;
-    public static final int snowStormRejoinPreviousRoomComposer = 5019;
-    public static final int unknown_snowstorm_5020 = 5020;
-    public static final int snowStormLevelDataComposer = 5021;
-    public static final int snowStormOnGameEndingComposer = 5022;
-    public static final int snowStormUserChatMessageComposer = 5023;
-    public static final int snowStormOnStageRunningComposer = 5024;
-    public static final int snowStormOnStageEndingComposer = 5025;
-    public static final int snowStormIntializedPlayersComposer = 5026;
-    public static final int snowStormOnPlayerExitedArenaComposer = 5027;
-    public static final int snowStormGenericErrorComposer = 5028;
-    public static final int snowStormUserRematchedComposer = 5029;
-
+    
+    // Roleplay
+    public static final int roleplayAttackUserComposer = 8001;
 
 }
