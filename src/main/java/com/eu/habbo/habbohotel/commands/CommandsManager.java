@@ -317,6 +317,8 @@ public class CommandsManager {
         addCommand(new SetHealthCommand());
 
         // Corporation
+        addCommand(new CorpAcceptJobCommand());
+        addCommand(new CorpDeclineJobCommand());
         addCommand(new CorpDemoteCommand());
         addCommand(new CorpFireCommand());
         addCommand(new CorpOfferJobCommand());

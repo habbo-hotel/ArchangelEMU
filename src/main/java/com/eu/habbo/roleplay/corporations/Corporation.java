@@ -2,6 +2,7 @@ package com.eu.habbo.roleplay.corporations;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,19 @@ public class Corporation {
             }
         }
         return null;
+    }
+    private TIntObjectHashMap<Habbo> invitedUsers;
+
+    public void addInvitedUser(Habbo habbo) {
+        this.invitedUsers.put(habbo.getHabboInfo().getId(), habbo);
+    }
+
+    public Habbo getInvitedUser(Habbo habbo) {
+        return this.invitedUsers.get(habbo.getHabboInfo().getId());
+    }
+
+    public void removeInvitedUser(Habbo habbo) {
+        this.invitedUsers.remove(habbo.getHabboInfo().getId());
     }
 
     @Getter

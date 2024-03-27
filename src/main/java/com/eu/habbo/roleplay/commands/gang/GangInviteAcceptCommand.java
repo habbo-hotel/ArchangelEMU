@@ -13,11 +13,9 @@ public class GangInviteAcceptCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboRoleplayStats().getGang() != null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_user_already_in_gang"));
+        if (params == null) {
             return true;
         }
-
 
         String gangName = params[1];
 

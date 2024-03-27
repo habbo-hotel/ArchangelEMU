@@ -13,6 +13,10 @@ public class CorpPromoteCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
+        if (params == null) {
+            return true;
+        }
+
         String targetedUsername = params[1];
 
         if (targetedUsername == null) {

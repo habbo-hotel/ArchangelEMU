@@ -33,6 +33,17 @@ public class CorporationManager {
         return this.corporations.get(corporationID);
     }
 
+    public Corporation getCorporationByName(String corpName) {
+        int[] keys = this.corporations.keys();
+        for (int key : keys) {
+            Corporation corp = this.corporations.get(key);
+            if (corp.getName().equalsIgnoreCase(corpName)) {
+                return corp;
+            }
+        }
+        return null;
+    }
+
     public List<Corporation> getCorporationsWithTag(String tag) {
         List<Corporation> corporationsWithTag = new ArrayList<>();
         int[] keys = corporations.keys();

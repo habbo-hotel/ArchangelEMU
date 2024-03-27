@@ -13,6 +13,10 @@ public class GangKickCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
+        if (params == null) {
+            return true;
+        }
+
         if (gameClient.getHabbo().getHabboRoleplayStats().getGang() == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.not_in_a_gang"));
             return true;
