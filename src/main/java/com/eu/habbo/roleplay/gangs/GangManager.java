@@ -35,6 +35,11 @@ public class GangManager {
         return null;
     }
 
+    public void deleteGang(Gang gang) {
+        GangManager.getInstance().deleteGang(gang);
+        this.gangs.remove(gang.getId());
+    }
+
     public Gang createGangWithDefaultPosition(String gangName, int userID, int roomID) {
         Gang newGang = GangRepository.getInstance().createGang(gangName, userID, roomID);
         this.gangs.put(newGang.getId(), newGang);

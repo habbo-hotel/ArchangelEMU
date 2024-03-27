@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.roleplay.database.GangRepository;
+import com.eu.habbo.roleplay.gangs.Gang;
+import com.eu.habbo.roleplay.gangs.GangManager;
 
 public class GangDisbandCommand extends Command {
     public GangDisbandCommand() {
@@ -22,7 +24,9 @@ public class GangDisbandCommand extends Command {
             return true;
         }
 
-        GangRepository.getInstance().deleteGangByID(gameClient.getHabbo().getHabboRoleplayStats().getGang().getId());
+        Gang userGang = gameClient.getHabbo().getHabboRoleplayStats().getGang();
+
+        GangManager.getInstance().deleteGang(userGang);
 
         gameClient.getHabbo().getHabboRoleplayStats().setGang(null, null);
 
