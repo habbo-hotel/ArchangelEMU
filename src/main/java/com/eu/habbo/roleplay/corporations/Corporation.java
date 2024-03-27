@@ -1,8 +1,7 @@
 package com.eu.habbo.roleplay.corporations;
 
-import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
+import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,10 +12,8 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
-
 @Getter
-public class Corporation {
+public class Corporation  implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CorporationPosition.class);
     private int id;
@@ -83,18 +80,19 @@ public class Corporation {
     }
 
     private void loadPositions() {
-        this.positions.clear();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations_positions WHERE corporation_id = ?")) {
-            statement.setInt(1, this.id);
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    if (!this.positions.containsKey(set.getInt("id")))
-                        this.positions.put(set.getInt("id"), new CorporationPosition(set));
-                }
-            }
-        } catch (SQLException e) {
-            Corporation.LOGGER.error(CAUGHT_SQL_EXCEPTION, e);
+        this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions();
+    }
+
+    @Override
+    public void run() {
+        CorporationRepository.getInstance().upsertCorporation(this);
+        TIntObjectIterator<CorporationPosition> iterator = positions.iterator();
+        while (iterator.hasNext()) {
+            iterator.advance();
+            CorporationPosition position = iterator.value();
+            position.run();
         }
+
     }
 
 

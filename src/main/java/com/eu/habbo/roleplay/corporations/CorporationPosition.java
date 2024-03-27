@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.sql.*;
 
 @Getter
-public class CorporationPosition {
+public class CorporationPosition implements Runnable {
 
     private int id;
     private int corporationID;
@@ -55,6 +55,11 @@ public class CorporationPosition {
         this.canFire = set.getInt("can_fire") == 1;
         this.canPromote = set.getInt("can_promote") == 1;
         this.canDemote = set.getInt("can_demote") == 1;
+    }
+
+    @Override
+    public void run() {
+        CorporationPositionRepository.getInstance().upsertCorporationPosition(this);
     }
 
 }
