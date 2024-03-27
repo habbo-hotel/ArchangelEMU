@@ -40,7 +40,9 @@ public class GangManager {
 
     public Gang createGangWithDefaultPosition(String gangName, int userID, int roomID) {
         Gang newGang = this.createGang(gangName, userID, roomID);
-        GangPosition newPosition = this.createGangPosition(newGang.getId(), "Member");
+        this.gangs.put(newGang.getId(), newGang);
+        GangPosition newPosition = GangRepository.getInstance().createGangPosition(newGang.getId(), "Member");
+        this.gangs.get(newGang.getId()).addPosition(newPosition);
         return newGang;
     }
 
@@ -62,7 +64,7 @@ public class GangManager {
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int newGangId = generatedKeys.getInt(1);
-                    return this.loadGangByID(newGangId);
+                    return GangRepository.getInstance().getGangByID(newGangId);
                 } else {
                     throw new SQLException("Creating gang failed, no ID obtained.");
                 }
@@ -73,68 +75,7 @@ public class GangManager {
         }
     }
 
-    public GangPosition createGangPosition (int gangID, String positionName) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_gangs_positions (gang_id, name, description) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, gangID);
-            statement.setString(2, positionName);
-            statement.setString(3, positionName);
 
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Creating gang position failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int newPositionId = generatedKeys.getInt(1);
-                    return this.loadGangPositionByID(newPositionId);
-
-                } else {
-                    throw new SQLException("Creating gang position failed, no ID obtained.");
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-            return null;
-        }
-    }
-
-    private Gang loadGangByID(int gangID) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement selectStatement = connection.prepareStatement("SELECT * FROM rp_gangs WHERE id = ?")) {
-            selectStatement.setInt(1, gangID);
-            try (ResultSet resultSet = selectStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    Gang matchingGang = new Gang(resultSet);
-                    this.gangs.put(gangID, matchingGang);
-                    return matchingGang;
-                } else {
-                    throw new SQLException("Retrieving gang position failed, no records found.");
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-            return null;
-        }
-    }
-
-    private GangPosition loadGangPositionByID(int gangPositionID) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement selectStatement = connection.prepareStatement("SELECT * FROM rp_gangs_positions WHERE id = ?")) {
-            selectStatement.setInt(1, gangPositionID);
-            try (ResultSet resultSet = selectStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    GangPosition newPosition = new GangPosition(resultSet);
-                    this.gangs.get(gangPositionID).addPosition(newPosition);
-                    return newPosition;
-                } else {
-                    throw new SQLException("Retrieving gang position failed, no records found.");
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-            return null;
-        }
-    }
 
     private GangManager() {
         long millis = System.currentTimeMillis();
