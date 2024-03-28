@@ -7,9 +7,13 @@ of the [Archangel nitro roleplay edit](https://github.com/habbo-hotel/nitro-rp)
 - Player energy
 - Player hunger
 - Hand-to-hand combat with other players
-- Custom weapon system
 - Teleport to hospital upon death
 - Dead users cannot leave hospital until revived
+
+## Features
+- Customizable weapons with different types
+- Weapon range 
+- Weapon damage
 
 # Government
 - Welfare system for players without a job

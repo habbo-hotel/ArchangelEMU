@@ -1,13 +1,17 @@
 # Combat
-- Weapon magazines 
-- Weapon timeouts
-- Weapon malfunctions for different types
-  - ie: guns jam, swords break
-- Weapon health
-- Weapon upgrades
-  - ie: red dot for extra accuracy
 - Cover system that deflects bullets 
 - Item health
+
+## Weapons
+- Weapon effects
+- Weapon accuracy
+- Weapon magazines
+- Weapon timeouts
+- Weapon malfunctions for different types
+    - ie: guns jam, swords break
+- Weapon health
+- Weapon upgrades
+    - ie: red dot for extra accuracy
 
 # Corporations
 - Job skills: Paramedic, Nurse, Police Officer
@@ -32,13 +36,11 @@
 - Gang territory that can be captured
 - Gang experience points when getting kills in gang territory
 
-
 # Activities
 - Chop down trees
 - Mine rocks
 - Go fishing
 - Cook food
-
 
 # Experience Points
 - Ability to earn experience points
