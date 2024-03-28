@@ -35,6 +35,11 @@ public class CorpStartWorkCommand extends Command {
             return true;
         }
 
+        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != userEmployer.getRoomID()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_not_in_boundaries"));
+            return true;
+        }
+
         Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().startUserShift(gameClient.getHabbo());
         String userStartedWorkMessage = Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_success")
                 .replace("%corp%", userEmployer.getName())
