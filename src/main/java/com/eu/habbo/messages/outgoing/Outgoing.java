@@ -430,34 +430,9 @@ public class Outgoing {
     public static final int youtubeControlVideoMessageComposer = 1554;
     public static final int youtubeDisplayPlaylistsComposer = 1112;
     public static final int youtubeDisplayVideoMessageComposer = 1411;
-    
+
     // Roleplay
-    public static final int roleplayAttackUserComposer = 8001;
-    public static final int roleplayCorpAcceptJobComposer = 8002;
-
-    public static final int roleplayCorpDeclineJobOfferComposer = 8003;
-
-    public static final int roleplayCorpDemoteUserComposer = 8004;
-
-    public static final int roleplayCorpFireUserComposer = 8005;
-
-    public static final int roleplayCorpOfferUserJobComposer = 8006;
-
-    public static final int roleplayCorpPromoteUserComposer = 8007;
-
-    public static final int roleplayCorpStartWorkComposer = 8011;
-
-    public static final int roleplayCorpStopWorkComposer = 8012;
-
-    public static final int roleplayGangDeclineInviteComposer = 8008;
-
-    public static final int roleplayGangDisbandComposer = 8013;
-
-    public static final int roleplayGangInviteAcceptComposer = 8009;
-
-    public static final int roleplayGangInviteUserComposer = 8010;
-
-    public static final int roleplayGangLeaveComposer = 8014;
+    public static final int userRoleplayStatsChangeComposer = 9001;
 
 
 }

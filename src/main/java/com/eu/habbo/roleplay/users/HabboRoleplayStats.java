@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.rooms.RoomSpecialTypes;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.roleplay.corporations.Corporation;
 import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import com.eu.habbo.roleplay.corporations.CorporationManager;
@@ -15,6 +16,7 @@ import com.eu.habbo.roleplay.gangs.GangPosition;
 import com.eu.habbo.roleplay.gangs.GangManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
+import com.eu.habbo.roleplay.messages.outgoing.users.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -97,6 +99,8 @@ public class HabboRoleplayStats implements Runnable {
                     .replace("%maximumHealth%", Integer.toString(this.getMaximumHealth()));
             this.habbo.shout(userHealthRemainingMessage);
         }
+
+        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
     }
 
     @Getter
@@ -111,6 +115,7 @@ public class HabboRoleplayStats implements Runnable {
     public void setCorporation(int corporationID, int corporationPositionID) {
         this.corporationID = corporationID;
         this.corporationPositionID = corporationPositionID;
+        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
         this.run();
     }
 
@@ -132,11 +137,10 @@ public class HabboRoleplayStats implements Runnable {
     public void setGang(Integer gangID, Integer gangPositionID) {
         this.gangID = gangID;
         this.gangPositionID = gangPositionID;
+        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
         this.run();
     }
 
-    @Getter
-    @Setter
     private Integer gangPositionID;
 
     public GangPosition getGangPosition() {

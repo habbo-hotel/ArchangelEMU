@@ -926,33 +926,34 @@ public enum Incoming {
     welcomeGiftChangeEmailEvent(66, UnknownEvent2.class),
 
     // Roleplay
-    attackUserEvent(Outgoing.roleplayAttackUserComposer, AttackUserEvent.class),
+    attackUserEvent(8001, AttackUserEvent.class),
 
-    corpAcceptJobOfferEvent(Outgoing.roleplayCorpAcceptJobComposer, CorpAcceptJobEvent.class),
+    corpAcceptJobOfferEvent(8002, CorpAcceptJobEvent.class),
 
-    corpDeclineJobOfferEvent(Outgoing.roleplayCorpDeclineJobOfferComposer, CorpDeclineOfferEvent.class),
+    corpDeclineJobOfferEvent(8003, CorpDeclineOfferEvent.class),
 
-    corpDemoteUserEvent(Outgoing.roleplayCorpDemoteUserComposer, CorpDemoteUserEvent.class),
+    corpDemoteUserEvent(8004, CorpDemoteUserEvent.class),
 
-    corpFireUserEvent(Outgoing.roleplayCorpFireUserComposer, CorpFireUserEvent.class),
+    corpFireUserEvent(8005, CorpFireUserEvent.class),
 
-    corpAcceptJobEvent(Outgoing.roleplayCorpOfferUserJobComposer, CorpOfferUserJobEvent.class),
+    corpAcceptJobEvent(8006, CorpOfferUserJobEvent.class),
 
-    corpPromoteUserEvent(Outgoing.roleplayCorpPromoteUserComposer, CorpPromoteUserEvent.class),
+    corpPromoteUserEvent(8006, CorpPromoteUserEvent.class),
 
-    corpStartWorkEvent(Outgoing.roleplayCorpStartWorkComposer, CorpStartWorkEvent.class),
+    corpStartWorkEvent(8011, CorpStartWorkEvent.class),
 
-    corpStopWorkEvent(Outgoing.roleplayCorpStopWorkComposer, CorpStopWorkEvent.class),
+    corpStopWorkEvent(8012, CorpStopWorkEvent.class),
 
-    gangDeclineInviteEvent(Outgoing.roleplayGangDeclineInviteComposer, GangDeclineInviteEvent.class),
+    gangDeclineInviteEvent(8008, GangDeclineInviteEvent.class),
 
-    gangDisbandEvent(Outgoing.roleplayGangDisbandComposer, GangDisbandEvent.class),
+    gangDisbandEvent(8013, GangDisbandEvent.class),
 
-    gangInviteAcceptEvent(Outgoing.roleplayGangInviteAcceptComposer, GangInviteAcceptEvent.class),
+    gangInviteAcceptEvent(8009, GangInviteAcceptEvent.class),
 
-    gangInviteUserEvent(Outgoing.roleplayGangInviteUserComposer, GangInviteUserEvent.class),
+    gangInviteUserEvent(8010, GangInviteUserEvent.class),
 
-    gangLeaveEvent(Outgoing.roleplayGangLeaveComposer, GangLeaveEvent.class);
+    gangLeaveEvent(8014, GangLeaveEvent.class);
+
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
