@@ -239,17 +239,22 @@ public class HabboInfo implements Runnable {
     }
 
     public void changeClothes(String newLook) {
-        String[] parts = newLook.split("\\.");
+        // hr-100-0.hd-180-97562.ch-215-73.lg-270-73.sh-305-62.ha-1002-70.wa-2007-0
+        String[] oldParts = this.look.split("\\.");
+        String[] newParts = newLook.split("\\.");
 
-        String head = parts[0];
-        String body = parts[1];
+        String[] prefixesToCheck = {"lg-", "sh-", "ha-", "wa-", "hr-"};
 
-        StringBuilder newLookBuilder = new StringBuilder(head).append(".").append(body);
-
-        for (int i = 2; i < parts.length; i++) {
-            newLookBuilder.append(".").append(parts[i]);
+        for (int i = 0; i < oldParts.length; i++) {
+            for (String prefix : prefixesToCheck) {
+                if (oldParts[i].startsWith(prefix)) {
+                    oldParts[i] = newParts[i];
+                    break;
+                }
+            }
         }
-        this.look = newLookBuilder.toString();
+
+        this.look = String.join(".", oldParts);
     }
 
     public boolean canBuy(CatalogItem item) {
