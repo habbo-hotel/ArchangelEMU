@@ -6,4 +6,5 @@ A fork of MS4 by [LeChris](https://github.com/80O/habbo-hotel), [TheGeneral](htt
 1. Create a new database and import `Arcturus-Base.sql`
 
 # Features
-[See all features](FEATURES.md)
+- [Current Features](FEATURES.md)
+- [Upcoming Features](FEATURES_TODO.md)
