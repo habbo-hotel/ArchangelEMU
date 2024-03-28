@@ -1,11 +1,13 @@
 # Note
-All features below are supported today.  Custom packets require usage
+Custom packets require usage
 of the [Archangel nitro roleplay edit](https://github.com/habbo-hotel/nitro-rp)
 
 # Combat
 - Player health
 - Player energy
 - Player hunger
+- Hand-to-hand combat with other players
+- Custom weapon system
 - Teleport to hospital upon death
 - Dead users cannot leave hospital until revived
 
