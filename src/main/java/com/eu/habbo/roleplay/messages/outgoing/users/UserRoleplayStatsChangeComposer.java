@@ -16,7 +16,7 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboInfo().getId());
         this.response.appendString(this.habbo.getHabboInfo().getUsername());
         this.response.appendString(this.habbo.getHabboInfo().getLook());
-        this.response.appendInt(this.habbo.getHabboInfo().getCredits()); 
+        this.response.appendInt(this.habbo.getHabboInfo().getCredits());
         this.response.appendInt(0); // TODO: Bank
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthMax());

@@ -37,6 +37,7 @@ import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMess
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
+import com.eu.habbo.roleplay.messages.outgoing.users.UserRoleplayStatsChangeComposer;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -290,8 +291,13 @@ public class SSOTicketEvent extends MessageHandler {
                         } else {
                             SSOTicketEvent.this.client.sendResponse(new HabboBroadcastMessageComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername())));
                         }
+
                     }, Emulator.getConfig().getInt("hotel.welcome.alert.delay", 5000));
                 }
+
+                Emulator.getThreading().run(() -> {
+                    this.client.sendResponse(new UserRoleplayStatsChangeComposer(this.client.getHabbo()));
+                }, Emulator.getConfig().getInt("roleplay.login.stats.delay", 2000));
 
                 if (SubscriptionHabboClub.HC_PAYDAY_ENABLED) {
                     SubscriptionHabboClub.processUnclaimed(habbo);
@@ -311,6 +317,7 @@ public class SSOTicketEvent extends MessageHandler {
 
                     this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
                 }
+
             } else {
                 Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
                 LOGGER.warn("Someone tried to login with a non-existing SSO token! Closed connection...");

@@ -28,7 +28,7 @@ import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
-import com.eu.habbo.roleplay.inventory.WeaponsComponent;
+import com.eu.habbo.roleplay.messages.outgoing.users.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
@@ -143,6 +143,7 @@ public class Habbo extends Avatar implements Runnable {
         this.messenger.connectionChanged(this, true, false);
 
         Emulator.getGameEnvironment().getRoomManager().loadRoomsForHabbo(this);
+
         log.info("{} logged in from IP {}", this.habboInfo.getUsername(), this.habboInfo.getIpLogin());
         return true;
     }
