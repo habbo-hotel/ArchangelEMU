@@ -33,7 +33,7 @@ public class InteractionHospitalBed extends InteractionDefault {
         if (this.habbo == null) {
             return;
         }
-        if (this.habbo.getHabboRoleplayStats().getCurrentHealth() >= this.habbo.getHabboRoleplayStats().getMaximumHealth()) {
+        if (this.habbo.getHabboRoleplayStats().getHealthNow() >= this.habbo.getHabboRoleplayStats().getHealthMax()) {
             return;
         }
         FacilityHospitalsManager.getInstance().addUserToHeal(this.habbo);

@@ -74,7 +74,7 @@ public class AttackCommand extends Command {
             gameClient.getHabbo().shout(hitSuccessMessage);
         }
 
-        targetedHabbo.getHabboRoleplayStats().setCurrentHealth(targetedHabbo.getHabboRoleplayStats().getCurrentHealth() - totalDamage);
+        targetedHabbo.getHabboRoleplayStats().setHealth(targetedHabbo.getHabboRoleplayStats().getHealthNow() - totalDamage);
 
         return true;
     }

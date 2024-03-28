@@ -49,7 +49,7 @@ public class FacilityHospitalsManager {
     public void startHealingProcess() {
         Runnable healTask = () -> {
             for (Habbo user : usersToHeal) {
-                user.getHabboRoleplayStats().setCurrentHealth(user.getHabboRoleplayStats().getCurrentHealth() + 5);
+                user.getHabboRoleplayStats().setHealth(user.getHabboRoleplayStats().getHealthNow() + 5);
             }
         };
 
