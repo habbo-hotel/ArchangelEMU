@@ -17,6 +17,13 @@ public class OpenFlatConnectionEvent extends MessageHandler {
         int roomId = this.packet.readInt();
         String password = this.packet.readString();
 
+        // TODO: Redo later on and make it prevent leaving when dead and in hospital instead of redirecting back
+        if (this.client.getHabbo().getHabboRoleplayStats().isDead()) {
+            Room previousRoom = this.client.getHabbo().getRoomUnit().getRoom();
+            Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), previousRoom.getRoomInfo().getId(), password, true);
+            return;
+        }
+
         if (CorporationsShiftManager.getInstance().isUserWorking(this.client.getHabbo())) {
             CorporationsShiftManager.getInstance().stopUserShift(this.client.getHabbo(), false, false);
         }
