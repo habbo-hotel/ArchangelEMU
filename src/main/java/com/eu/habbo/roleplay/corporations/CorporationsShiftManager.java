@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
+import com.eu.habbo.roleplay.messages.outgoing.users.UserRoleplayStatsChangeComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class CorporationsShiftManager {
         habbo.getHabboInfo().changeClothes(jobUniform);
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+        habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(habbo));
     }
 
     public void stopUserShift(Habbo habbo) {
@@ -88,6 +90,7 @@ public class CorporationsShiftManager {
             habbo.getHabboInfo().changeClothes(userShift.getOldLook());
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+            habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(habbo));
         }
     }
 

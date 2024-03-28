@@ -239,13 +239,12 @@ public class HabboInfo implements Runnable {
     }
 
     public void changeClothes(String newLook) {
-        // hr-100-0.hd-180-97562.ch-215-73.lg-270-73.sh-305-62.ha-1002-70.wa-2007-0
         String[] oldParts = this.look.split("\\.");
         String[] newParts = newLook.split("\\.");
 
         String[] prefixesToCheck = {"lg-", "sh-", "ha-", "wa-", "hr-"};
 
-        for (int i = 0; i < oldParts.length; i++) {
+        for (int i = 0; i < oldParts.length && i < newParts.length; i++) {
             for (String prefix : prefixesToCheck) {
                 if (oldParts[i].startsWith(prefix)) {
                     oldParts[i] = newParts[i];
@@ -253,7 +252,6 @@ public class HabboInfo implements Runnable {
                 }
             }
         }
-
         this.look = String.join(".", oldParts);
     }
 
