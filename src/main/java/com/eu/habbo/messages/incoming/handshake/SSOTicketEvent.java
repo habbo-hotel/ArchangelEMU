@@ -296,7 +296,7 @@ public class SSOTicketEvent extends MessageHandler {
                 }
 
                 Emulator.getThreading().run(() -> {
-                    this.client.sendResponse(new UserRoleplayStatsChangeComposer(this.client.getHabbo()));
+                    this.client.getHabbo().getRoomUnit().getRoom().sendComposer((new UserRoleplayStatsChangeComposer(this.client.getHabbo()).compose()));
                 }, Emulator.getConfig().getInt("roleplay.login.stats.delay", 1500));
 
                 if (SubscriptionHabboClub.HC_PAYDAY_ENABLED) {

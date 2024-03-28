@@ -115,7 +115,8 @@ public class HabboRoleplayStats implements Runnable {
             this.habbo.shout(userHealthRemainingMessage);
         }
 
-        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+
     }
 
     public Corporation getCorporation() {
@@ -125,7 +126,7 @@ public class HabboRoleplayStats implements Runnable {
     public void setCorporation(int corporationID, int corporationPositionID) {
         this.corporationID = corporationID;
         this.corporationPositionID = corporationPositionID;
-        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
         this.run();
     }
 
@@ -143,7 +144,7 @@ public class HabboRoleplayStats implements Runnable {
     public void setGang(Integer gangID, Integer gangPositionID) {
         this.gangID = gangID;
         this.gangPositionID = gangPositionID;
-        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
         this.run();
     }
 

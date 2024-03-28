@@ -47,7 +47,7 @@ public class CorporationsShiftManager {
         habbo.getHabboInfo().changeClothes(jobUniform);
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
-        habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(habbo));
+        habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(habbo).compose());
     }
 
     public void stopUserShift(Habbo habbo) {
@@ -90,7 +90,7 @@ public class CorporationsShiftManager {
             habbo.getHabboInfo().changeClothes(userShift.getOldLook());
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
-            habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(habbo));
+            habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(habbo).compose());
         }
     }
 
