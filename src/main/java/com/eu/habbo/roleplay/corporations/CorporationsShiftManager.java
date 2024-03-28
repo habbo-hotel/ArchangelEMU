@@ -60,11 +60,15 @@ public class CorporationsShiftManager {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;
         }
+
+        if (shiftCompleted) {
+            habbo.giveCredits(userPosition.getSalary());
+        }
+
         if (!shiftCompleted) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_not_complete"));
         }
 
-        habbo.giveCredits(userPosition.getSalary());
         this.activeUserShifts.remove(habbo.getHabboInfo().getId());
 
         if (startNewShift) {

@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.roleplay.corporations.CorporationsShiftManager;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -15,6 +16,10 @@ public class OpenFlatConnectionEvent extends MessageHandler {
     public void handle() {
         int roomId = this.packet.readInt();
         String password = this.packet.readString();
+
+        if (CorporationsShiftManager.getInstance().isUserWorking(this.client.getHabbo())) {
+            CorporationsShiftManager.getInstance().stopUserShift(this.client.getHabbo(), false, false);
+        }
 
         if (!this.client.getHabbo().getRoomUnit().isLoadingRoom() && this.client.getHabbo().getHabboStats().roomEnterTimestamp + 1000 < System.currentTimeMillis()) {
             Room previousRoom = this.client.getHabbo().getRoomUnit().getRoom();
