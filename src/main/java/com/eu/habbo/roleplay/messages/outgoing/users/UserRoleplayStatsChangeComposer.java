@@ -13,6 +13,7 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.userRoleplayStatsChangeComposer);
+        this.response.appendInt(this.habbo.getHabboInfo().getId());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCurrentHealth());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getMaximumHealth());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporation().getId());
