@@ -238,6 +238,20 @@ public class HabboInfo implements Runnable {
         this.run();
     }
 
+    public void changeClothes(String newLook) {
+        String[] parts = newLook.split("\\.");
+
+        String head = parts[0];
+        String body = parts[1];
+
+        StringBuilder newLookBuilder = new StringBuilder(head).append(".").append(body);
+
+        for (int i = 2; i < parts.length; i++) {
+            newLookBuilder.append(".").append(parts[i]);
+        }
+        this.look = newLookBuilder.toString();
+    }
+
     public boolean canBuy(CatalogItem item) {
         return this.credits >= item.getCredits() && this.getCurrencies().get(item.getPointsType()) >= item.getPoints();
     }
