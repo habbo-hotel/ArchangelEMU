@@ -1,9 +1,9 @@
-package com.eu.habbo.roleplay.messages.incoming;
+package com.eu.habbo.roleplay.messages.incoming.combat;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.roleplay.commands.combat.AttackCommand;
 
-public class GangDeclineInviteEvent extends MessageHandler {
+public class AttackUserEvent extends MessageHandler {
     @Override
     public void handle() {
         String targetedUsername = this.packet.readString();

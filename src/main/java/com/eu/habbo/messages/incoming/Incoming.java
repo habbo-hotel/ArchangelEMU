@@ -61,12 +61,11 @@ import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
-import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.messages.incoming.*;
+import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
+import com.eu.habbo.roleplay.messages.incoming.corp.*;
+import com.eu.habbo.roleplay.messages.incoming.gang.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor

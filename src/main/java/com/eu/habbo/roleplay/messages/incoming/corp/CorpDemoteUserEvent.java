@@ -1,9 +1,10 @@
-package com.eu.habbo.roleplay.messages.incoming;
+package com.eu.habbo.roleplay.messages.incoming.corp;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.roleplay.commands.combat.AttackCommand;
+import com.eu.habbo.roleplay.commands.corporation.CorpDemoteCommand;
 
-public class AttackUserEvent extends MessageHandler {
+public class CorpDemoteUserEvent extends MessageHandler {
     @Override
     public void handle() {
         String targetedUsername = this.packet.readString();
@@ -12,6 +13,6 @@ public class AttackUserEvent extends MessageHandler {
             return;
         }
 
-        new AttackCommand().handle(this.client, new String[] {null, targetedUsername});
+        new CorpDemoteCommand().handle(this.client, new String[] {null, targetedUsername});
     }
 }
