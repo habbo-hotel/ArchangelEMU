@@ -89,8 +89,10 @@ public class CorporationsShiftManager {
             habbo.shout(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_stopped"));
             habbo.getHabboInfo().changeClothes(userShift.getOldLook());
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
-            habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
-            habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(habbo).compose());
+            if (habbo.getRoomUnit().getRoom() != null) {
+                habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+                habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(habbo).compose());
+            }
         }
     }
 

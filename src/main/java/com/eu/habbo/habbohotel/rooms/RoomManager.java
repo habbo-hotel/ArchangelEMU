@@ -27,10 +27,10 @@ import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.habbohotel.rooms.constants.RoomState;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.infractions.RoomBan;
-import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
+import com.eu.habbo.habbohotel.rooms.infractions.RoomBan;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
@@ -54,6 +54,7 @@ import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
 import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
+import com.eu.habbo.roleplay.corps.CorporationsShiftManager;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
@@ -480,6 +481,10 @@ public class RoomManager {
     public void enterRoom(Habbo habbo, int roomId, String password, boolean forceEnter, RoomTile spawnLocation) {
         Room room = this.getRoom(roomId, true);
 
+        if (habbo.getHabboRoleplayStats().isDead()) {
+            return;
+        }
+
         if (room == null) {
             log.error("User (ID: {}) is trying to enter a corrupted room (ID: {})", habbo.getHabboInfo().getId(), roomId);
             return;
@@ -560,6 +565,10 @@ public class RoomManager {
         } else {
             habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
             habbo.getRoomUnit().setLoadingRoom(null);
+        }
+
+        if (CorporationsShiftManager.getInstance().isUserWorking(habbo)) {
+            CorporationsShiftManager.getInstance().stopUserShift(habbo, false, false);
         }
     }
 
