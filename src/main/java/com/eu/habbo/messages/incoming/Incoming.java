@@ -64,6 +64,7 @@ import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
+import com.eu.habbo.roleplay.messages.incoming.users.UserRoleplayStatsQueryComposer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -951,7 +952,9 @@ public enum Incoming {
 
     gangInviteUserEvent(8010, GangInviteUserEvent.class),
 
-    gangLeaveEvent(8014, GangLeaveEvent.class);
+    gangLeaveEvent(8014, GangLeaveEvent.class),
+
+    userRoleplayStatsQueryEvent(8015, UserRoleplayStatsQueryComposer.class);
 
 
     private final int messageId;
