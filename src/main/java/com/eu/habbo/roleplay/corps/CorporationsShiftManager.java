@@ -1,11 +1,11 @@
-package com.eu.habbo.roleplay.corporations;
+package com.eu.habbo.roleplay.corps;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
-import com.eu.habbo.roleplay.messages.outgoing.users.UserRoleplayStatsChangeComposer;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.corporations;
+package com.eu.habbo.roleplay.corps;
 
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.database.CorporationPositionRepository;

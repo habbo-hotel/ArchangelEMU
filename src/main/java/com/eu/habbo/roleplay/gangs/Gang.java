@@ -2,7 +2,6 @@ package com.eu.habbo.roleplay.gangs;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.corporations.CorporationPosition;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;

@@ -433,6 +433,12 @@ public class Outgoing {
 
     // Roleplay
     public static final int userRoleplayStatsChangeComposer = 9001;
+    public static final int corpInfoComposer = 9002;
+    public static final int gangInfoComposer = 9003;
+
+    public static final int corpPositionInfoComposer = 9004;
+
+    public static final int gangPositionInfoComposer = 9005;
 
 
 }

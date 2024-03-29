@@ -1,10 +1,10 @@
-package com.eu.habbo.roleplay.messages.outgoing.users;
+package com.eu.habbo.roleplay.messages.outgoing.user;
 
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.corporations.CorporationsShiftManager;
+import com.eu.habbo.roleplay.corps.CorporationsShiftManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

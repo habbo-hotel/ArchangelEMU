@@ -3,7 +3,7 @@ package com.eu.habbo.roleplay.commands.corporation;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.corporations.CorporationShift;
+import com.eu.habbo.roleplay.corps.CorporationShift;
 
 public class CorpStopWorkCommand extends Command {
     public CorpStopWorkCommand() {

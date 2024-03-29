@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.corporations;
+package com.eu.habbo.roleplay.corps;
 
 import com.eu.habbo.roleplay.database.CorporationRepository;
 import gnu.trove.map.hash.TIntObjectHashMap;

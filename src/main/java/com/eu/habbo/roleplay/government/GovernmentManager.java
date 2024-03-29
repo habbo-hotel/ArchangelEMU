@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.government;
 
-import com.eu.habbo.roleplay.corporations.Corporation;
-import com.eu.habbo.roleplay.corporations.CorporationManager;
+import com.eu.habbo.roleplay.corps.Corporation;
+import com.eu.habbo.roleplay.corps.CorporationManager;
 import lombok.Getter;
 
 @Getter

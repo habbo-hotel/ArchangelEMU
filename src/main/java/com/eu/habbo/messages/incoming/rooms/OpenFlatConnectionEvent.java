@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.roleplay.corporations.CorporationsShiftManager;
+import com.eu.habbo.roleplay.corps.CorporationsShiftManager;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

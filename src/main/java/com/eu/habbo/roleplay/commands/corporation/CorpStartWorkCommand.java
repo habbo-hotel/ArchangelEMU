@@ -3,11 +3,8 @@ package com.eu.habbo.roleplay.commands.corporation;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
-import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
-import com.eu.habbo.roleplay.corporations.Corporation;
-import com.eu.habbo.roleplay.corporations.CorporationPosition;
+import com.eu.habbo.roleplay.corps.Corporation;
+import com.eu.habbo.roleplay.corps.CorporationPosition;
 
 public class CorpStartWorkCommand extends Command {
     public CorpStartWorkCommand() {

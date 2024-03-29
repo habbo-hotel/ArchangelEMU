@@ -954,7 +954,15 @@ public enum Incoming {
 
     gangLeaveEvent(8014, GangLeaveEvent.class),
 
-    userRoleplayStatsQueryEvent(8015, UserRoleplayStatsQueryComposer.class);
+    userRoleplayStatsQueryEvent(8015, UserRoleplayStatsQueryComposer.class),
+
+    corpInfoQueryEvent(8016, CorpInfoQueryEvent.class),
+
+    gangInfoQueryEvent(8017, GangInfoQueryEvent.class),
+
+    corpPositionInfoQueryEvent(8018, CorpPositionInfoQueryEvent.class),
+
+    gangPositionInfoQueryEvent(8019, GangPositionInfoQueryEvent.class);
 
 
     private final int messageId;

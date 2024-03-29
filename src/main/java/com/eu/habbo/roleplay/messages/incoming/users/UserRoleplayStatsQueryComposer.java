@@ -3,7 +3,7 @@ package com.eu.habbo.roleplay.messages.incoming.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.roleplay.messages.outgoing.users.UserRoleplayStatsChangeComposer;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 
 public class UserRoleplayStatsQueryComposer extends MessageHandler {
     @Override
@@ -19,7 +19,7 @@ public class UserRoleplayStatsQueryComposer extends MessageHandler {
         if (targetedUser == null) {
             return;
         }
-        
+
         this.client.sendResponse(new UserRoleplayStatsChangeComposer(targetedUser));
 
     }

@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.database;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.corporations.CorporationPosition;
+import com.eu.habbo.roleplay.corps.CorporationPosition;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

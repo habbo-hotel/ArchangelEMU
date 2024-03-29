@@ -14,8 +14,6 @@ public class GangPosition {
     @Setter
     private int orderID;
     @Setter
-    private int roomID;
-    @Setter
     private String name;
     @Setter
     private String description;

@@ -4,9 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.corporations.Corporation;
-import com.eu.habbo.roleplay.corporations.CorporationPosition;
-import com.eu.habbo.roleplay.corporations.CorporationManager;
+import com.eu.habbo.roleplay.corps.Corporation;
+import com.eu.habbo.roleplay.corps.CorporationPosition;
+import com.eu.habbo.roleplay.corps.CorporationManager;
 
 public class CorpSuperHireCommand extends Command {
     public CorpSuperHireCommand() {

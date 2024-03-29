@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.corporations.CorporationPosition;
+import com.eu.habbo.roleplay.corps.CorporationPosition;
 
 public class CorpPromoteCommand extends Command {
     public CorpPromoteCommand() {
