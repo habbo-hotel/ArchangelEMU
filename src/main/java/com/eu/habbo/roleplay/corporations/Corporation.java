@@ -68,6 +68,7 @@ public class Corporation  implements Runnable {
         this.userID = set.getInt("user_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
+        this.roomID = set.getInt("room_id");
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
         this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions();
         this.invitedUsers = new TIntObjectHashMap<>();

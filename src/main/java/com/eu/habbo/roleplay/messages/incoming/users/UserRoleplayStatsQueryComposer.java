@@ -19,8 +19,8 @@ public class UserRoleplayStatsQueryComposer extends MessageHandler {
         if (targetedUser == null) {
             return;
         }
-
-        targetedUser.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(targetedUser).compose());
+        
+        this.client.sendResponse(new UserRoleplayStatsChangeComposer(targetedUser));
 
     }
 }
