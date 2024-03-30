@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumView;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildFurni;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.messages.outgoing.guilds.HabboGroupJoinFailedMessageComposer;
+import com.eu.habbo.roleplay.messages.outgoing.guild.HabboGroupJoinFailedMessageComposer;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
