@@ -20,6 +20,7 @@ public class GangInfoComposer extends MessageComposer {
         this.response.appendInt(matchingGang.getRoomID());
         this.response.appendString(matchingGang.getName());
         this.response.appendString(matchingGang.getDescription());
+        this.response.appendString(matchingGang.getBadgeCode());
         return this.response;
     }
 }

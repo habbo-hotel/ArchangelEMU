@@ -28,6 +28,9 @@ public class Gang {
     @Setter
     private String description;
     @Getter
+    @Setter
+    private String badgeCode;
+    @Getter
     private TIntObjectHashMap<GangPosition> positions;
     private TIntObjectHashMap<Habbo> invitedUsers;
 
@@ -71,6 +74,7 @@ public class Gang {
         this.userID = set.getInt("user_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
+        this.badgeCode = set.getString("badge_code");
         this.positions = new TIntObjectHashMap<>();
         this.invitedUsers = new TIntObjectHashMap<>();
         this.loadPositions();

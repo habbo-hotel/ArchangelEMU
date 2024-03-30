@@ -26,6 +26,9 @@ public class Corporation  implements Runnable {
     private String name;
     @Setter
     private String description;
+    @Getter
+    @Setter
+    private String badgeCode;
     private TIntObjectHashMap<CorporationPosition> positions;
 
     public CorporationPosition getPositionByOrderID(int orderID) {
@@ -68,6 +71,7 @@ public class Corporation  implements Runnable {
         this.userID = set.getInt("user_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
+        this.badgeCode = set.getString("badge_code");
         this.roomID = set.getInt("room_id");
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
         this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions();

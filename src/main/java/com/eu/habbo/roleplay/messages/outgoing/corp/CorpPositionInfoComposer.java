@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class CorpPositionInfoComposer extends MessageComposer {
-    private  final int corpID;
+    private final int corpID;
     private final int corpPositionID;
 
     @Override

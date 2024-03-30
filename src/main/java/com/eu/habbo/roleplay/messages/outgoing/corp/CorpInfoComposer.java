@@ -20,6 +20,7 @@ public class CorpInfoComposer extends MessageComposer {
         this.response.appendInt(matchingCorp.getRoomID());
         this.response.appendString(matchingCorp.getName());
         this.response.appendString(matchingCorp.getDescription());
+        this.response.appendString(matchingCorp.getBadgeCode());
         return this.response;
     }
 }
