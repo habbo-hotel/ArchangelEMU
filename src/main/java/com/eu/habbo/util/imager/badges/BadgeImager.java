@@ -215,7 +215,9 @@ public class BadgeImager {
 
                 point = getPoint(image, imagePart, position);
 
-                recolor(imagePart, colorFromHexString(color.getValueA()));
+                if (color != null) {
+                    recolor(imagePart, colorFromHexString(color.getValueA()));
+                }
 
                 graphics.drawImage(imagePart, point.x, point.y, null);
             }
