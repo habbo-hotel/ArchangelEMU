@@ -1047,7 +1047,7 @@ public class RoomManager {
         ArrayList<Room> rooms = new ArrayList<>();
 
         for (Room room : this.activeRooms.values()) {
-            if (room.getRoomInfo().getGuild().getId() == 0)
+            if (room.getRoomInfo().getGuild() == null)
                 continue;
 
             if (room.getRoomInfo().getName().toLowerCase().contains(name.toLowerCase()))

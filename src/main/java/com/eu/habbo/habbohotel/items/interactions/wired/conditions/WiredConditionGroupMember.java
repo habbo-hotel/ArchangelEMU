@@ -22,7 +22,7 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (room.getRoomInfo().getGuild().getId() == 0) {
+        if (room.getRoomInfo().getGuild() == null) {
             return false;
         }
 

@@ -52,7 +52,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
             }
 
             if (r.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
-                if (r.getRoomInfo().getGuild().getId() == 0) {
+                if (r.getRoomInfo().getGuild() == null) {
                     int colorOne = this.packet.readInt();
                     int colorTwo = this.packet.readInt();
 
