@@ -329,7 +329,6 @@ public class CommandsManager {
         addCommand(new CorpSuperHireCommand());
 
         // Gang
-        addCommand(new GangCreateCommand());
         addCommand(new GangDisbandCommand());
         addCommand(new GangInviteAcceptCommand());
         addCommand(new GangInviteUserCommand());

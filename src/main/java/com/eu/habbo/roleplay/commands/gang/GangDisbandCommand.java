@@ -3,9 +3,8 @@ package com.eu.habbo.roleplay.commands.gang;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.database.GangRepository;
-import com.eu.habbo.roleplay.gangs.Gang;
-import com.eu.habbo.roleplay.gangs.GangManager;
+import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.GuildRank;
 
 public class GangDisbandCommand extends Command {
     public GangDisbandCommand() {
@@ -19,16 +18,16 @@ public class GangDisbandCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboInfo().getId() != gameClient.getHabbo().getHabboRoleplayStats().getGang().getUserID()) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().getRank() == GuildRank.OWNER) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_disband_not_allowed"));
             return true;
         }
 
-        Gang userGang = gameClient.getHabbo().getHabboRoleplayStats().getGang();
+        Guild userGang = gameClient.getHabbo().getHabboRoleplayStats().getGang();
 
-        GangManager.getInstance().deleteGang(userGang);
+        Emulator.getGameEnvironment().getGuildManager().deleteGuild(userGang);
 
-        gameClient.getHabbo().getHabboRoleplayStats().setGang(null, null);
+        gameClient.getHabbo().getHabboRoleplayStats().setGang(null);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_disband_success"));
 

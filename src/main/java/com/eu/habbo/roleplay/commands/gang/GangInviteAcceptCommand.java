@@ -3,8 +3,7 @@ package com.eu.habbo.roleplay.commands.gang;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.gangs.Gang;
-import com.eu.habbo.roleplay.gangs.GangManager;
+import com.eu.habbo.roleplay.guilds.Guild;
 
 public class GangInviteAcceptCommand extends Command {
     public GangInviteAcceptCommand() {
@@ -24,7 +23,7 @@ public class GangInviteAcceptCommand extends Command {
             return true;
         }
 
-        Gang targetedGang = GangManager.getInstance().getGangByName(gangName);
+        Guild targetedGang = Emulator.getGameEnvironment().getGuildManager().getGuild(gangName);
 
         if (targetedGang == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.gang_not_found"));
@@ -37,7 +36,7 @@ public class GangInviteAcceptCommand extends Command {
         }
 
 
-        gameClient.getHabbo().getHabboRoleplayStats().setGang(targetedGang.getId(), targetedGang.getPositionByOrderID(1).getId());
+        gameClient.getHabbo().getHabboRoleplayStats().setGang(targetedGang.getId());
 
         gameClient.getHabbo().getHabboRoleplayStats().getGang().removeInvitedUser(gameClient.getHabbo());
 

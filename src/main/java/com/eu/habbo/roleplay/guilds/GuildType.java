@@ -14,4 +14,13 @@ public enum GuildType {
         this.type = type;
     }
 
+    public static GuildType fromString(String text) {
+        for (GuildType guildType : GuildType.values()) {
+            if (guildType.type.equalsIgnoreCase(text)) {
+                return guildType;
+            }
+        }
+        throw new IllegalArgumentException("No constant with text " + text + " found in GuildType enum");
+    }
+
 }

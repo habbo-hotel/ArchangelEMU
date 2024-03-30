@@ -7,13 +7,12 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corps.Corporation;
-import com.eu.habbo.roleplay.corps.CorporationPosition;
 import com.eu.habbo.roleplay.corps.CorporationManager;
+import com.eu.habbo.roleplay.corps.CorporationPosition;
 import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
-import com.eu.habbo.roleplay.gangs.Gang;
-import com.eu.habbo.roleplay.gangs.GangPosition;
-import com.eu.habbo.roleplay.gangs.GangManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
+import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.GuildMember;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
@@ -134,25 +133,24 @@ public class HabboRoleplayStats implements Runnable {
         return this.getCorporation().getPositionByID(this.corporationPositionID);
     }
 
-    public Gang getGang() {
+    public Guild getGang() {
         if (this.gangID == null) {
             return null;
         }
-        return GangManager.getInstance().getGangById(this.gangID);
+        return Emulator.getGameEnvironment().getGuildManager().getGuild(this.gangID);
     }
 
-    public void setGang(Integer gangID, Integer gangPositionID) {
+    public void setGang(Integer gangID ) {
         this.gangID = gangID;
-        this.gangPositionID = gangPositionID;
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
         this.run();
     }
 
-    public GangPosition getGangPosition() {
+    public GuildMember getGangPosition() {
         if (this.gangPositionID == null) {
             return null;
         }
-        return this.getGang().getPositionByID(this.gangPositionID);
+        return Emulator.getGameEnvironment().getGuildManager().getGuildMember(this.gangID, this.habbo.getHabboInfo().getId());
     }
 
     public void setIsDead(boolean isDead) {

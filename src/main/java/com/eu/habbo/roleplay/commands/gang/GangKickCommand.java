@@ -4,7 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.gangs.Gang;
+import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.GuildRank;
 
 public class GangKickCommand extends Command {
     public GangKickCommand() {
@@ -22,10 +23,10 @@ public class GangKickCommand extends Command {
             return true;
         }
 
-        Gang gang = gameClient.getHabbo().getHabboRoleplayStats().getGang();
+        Guild gang = gameClient.getHabbo().getHabboRoleplayStats().getGang();
 
-        boolean isGangOwner = gang.getUserID() == gameClient.getHabbo().getHabboInfo().getId();
-        boolean hasKickRights = gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().isCanKick();
+        boolean isGangOwner = gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().getRank() == GuildRank.OWNER;
+        boolean hasKickRights = gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().getRank() == GuildRank.ADMIN;
 
         if (!isGangOwner && !hasKickRights) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_kick_not_allowed"));
@@ -46,7 +47,7 @@ public class GangKickCommand extends Command {
             return true;
         }
 
-        targetedHabbo.getHabboRoleplayStats().setGang(null, null);
+        targetedHabbo.getHabboRoleplayStats().setGang(null);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_kick_success").replace("%user%", targetedHabbo.getHabboInfo().getUsername()));
         targetedHabbo.shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_kick_received").replace("%gang%", gang.getName()));

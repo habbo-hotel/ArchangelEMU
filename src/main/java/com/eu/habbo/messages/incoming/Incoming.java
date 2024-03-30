@@ -960,9 +960,7 @@ public enum Incoming {
 
     gangInfoQueryEvent(8017, GangInfoQueryEvent.class),
 
-    corpPositionInfoQueryEvent(8018, CorpPositionInfoQueryEvent.class),
-
-    gangPositionInfoQueryEvent(8019, GangPositionInfoQueryEvent.class);
+    corpPositionInfoQueryEvent(8018, CorpPositionInfoQueryEvent.class);
 
 
     private final int messageId;

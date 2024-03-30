@@ -2,6 +2,8 @@ package com.eu.habbo.roleplay.guilds;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
+import com.eu.habbo.habbohotel.users.Habbo;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +71,7 @@ public class Guild implements Runnable {
 
     public Guild(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
-        this.guildType = GuildType.valueOf(set.getString("group_type"));
+        this.guildType = GuildType.fromString(set.getString("guild_type"));
         this.ownerId = set.getInt(DatabaseConstants.USER_ID);
         this.ownerName = set.getString("username");
         this.name = set.getString("name");
@@ -106,6 +108,21 @@ public class Guild implements Runnable {
         this.badge = badge;
         this.memberCount = 0;
         this.dateCreated = Emulator.getIntUnixTimestamp();
+    }
+
+
+    private TIntObjectHashMap<Habbo> invitedUsers;
+
+    public void addInvitedUser(Habbo habbo) {
+        this.invitedUsers.put(habbo.getHabboInfo().getId(), habbo);
+    }
+
+    public Habbo getInvitedUser(Habbo habbo) {
+        return this.invitedUsers.get(habbo.getHabboInfo().getId());
+    }
+
+    public void removeInvitedUser(Habbo habbo) {
+        this.invitedUsers.remove(habbo.getHabboInfo().getId());
     }
 
     public void loadMemberCount() {

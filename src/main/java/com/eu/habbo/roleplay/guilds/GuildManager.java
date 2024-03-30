@@ -480,6 +480,36 @@ public class GuildManager {
         return g;
     }
 
+    public Guild getGuild(String guildName) {
+        // Check if a guild with the given name is already in the cache
+        for (Guild g : this.guilds.valueCollection()) {
+            if (g.getName().equalsIgnoreCase(guildName)) {
+                return g;
+            }
+        }
+
+        // If not found in the cache, query the database
+        Guild g = null;
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT users.username, rooms.name as room_name, guilds.* FROM guilds INNER JOIN users ON guilds.user_id = users.id INNER JOIN rooms ON rooms.id = guilds.room_id WHERE guilds.name = ? LIMIT 1")) {
+            statement.setString(1, guildName);
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    g = new Guild(set);
+                    g.loadMemberCount();
+                    g.lastRequested = Emulator.getIntUnixTimestamp();
+                    // Assuming guildId is retrieved from the ResultSet
+                    int guildId = set.getInt("id");
+                    this.guilds.put(guildId, g);
+                }
+            }
+        } catch (SQLException e) {
+            log.error("Caught SQL exception", e);
+        }
+        return g;
+    }
+
+
     public List<Guild> getGuilds(int userId) {
         List<Guild> guilds = new ArrayList<>();
 
