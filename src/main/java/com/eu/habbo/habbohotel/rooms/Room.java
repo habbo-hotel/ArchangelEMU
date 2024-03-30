@@ -29,7 +29,7 @@ import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
-import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
+import com.eu.habbo.roleplay.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.FlatAccessDeniedMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.FlatAccessibleMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
