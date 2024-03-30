@@ -1,9 +1,9 @@
-package com.eu.habbo.habbohotel.guilds;
+package com.eu.habbo.roleplay.guilds;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.guilds.forums.ForumView;
+import com.eu.habbo.roleplay.guilds.forums.ForumView;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildFurni;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;

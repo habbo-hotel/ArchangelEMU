@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.messages.outgoing.guild;
 
-import com.eu.habbo.habbohotel.guilds.Guild;
-import com.eu.habbo.habbohotel.guilds.GuildMember;
+import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.GuildMember;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;

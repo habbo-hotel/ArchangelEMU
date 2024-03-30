@@ -1,8 +1,8 @@
 package com.eu.habbo.roleplay.messages.incoming.guild.forums;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.guilds.Guild;
-import com.eu.habbo.habbohotel.guilds.SettingsState;
+import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.SettingsState;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;

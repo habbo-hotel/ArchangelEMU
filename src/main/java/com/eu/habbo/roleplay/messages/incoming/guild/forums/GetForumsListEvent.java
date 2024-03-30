@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.messages.incoming.guild.forums;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.roleplay.messages.outgoing.guild.forums.ForumsListMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;

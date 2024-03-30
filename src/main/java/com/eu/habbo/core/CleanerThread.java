@@ -1,7 +1,7 @@
 package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
+import com.eu.habbo.roleplay.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.friends.HabboSearchEvent;
 import com.eu.habbo.messages.incoming.navigator.RoomTextSearchEvent;

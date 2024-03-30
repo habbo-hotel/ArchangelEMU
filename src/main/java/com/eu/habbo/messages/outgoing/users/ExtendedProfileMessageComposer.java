@@ -2,7 +2,7 @@ package com.eu.habbo.messages.outgoing.users;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.Guild;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;

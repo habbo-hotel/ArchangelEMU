@@ -1,9 +1,9 @@
 package com.eu.habbo.util.imager.badges;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.guilds.Guild;
-import com.eu.habbo.habbohotel.guilds.GuildPart;
-import com.eu.habbo.habbohotel.guilds.GuildPartType;
+import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.roleplay.guilds.GuildPart;
+import com.eu.habbo.roleplay.guilds.GuildPartType;
 import gnu.trove.map.hash.THashMap;
 import lombok.extern.slf4j.Slf4j;
 

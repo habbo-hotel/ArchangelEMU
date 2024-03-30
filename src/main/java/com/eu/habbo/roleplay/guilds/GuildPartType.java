@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.guilds;
+package com.eu.habbo.roleplay.guilds;
 
 public enum GuildPartType {
 

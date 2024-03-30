@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.incoming.modtool;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
+import com.eu.habbo.roleplay.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.modtool.CfhTopic;
 import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.habbohotel.modtool.ModToolTicketType;
