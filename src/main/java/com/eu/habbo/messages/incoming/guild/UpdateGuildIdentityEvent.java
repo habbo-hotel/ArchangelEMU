@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.guilds.GuildChangedNameEvent;
+import com.eu.habbo.roleplay.guilds.GuildType;
 
 public class UpdateGuildIdentityEvent extends MessageHandler {
     @Override
@@ -16,7 +17,7 @@ public class UpdateGuildIdentityEvent extends MessageHandler {
 
         if (guild != null) {
             if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
-                GuildChangedNameEvent nameEvent = new GuildChangedNameEvent(guild, this.packet.readString(), this.packet.readString());
+                GuildChangedNameEvent nameEvent = new GuildChangedNameEvent(guild, GuildType.fromString(this.packet.readString()), this.packet.readString(), this.packet.readString());
                 Emulator.getPluginManager().fireEvent(nameEvent);
 
                 if (nameEvent.isCancelled())
@@ -28,6 +29,7 @@ public class UpdateGuildIdentityEvent extends MessageHandler {
                 if(nameEvent.getName().length() > 29 || nameEvent.getDescription().length() > 254)
                     return;
 
+                guild.setType(nameEvent.getType());
                 guild.setName(nameEvent.getName());
                 guild.setDescription(nameEvent.getDescription());
                 guild.needsUpdate = true;

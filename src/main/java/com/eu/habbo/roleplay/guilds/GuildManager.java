@@ -73,19 +73,20 @@ public class GuildManager {
         }
     }
 
-    public Guild createGuild(Habbo habbo, int roomId, String roomName, String name, String description, String badge, int colorOne, int colorTwo) {
-        Guild guild = new Guild(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), roomId, roomName, name, description, colorOne, colorTwo, badge);
+    public Guild createGuild(Habbo habbo, GuildType type, int roomId, String roomName, String name, String description, String badge, int colorOne, int colorTwo) {
+        Guild guild = new Guild(type, habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), roomId, roomName, name, description, colorOne, colorTwo, badge);
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO guilds (name, description, room_id, user_id, color_one, color_two, badge, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, name);
-                statement.setString(2, description);
-                statement.setInt(3, roomId);
-                statement.setInt(4, guild.getOwnerId());
-                statement.setInt(5, colorOne);
-                statement.setInt(6, colorTwo);
-                statement.setString(7, badge);
-                statement.setInt(8, Emulator.getIntUnixTimestamp());
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO guilds (guild_type, name, description, room_id, user_id, color_one, color_two, badge, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1, type.getType());
+                statement.setString(2, name);
+                statement.setString(3, description);
+                statement.setInt(4, roomId);
+                statement.setInt(5, guild.getOwnerId());
+                statement.setInt(6, colorOne);
+                statement.setInt(7, colorTwo);
+                statement.setString(8, badge);
+                statement.setInt(9, Emulator.getIntUnixTimestamp());
                 statement.execute();
 
                 try (ResultSet set = statement.getGeneratedKeys()) {

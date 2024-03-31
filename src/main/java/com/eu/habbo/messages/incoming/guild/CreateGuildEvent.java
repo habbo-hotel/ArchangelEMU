@@ -12,6 +12,7 @@ import com.eu.habbo.messages.outgoing.guild.GuildCreatedMessageComposer;
 import com.eu.habbo.messages.outgoing.guild.GuildEditFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guild.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
+import com.eu.habbo.roleplay.guilds.GuildType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,6 +20,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
     @Override
     public void handle() {
+        GuildType type = GuildType.fromString(this.packet.readString());
         String name = Emulator.getGameEnvironment().getWordFilter().filter(this.packet.readString(), this.client.getHabbo());
         String description = Emulator.getGameEnvironment().getWordFilter().filter(this.packet.readString(), this.client.getHabbo());
 
@@ -60,7 +62,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
                     StringBuilder badge = createBadge(count);
 
-                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
+                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), type, roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
 
                     r.getRoomInfo().setGuild(guild);
                     r.getRoomRightsManager().removeAllRights(); //TODO Check if this is needed

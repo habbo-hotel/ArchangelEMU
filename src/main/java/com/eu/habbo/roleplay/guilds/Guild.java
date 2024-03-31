@@ -93,8 +93,9 @@ public class Guild implements Runnable {
         this.requestCount = 0;
     }
 
-    public Guild(int ownerId, String ownerName, int roomId, String roomName, String name, String description, int colorOne, int colorTwo, String badge) {
+    public Guild(GuildType type, int ownerId, String ownerName, int roomId, String roomName, String name, String description, int colorOne, int colorTwo, String badge) {
         this.id = 0;
+        this.type = type;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
         this.roomId = roomId;
