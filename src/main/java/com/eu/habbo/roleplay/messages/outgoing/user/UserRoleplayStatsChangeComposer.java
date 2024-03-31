@@ -27,18 +27,14 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerMax());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporation().getId());
-        this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporationPosition().getId());
+        this.response.appendInt(0);
         this.response.appendBoolean(CorporationsShiftManager.getInstance().isUserWorking(this.habbo));
         if (this.habbo.getHabboRoleplayStats().getGang() != null) {
             this.response.appendInt(this.habbo.getHabboRoleplayStats().getGang().getId());
         } else {
             this.response.appendInt(0);
         }
-        if (this.habbo.getHabboRoleplayStats().getGangPosition() != null) {
-            this.response.appendInt(Integer.parseInt(this.habbo.getHabboRoleplayStats().getGangPosition().getRank().toString()));
-        } else {
-            this.response.appendInt(0);
-        }
+        this.response.appendInt(0);
         return this.response;
     }
 }
