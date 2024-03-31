@@ -233,10 +233,10 @@ public class Pet extends Unit implements ISerialize, Runnable {
                 statement.setInt(2, this.experience);
                 statement.setInt(3, this.energy);
                 statement.setInt(4, this.respect);
-                statement.setInt(5, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentPosition().getX() : 0);
-                statement.setInt(6, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentPosition().getY() : 0);
-                statement.setDouble(7, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentZ() : 0.0);
-                statement.setInt(8, this.getRoomUnit() != null ? this.getRoomUnit().getBodyRotation().getValue() : 0);
+                statement.setInt(5, this.getRoomUnit().getCurrentPosition() != null ? this.getRoomUnit().getCurrentPosition().getX() : 0);
+                statement.setInt(6, this.getRoomUnit().getCurrentPosition() != null ? this.getRoomUnit().getCurrentPosition().getY() : 0);
+                statement.setDouble(7, this.getRoomUnit().getCurrentPosition()!= null ? this.getRoomUnit().getCurrentZ() : 0.0);
+                statement.setInt(8, this.getRoomUnit().getCurrentPosition() != null ? this.getRoomUnit().getBodyRotation().getValue() : 0);
                 statement.setInt(9, this.levelHunger);
                 statement.setInt(10, this.levelThirst);
                 statement.setInt(11, this.happiness);
