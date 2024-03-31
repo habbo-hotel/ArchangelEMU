@@ -116,6 +116,7 @@ public abstract class RoomUnit extends RoomEntity {
     public void cycle() {
         if(this.isWalking()) {
             this.processWalking();
+
         } else {
             this.stopWalking();
         }
@@ -528,7 +529,8 @@ public abstract class RoomUnit extends RoomEntity {
             this.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + nextHeight);
             this.nextPosition = next;
             this.nextZ = nextHeight;
-
+        } else {
+            this.stopWalking();
             for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
                 try {
                     h.getRoomUnit().getCurrentItem().onWalkOn(h.getRoomUnit(), this.room, null);
@@ -536,8 +538,6 @@ public abstract class RoomUnit extends RoomEntity {
 
                 }
             }
-        } else {
-            this.stopWalking();
         }
     }
 
