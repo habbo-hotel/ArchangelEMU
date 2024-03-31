@@ -1,12 +1,12 @@
-package com.eu.habbo.roleplay.commands.corporation;
+package com.eu.habbo.roleplay.commands.corp;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.corps.Corporation;
-import com.eu.habbo.roleplay.corps.CorporationPosition;
-import com.eu.habbo.roleplay.corps.CorporationManager;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpPosition;
+import com.eu.habbo.roleplay.corp.CorpManager;
 
 public class CorpSuperHireCommand extends Command {
     public CorpSuperHireCommand() {
@@ -40,7 +40,7 @@ public class CorpSuperHireCommand extends Command {
             return true;
         }
 
-        Corporation matchingCorp = CorporationManager.getInstance().getCorporationByID(corporationId);
+        Corp matchingCorp = CorpManager.getInstance().getCorpByID(corporationId);
 
         if (matchingCorp == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_superhire_invalid_corp"));
@@ -55,7 +55,7 @@ public class CorpSuperHireCommand extends Command {
             return true;
         }
 
-        CorporationPosition matchingPosition = matchingCorp.getPositionByID(positionId);
+        CorpPosition matchingPosition = matchingCorp.getPositionByID(positionId);
 
         if (matchingPosition == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_superhire_invalid_position"));

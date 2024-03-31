@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.corps;
+package com.eu.habbo.roleplay.corp;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -15,23 +15,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CorporationsShiftManager {
+public class CorpShiftManager {
 
-    private static CorporationsShiftManager instance;
+    private static CorpShiftManager instance;
 
-    public static CorporationsShiftManager getInstance() {
+    public static CorpShiftManager getInstance() {
         if (instance == null) {
-            instance = new CorporationsShiftManager();
+            instance = new CorpShiftManager();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationsShiftManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CorpShiftManager.class);
 
     private final Map<Integer, CorporationShift> activeUserShifts;
     private final ScheduledExecutorService scheduler;
 
-    private CorporationsShiftManager() {
+    private CorpShiftManager() {
         long millis = System.currentTimeMillis();
         this.activeUserShifts = new HashMap<>();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -60,12 +60,12 @@ public class CorporationsShiftManager {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_no_shift"));
             return;
         }
-        Corporation userEmployer = habbo.getHabboRoleplayStats().getCorporation();
+        Corp userEmployer = habbo.getHabboRoleplayStats().getCorporation();
         if (userEmployer == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;
         }
-        CorporationPosition userPosition =  habbo.getHabboRoleplayStats().getCorporationPosition();
+        CorpPosition userPosition =  habbo.getHabboRoleplayStats().getCorporationPosition();
         if (userPosition == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;

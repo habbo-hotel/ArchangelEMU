@@ -3,9 +3,9 @@ package com.eu.habbo.roleplay.messages.outgoing.corp;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.corps.Corporation;
-import com.eu.habbo.roleplay.corps.CorporationManager;
-import com.eu.habbo.roleplay.corps.CorporationPosition;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.corp.CorpPosition;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -15,8 +15,8 @@ public class CorpPositionInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        Corporation matchingCorp = CorporationManager.getInstance().getCorporationByID(this.corpID);
-        CorporationPosition matchingPosition = matchingCorp.getPositionByID(this.corpPositionID);
+        Corp matchingCorp = CorpManager.getInstance().getCorpByID(this.corpID);
+        CorpPosition matchingPosition = matchingCorp.getPositionByID(this.corpPositionID);
         this.response.init(Outgoing.corpPositionInfoComposer);
         this.response.appendInt(matchingPosition.getId());;
         this.response.appendInt(matchingPosition.getCorporationID());;

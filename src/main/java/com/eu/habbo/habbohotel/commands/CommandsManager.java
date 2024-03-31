@@ -37,7 +37,7 @@ import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import com.eu.habbo.roleplay.commands.combat.AttackCommand;
 import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
-import com.eu.habbo.roleplay.commands.corporation.*;
+import com.eu.habbo.roleplay.commands.corp.*;
 import com.eu.habbo.roleplay.commands.gang.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -316,7 +316,7 @@ public class CommandsManager {
         addCommand(new EquipCommand());
         addCommand(new SetHealthCommand());
 
-        // Corporation
+        // Corp
         addCommand(new CorpAcceptJobCommand());
         addCommand(new CorpDeclineJobCommand());
         addCommand(new CorpDemoteCommand());

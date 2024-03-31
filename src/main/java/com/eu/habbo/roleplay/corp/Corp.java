@@ -1,10 +1,10 @@
-package com.eu.habbo.roleplay.corps;
+package com.eu.habbo.roleplay.corp;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.database.CorporationPositionRepository;
-import com.eu.habbo.roleplay.database.CorporationRepository;
+import com.eu.habbo.roleplay.database.CorpPositionRepository;
+import com.eu.habbo.roleplay.database.CorpRepository;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
@@ -17,20 +17,20 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class Corporation  implements Runnable {
+public class Corp implements Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationPosition.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CorpPosition.class);
     @Getter
     private final Guild guild;
     @Getter
     private List<String> tags;
     @Getter
-    private TIntObjectHashMap<CorporationPosition> positions;
+    private TIntObjectHashMap<CorpPosition> positions;
 
-    public CorporationPosition getPositionByOrderID(int orderID) {
+    public CorpPosition getPositionByOrderID(int orderID) {
         int[] keys = positions.keys();
         for (int key : keys) {
-            CorporationPosition position = positions.get(key);
+            CorpPosition position = positions.get(key);
             if (position.getOrderID() == orderID) {
                 return position;
             }
@@ -54,25 +54,25 @@ public class Corporation  implements Runnable {
     }
 
 
-    public CorporationPosition getPositionByID(int positionID) {
+    public CorpPosition getPositionByID(int positionID) {
         return this.positions.get(positionID);
     }
 
-    public Corporation(ResultSet set) throws SQLException {
+    public Corp(ResultSet set) throws SQLException {
         int guildID = set.getInt("guild_id");
         this.guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildID);
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
-        this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions(this.guild.getId());
+        this.positions = CorpPositionRepository.getInstance().getAllCorporationPositions(this.guild.getId());
         this.invitedUsers = new TIntObjectHashMap<>();
     }
 
     @Override
     public void run() {
-        CorporationRepository.getInstance().upsertCorporation(this);
-        TIntObjectIterator<CorporationPosition> iterator = positions.iterator();
+        CorpRepository.getInstance().upsertCorp(this);
+        TIntObjectIterator<CorpPosition> iterator = positions.iterator();
         while (iterator.hasNext()) {
             iterator.advance();
-            CorporationPosition position = iterator.value();
+            CorpPosition position = iterator.value();
             position.run();
         }
     }

@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.corps.CorporationsShiftManager;
+import com.eu.habbo.roleplay.corp.CorpShiftManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -28,7 +28,7 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerMax());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporation().getGuild().getId());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporationPosition().getId());
-        this.response.appendBoolean(CorporationsShiftManager.getInstance().isUserWorking(this.habbo));
+        this.response.appendBoolean(CorpShiftManager.getInstance().isUserWorking(this.habbo));
         if (this.habbo.getHabboRoleplayStats().getGang() != null) {
             this.response.appendInt(this.habbo.getHabboRoleplayStats().getGang().getId());
         } else {

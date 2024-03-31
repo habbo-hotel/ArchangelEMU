@@ -1,34 +1,34 @@
 package com.eu.habbo.roleplay.database;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.corps.CorporationPosition;
+import com.eu.habbo.roleplay.corp.CorpPosition;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
-public class CorporationPositionRepository {
+public class CorpPositionRepository {
 
 
-    private static CorporationPositionRepository instance;
+    private static CorpPositionRepository instance;
 
-    public static CorporationPositionRepository getInstance() {
+    public static CorpPositionRepository getInstance() {
         if (instance == null) {
-            instance = new CorporationPositionRepository();
+            instance = new CorpPositionRepository();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorporationPositionRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CorpPositionRepository.class);
 
-    public TIntObjectHashMap<CorporationPosition> getAllCorporationPositions(int corporationId) {
-        TIntObjectHashMap<CorporationPosition> corpPositions = new TIntObjectHashMap<>();
+    public TIntObjectHashMap<CorpPosition> getAllCorporationPositions(int corporationId) {
+        TIntObjectHashMap<CorpPosition> corpPositions = new TIntObjectHashMap<>();
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations_positions WHERE corporation_id = ? ORDER BY id ASC")) {
             statement.setInt(1, corporationId);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
-                corpPositions.put(set.getInt("id"), new CorporationPosition(set));
+                corpPositions.put(set.getInt("id"), new CorpPosition(set));
             }
             return corpPositions;
         } catch (SQLException e) {
@@ -37,7 +37,7 @@ public class CorporationPositionRepository {
         }
     }
 
-    public void upsertCorporationPosition(CorporationPosition position) {
+    public void upsertCorpPosition(CorpPosition position) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations_positions (corporation_id, order_id, name, description, salary, male_figure, female_figure, can_hire, can_fire, can_promote, can_demote) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE corporation_id = VALUES(corporation_id), order_id = VALUES(order_id), name = VALUES(name), description = VALUES(description), salary = VALUES(salary), male_figure = VALUES(male_figure), female_figure = VALUES(female_figure), can_hire = VALUES(can_hire), can_fire = VALUES(can_fire), can_promote = VALUES(can_promote), can_demote = VALUES(can_demote)")) {
                 statement.setInt(1, position.getCorporationID());

@@ -1,10 +1,10 @@
-package com.eu.habbo.roleplay.commands.corporation;
+package com.eu.habbo.roleplay.commands.corp;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.corps.Corporation;
-import com.eu.habbo.roleplay.corps.CorporationManager;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpManager;
 
 public class CorpDeclineJobCommand extends Command {
     public CorpDeclineJobCommand() {
@@ -23,7 +23,7 @@ public class CorpDeclineJobCommand extends Command {
             return true;
         }
 
-        Corporation targetedCorp = CorporationManager.getInstance().getCorporationByName(corpName);
+        Corp targetedCorp = CorpManager.getInstance().getCorpsByName(corpName);
 
         if (targetedCorp == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.corp_not_found"));

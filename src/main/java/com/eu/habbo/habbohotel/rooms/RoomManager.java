@@ -54,7 +54,7 @@ import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
 import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
-import com.eu.habbo.roleplay.corps.CorporationsShiftManager;
+import com.eu.habbo.roleplay.corp.CorpShiftManager;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
@@ -567,8 +567,8 @@ public class RoomManager {
             habbo.getRoomUnit().setLoadingRoom(null);
         }
 
-        if (CorporationsShiftManager.getInstance().isUserWorking(habbo)) {
-            CorporationsShiftManager.getInstance().stopUserShift(habbo, false, false);
+        if (CorpShiftManager.getInstance().isUserWorking(habbo)) {
+            CorpShiftManager.getInstance().stopUserShift(habbo, false, false);
         }
     }
 

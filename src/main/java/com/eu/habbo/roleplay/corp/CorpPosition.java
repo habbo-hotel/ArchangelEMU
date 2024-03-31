@@ -1,13 +1,13 @@
-package com.eu.habbo.roleplay.corps;
+package com.eu.habbo.roleplay.corp;
 
-import com.eu.habbo.roleplay.database.CorporationPositionRepository;
+import com.eu.habbo.roleplay.database.CorpPositionRepository;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.*;
 
 @Getter
-public class CorporationPosition implements Runnable {
+public class CorpPosition implements Runnable {
 
     private int id;
     private int corporationID;
@@ -39,7 +39,7 @@ public class CorporationPosition implements Runnable {
     @Setter
     private boolean canDemote;
 
-    public CorporationPosition(ResultSet set) throws SQLException {
+    public CorpPosition(ResultSet set) throws SQLException {
         this.load(set);
     }
 
@@ -60,7 +60,7 @@ public class CorporationPosition implements Runnable {
 
     @Override
     public void run() {
-        CorporationPositionRepository.getInstance().upsertCorporationPosition(this);
+        CorpPositionRepository.getInstance().upsertCorpPosition(this);
     }
 
 }

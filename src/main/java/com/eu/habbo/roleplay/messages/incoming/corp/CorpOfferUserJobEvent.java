@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.messages.incoming.corp;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.roleplay.commands.corporation.CorpOfferUserJobCommand;
+import com.eu.habbo.roleplay.commands.corp.CorpOfferUserJobCommand;
 
 public class CorpOfferUserJobEvent extends MessageHandler {
     @Override

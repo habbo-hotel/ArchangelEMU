@@ -3,8 +3,8 @@ package com.eu.habbo.roleplay.messages.outgoing.corp;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.corps.Corporation;
-import com.eu.habbo.roleplay.corps.CorporationManager;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -13,7 +13,7 @@ public class CorpInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        Corporation matchingCorp = CorporationManager.getInstance().getCorporationByID(this.corpID);
+        Corp matchingCorp = CorpManager.getInstance().getCorpByID(this.corpID);
         this.response.init(Outgoing.corpInfoComposer);
         this.response.appendInt(matchingCorp.getGuild().getId());;
         this.response.appendInt(matchingCorp.getGuild().getOwnerId());;

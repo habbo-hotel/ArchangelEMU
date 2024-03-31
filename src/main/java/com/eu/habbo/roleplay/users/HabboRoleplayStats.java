@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.rooms.RoomSpecialTypes;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.corps.Corporation;
-import com.eu.habbo.roleplay.corps.CorporationManager;
-import com.eu.habbo.roleplay.corps.CorporationPosition;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.habbohotel.guilds.Guild;
@@ -118,8 +118,8 @@ public class HabboRoleplayStats implements Runnable {
 
     }
 
-    public Corporation getCorporation() {
-        return CorporationManager.getInstance().getCorporationByID(this.corporationID);
+    public Corp getCorporation() {
+        return CorpManager.getInstance().getCorpByID(this.corporationID);
     }
 
     public void setCorporation(int corporationID, int corporationPositionID) {
@@ -129,7 +129,7 @@ public class HabboRoleplayStats implements Runnable {
         this.run();
     }
 
-    public CorporationPosition getCorporationPosition() {
+    public CorpPosition getCorporationPosition() {
         return this.getCorporation().getPositionByID(this.corporationPositionID);
     }
 

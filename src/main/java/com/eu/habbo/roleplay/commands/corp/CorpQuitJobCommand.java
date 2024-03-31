@@ -1,9 +1,9 @@
-package com.eu.habbo.roleplay.commands.corporation;
+package com.eu.habbo.roleplay.commands.corp;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.corps.Corporation;
+import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 
 public class CorpQuitJobCommand extends Command {
@@ -18,7 +18,7 @@ public class CorpQuitJobCommand extends Command {
             return true;
         }
 
-        Corporation welfareCorp = GovernmentManager.getInstance().getWelfareCorp();
+        Corp welfareCorp = GovernmentManager.getInstance().getWelfareCorp();
 
         gameClient.getHabbo().getHabboRoleplayStats().setCorporation(welfareCorp.getGuild().getId(), welfareCorp.getPositionByOrderID(1).getId());
 

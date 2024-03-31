@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.corps;
+package com.eu.habbo.roleplay.corp;
 import com.eu.habbo.habbohotel.users.Habbo;
 import lombok.Getter;
 
