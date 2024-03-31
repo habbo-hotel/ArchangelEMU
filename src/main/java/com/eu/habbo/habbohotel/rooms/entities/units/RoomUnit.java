@@ -5,14 +5,15 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -115,13 +116,6 @@ public abstract class RoomUnit extends RoomEntity {
     public void cycle() {
         if(this.isWalking()) {
             this.processWalking();
-            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
-                try {
-                    h.getRoomUnit().getCurrentItem().onWalkOn(h.getRoomUnit(), this.room, null);
-                } catch (Exception ignored) {
-
-                }
-            }
         } else {
             this.stopWalking();
         }
@@ -498,7 +492,7 @@ public abstract class RoomUnit extends RoomEntity {
         this.statuses.entrySet().removeIf(entry -> entry.getKey().isRemoveWhenWalking());
 
         if(this.getNextPosition() != null) {
-            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getNextPosition())) {
+            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
                 try {
                     h.getRoomUnit().getCurrentItem().onWalkOff(h.getRoomUnit(), this.room, null);
                 } catch (Exception ignored) {
@@ -534,6 +528,14 @@ public abstract class RoomUnit extends RoomEntity {
             this.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + nextHeight);
             this.nextPosition = next;
             this.nextZ = nextHeight;
+
+            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
+                try {
+                    h.getRoomUnit().getCurrentItem().onWalkOn(h.getRoomUnit(), this.room, null);
+                } catch (Exception ignored) {
+
+                }
+            }
         } else {
             this.stopWalking();
         }

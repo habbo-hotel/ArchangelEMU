@@ -463,18 +463,6 @@ public class RoomItemManager {
             this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(t);
         }
 
-        if (Emulator.getConfig().getBoolean("wired.place.under", false)) {
-            for (RoomTile t : newOccupiedTiles) {
-                for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(t)) {
-                    try {
-                        item.onWalkOn(h.getRoomUnit(), this.room, null);
-                    } catch (Exception ignored) {
-
-                    }
-                }
-            }
-        }
-
         return FurnitureMovementError.NONE;
     }
 
