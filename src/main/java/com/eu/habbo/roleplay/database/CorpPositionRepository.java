@@ -24,7 +24,7 @@ public class CorpPositionRepository {
 
     public TIntObjectHashMap<CorpPosition> getAllCorporationPositions(int corporationId) {
         TIntObjectHashMap<CorpPosition> corpPositions = new TIntObjectHashMap<>();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations_positions WHERE corporation_id = ? ORDER BY id ASC")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations_positions WHERE guild_id = ? ORDER BY id ASC")) {
             statement.setInt(1, corporationId);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
@@ -39,7 +39,7 @@ public class CorpPositionRepository {
 
     public void upsertCorpPosition(CorpPosition position) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations_positions (corporation_id, order_id, name, description, salary, male_figure, female_figure, can_hire, can_fire, can_promote, can_demote) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE corporation_id = VALUES(corporation_id), order_id = VALUES(order_id), name = VALUES(name), description = VALUES(description), salary = VALUES(salary), male_figure = VALUES(male_figure), female_figure = VALUES(female_figure), can_hire = VALUES(can_hire), can_fire = VALUES(can_fire), can_promote = VALUES(can_promote), can_demote = VALUES(can_demote)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations_positions (guild_id, order_id, name, description, salary, male_figure, female_figure, can_hire, can_fire, can_promote, can_demote) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE guild_id = VALUES(guild_id), order_id = VALUES(order_id), name = VALUES(name), description = VALUES(description), salary = VALUES(salary), male_figure = VALUES(male_figure), female_figure = VALUES(female_figure), can_hire = VALUES(can_hire), can_fire = VALUES(can_fire), can_promote = VALUES(can_promote), can_demote = VALUES(can_demote)")) {
                 statement.setInt(1, position.getCorporationID());
                 statement.setInt(2, position.getOrderID());
                 statement.setString(3, position.getName());

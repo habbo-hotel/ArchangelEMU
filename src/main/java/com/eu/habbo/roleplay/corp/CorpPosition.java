@@ -45,7 +45,7 @@ public class CorpPosition implements Runnable {
 
     public void load(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
-        this.corporationID = set.getInt("corporation_id");
+        this.corporationID = set.getInt("guild_id");
         this.orderID = set.getInt("order_id");
         this.name = set.getString("name");
         this.description = set.getString("description");

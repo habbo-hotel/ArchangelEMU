@@ -62,7 +62,7 @@ public class CorpSuperHireCommand extends Command {
             return true;
         }
 
-        targetedHabbo.getHabboRoleplayStats().setCorporation(corporationId, positionId);
+        targetedHabbo.getHabboRoleplayStats().setCorp(corporationId, positionId);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_superhire_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())

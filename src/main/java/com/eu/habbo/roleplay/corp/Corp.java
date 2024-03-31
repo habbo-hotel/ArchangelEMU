@@ -59,8 +59,7 @@ public class Corp implements Runnable {
     }
 
     public Corp(ResultSet set) throws SQLException {
-        int guildID = set.getInt("guild_id");
-        this.guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildID);
+        this.guild = Emulator.getGameEnvironment().getGuildManager().getGuild(set.getInt("guild_id"));
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
         this.positions = CorpPositionRepository.getInstance().getAllCorporationPositions(this.guild.getId());
         this.invitedUsers = new TIntObjectHashMap<>();

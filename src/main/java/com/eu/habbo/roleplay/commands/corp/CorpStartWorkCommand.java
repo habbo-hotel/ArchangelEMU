@@ -18,14 +18,14 @@ public class CorpStartWorkCommand extends Command {
             return true;
         }
 
-        Corp userEmployer = Emulator.getGameEnvironment().getCorpManager().getCorpByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getGuild().getId());
+        Corp userEmployer = Emulator.getGameEnvironment().getCorpManager().getCorpByID(gameClient.getHabbo().getHabboRoleplayStats().getCorp().getGuild().getId());
 
         if (userEmployer == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_company_does_not_exist"));
             return true;
         }
 
-        CorpPosition userPosition = userEmployer.getPositionByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporationPosition().getId());
+        CorpPosition userPosition = userEmployer.getPositionByID(gameClient.getHabbo().getHabboRoleplayStats().getCorpPosition().getId());
 
         if (userPosition == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_position_does_not_exist"));

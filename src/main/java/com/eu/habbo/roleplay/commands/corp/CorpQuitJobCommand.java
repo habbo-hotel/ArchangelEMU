@@ -13,14 +13,14 @@ public class CorpQuitJobCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getGuild().getId() == GovernmentManager.getInstance().getWelfareCorp().getGuild().getId()) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getCorp().getGuild().getId() == GovernmentManager.getInstance().getWelfareCorp().getGuild().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_quitjob_unemployed"));
             return true;
         }
 
         Corp welfareCorp = GovernmentManager.getInstance().getWelfareCorp();
 
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporation(welfareCorp.getGuild().getId(), welfareCorp.getPositionByOrderID(1).getId());
+        gameClient.getHabbo().getHabboRoleplayStats().setCorp(welfareCorp.getGuild().getId(), welfareCorp.getPositionByOrderID(1).getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_quitjob_success"));
 

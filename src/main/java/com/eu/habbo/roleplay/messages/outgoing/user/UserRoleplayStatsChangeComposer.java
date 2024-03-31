@@ -26,8 +26,8 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getEnergyMax());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerMax());
-        this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporation().getGuild().getId());
-        this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorporationPosition().getId());
+        this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorp().getGuild().getId());
+        this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorpPosition().getId());
         this.response.appendBoolean(CorpShiftManager.getInstance().isUserWorking(this.habbo));
         if (this.habbo.getHabboRoleplayStats().getGang() != null) {
             this.response.appendInt(this.habbo.getHabboRoleplayStats().getGang().getId());

@@ -118,19 +118,19 @@ public class HabboRoleplayStats implements Runnable {
 
     }
 
-    public Corp getCorporation() {
+    public Corp getCorp() {
         return CorpManager.getInstance().getCorpByID(this.corporationID);
     }
 
-    public void setCorporation(int corporationID, int corporationPositionID) {
+    public void setCorp(int corporationID, int corporationPositionID) {
         this.corporationID = corporationID;
         this.corporationPositionID = corporationPositionID;
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
         this.run();
     }
 
-    public CorpPosition getCorporationPosition() {
-        return this.getCorporation().getPositionByID(this.corporationPositionID);
+    public CorpPosition getCorpPosition() {
+        return this.getCorp().getPositionByID(this.corporationPositionID);
     }
 
     public Guild getGang() {

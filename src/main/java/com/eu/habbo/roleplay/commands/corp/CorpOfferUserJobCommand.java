@@ -29,22 +29,22 @@ public class CorpOfferUserJobCommand extends Command {
             return true;
         }
 
-        if (!gameClient.getHabbo().getHabboRoleplayStats().getCorporationPosition().isCanHire()) {
+        if (!gameClient.getHabbo().getHabboRoleplayStats().getCorpPosition().isCanHire()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hire_not_allowed"));
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getGuild().getId() == targetedHabbo.getHabboRoleplayStats().getCorporation().getGuild().getId()) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getCorp().getGuild().getId() == targetedHabbo.getHabboRoleplayStats().getCorp().getGuild().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hire_user_has_same_employer"));
             return true;
         }
 
 
-        gameClient.getHabbo().getHabboRoleplayStats().getCorporation().addInvitedUser(targetedHabbo);
+        gameClient.getHabbo().getHabboRoleplayStats().getCorp().addInvitedUser(targetedHabbo);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_sent").replace("%user%", targetedHabbo.getHabboInfo().getUsername()));
 
-        targetedHabbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_received").replace("%corp%",gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getGuild().getName()));
+        targetedHabbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_received").replace("%corp%",gameClient.getHabbo().getHabboRoleplayStats().getCorp().getGuild().getName()));
 
         return true;
     }

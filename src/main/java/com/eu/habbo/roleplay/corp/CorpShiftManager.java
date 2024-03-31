@@ -43,7 +43,7 @@ public class CorpShiftManager {
     public void startUserShift(Habbo habbo) {
         this.activeUserShifts.put(habbo.getHabboInfo().getId(), new CorporationShift(habbo));
 
-        String jobUniform = habbo.getHabboInfo().getGender() == HabboGender.M ? habbo.getHabboRoleplayStats().getCorporationPosition().getMaleFigure() : habbo.getHabboRoleplayStats().getCorporationPosition().getFemaleFigure();
+        String jobUniform = habbo.getHabboInfo().getGender() == HabboGender.M ? habbo.getHabboRoleplayStats().getCorpPosition().getMaleFigure() : habbo.getHabboRoleplayStats().getCorpPosition().getFemaleFigure();
         habbo.getHabboInfo().changeClothes(jobUniform);
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
@@ -60,12 +60,12 @@ public class CorpShiftManager {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_no_shift"));
             return;
         }
-        Corp userEmployer = habbo.getHabboRoleplayStats().getCorporation();
+        Corp userEmployer = habbo.getHabboRoleplayStats().getCorp();
         if (userEmployer == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;
         }
-        CorpPosition userPosition =  habbo.getHabboRoleplayStats().getCorporationPosition();
+        CorpPosition userPosition =  habbo.getHabboRoleplayStats().getCorpPosition();
         if (userPosition == null) {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
             return;

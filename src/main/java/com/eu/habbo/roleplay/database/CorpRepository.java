@@ -23,9 +23,9 @@ public class CorpRepository {
 
     public TIntObjectHashMap<Corp> getAllCorps() {
         TIntObjectHashMap<Corp> corps = new TIntObjectHashMap<>();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_corporations ORDER BY id ASC")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_corporations ORDER BY guild_id ASC")) {
             while (set.next()) {
-                corps.put(set.getInt("id"), new Corp(set));
+                corps.put(set.getInt("guild_id"), new Corp(set));
             }
             return corps;
         } catch (SQLException e) {
