@@ -23,8 +23,8 @@ import com.eu.habbo.messages.incoming.guardians.ChatReviewGuideDecidesOnOfferEve
 import com.eu.habbo.messages.incoming.guardians.ChatReviewGuideDetachedEvent;
 import com.eu.habbo.messages.incoming.guardians.ChatReviewGuideVoteEvent;
 import com.eu.habbo.messages.incoming.guides.*;
-import com.eu.habbo.roleplay.messages.incoming.guild.*;
-import com.eu.habbo.roleplay.messages.incoming.guild.forums.*;
+import com.eu.habbo.messages.incoming.guild.*;
+import com.eu.habbo.messages.incoming.guild.forums.*;
 import com.eu.habbo.messages.incoming.handshake.*;
 import com.eu.habbo.messages.incoming.helper.GetCfhStatusEvent;
 import com.eu.habbo.messages.incoming.helper.GetTalentTrackEvent;
