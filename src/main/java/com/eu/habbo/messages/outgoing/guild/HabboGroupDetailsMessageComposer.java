@@ -27,6 +27,7 @@ public class HabboGroupDetailsMessageComposer extends MessageComposer {
             this.response.init(Outgoing.habboGroupDetailsMessageComposer);
             this.response.appendInt(this.guild.getId());
             this.response.appendBoolean(true);
+            this.response.appendString(this.guild.getType().getType());
             this.response.appendInt(this.guild.getState().getState());
             this.response.appendString(this.guild.getName());
             this.response.appendString(this.guild.getDescription());

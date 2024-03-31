@@ -22,7 +22,7 @@ public class Guild implements Runnable {
     private int id;
     @Setter
     @Getter
-    private GuildType guildType;
+    private GuildType type;
     @Getter
     private final int ownerId;
     @Getter
@@ -71,7 +71,7 @@ public class Guild implements Runnable {
 
     public Guild(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
-        this.guildType = GuildType.fromString(set.getString("guild_type"));
+        this.type = GuildType.fromString(set.getString("guild_type"));
         this.ownerId = set.getInt(DatabaseConstants.USER_ID);
         this.ownerName = set.getString("username");
         this.name = set.getString("name");
