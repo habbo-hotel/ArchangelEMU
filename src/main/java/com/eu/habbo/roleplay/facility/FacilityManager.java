@@ -24,6 +24,12 @@ public class FacilityManager {
         this.facilityHospitalsManager.cycle();
     }
 
+    public void cycle(Room room) {
+        if (room.getRoomInfo().getId() == FacilityHospitalsManager.getInstance().getHospital().getRoomInfo().getId()) {
+            FacilityHospitalsManager.getInstance().cycle();
+        }
+    }
+
     public static Room getFirstRoomWithTag(String tag) {
         List<Room> matchingRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithTag(tag);
         if (matchingRooms.isEmpty()) {
