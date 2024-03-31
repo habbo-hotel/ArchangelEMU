@@ -21,7 +21,7 @@ public class FacilityManager {
 
     private FacilityManager() {
         this.facilityHospitalsManager =FacilityHospitalsManager.getInstance();
-        this.facilityHospitalsManager.startHealingProcess();
+        this.facilityHospitalsManager.cycle();
     }
 
     public static Room getFirstRoomWithTag(String tag) {

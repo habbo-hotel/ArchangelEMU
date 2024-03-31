@@ -105,14 +105,6 @@ public class HabboRoleplayStats implements Runnable {
             this.setIsDead(false);
         }
 
-        if (this.healthNow > 0) {
-            String userHealthRemainingMessage = Emulator.getTexts().
-                    getValue("commands.roleplay.user_health_remaining")
-                    .replace("%currentHealth%", Integer.toString(this.getHealthNow()))
-                    .replace("%maximumHealth%", Integer.toString(this.getHealthMax()));
-            this.habbo.shout(userHealthRemainingMessage);
-        }
-
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
 
     }

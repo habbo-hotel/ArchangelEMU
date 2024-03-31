@@ -15,6 +15,7 @@ import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
@@ -114,16 +115,13 @@ public abstract class RoomUnit extends RoomEntity {
     public void cycle() {
         if(this.isWalking()) {
             this.processWalking();
-            Collection<RoomUnit> roomUnits = this.getRoom().getRoomUnitManager().getRoomUnitsAt(this.currentPosition);
-            this.getRoom().getRoomItemManager().getItemsAt(this.currentPosition).forEach(item -> {
-                roomUnits.forEach(roomUnit -> {
-                    try {
-                        item.onWalkOn(roomUnit, this.room, new Object[0]);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            });
+            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
+                try {
+                    h.getRoomUnit().getCurrentItem().onWalkOn(h.getRoomUnit(), this.room, null);
+                } catch (Exception ignored) {
+
+                }
+            }
         } else {
             this.stopWalking();
         }
@@ -500,6 +498,13 @@ public abstract class RoomUnit extends RoomEntity {
         this.statuses.entrySet().removeIf(entry -> entry.getKey().isRemoveWhenWalking());
 
         if(this.getNextPosition() != null) {
+            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getNextPosition())) {
+                try {
+                    h.getRoomUnit().getCurrentItem().onWalkOff(h.getRoomUnit(), this.room, null);
+                } catch (Exception ignored) {
+
+                }
+            }
             this.setCurrentPosition(this.getNextPosition());
             this.setCurrentZ(this.getNextZ());
         }

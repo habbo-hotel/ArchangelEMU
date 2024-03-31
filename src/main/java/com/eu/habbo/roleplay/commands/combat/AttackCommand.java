@@ -76,6 +76,12 @@ public class AttackCommand extends Command {
 
         targetedHabbo.getHabboRoleplayStats().setHealth(targetedHabbo.getHabboRoleplayStats().getHealthNow() - totalDamage);
 
+        targetedHabbo.shout(Emulator.getTexts().
+                getValue("commands.roleplay.user_health_remaining")
+                .replace("%currentHealth%", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
+                .replace("%maximumHealth%", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
+        );
+
         return true;
     }
 }
