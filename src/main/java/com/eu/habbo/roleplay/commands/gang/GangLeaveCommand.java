@@ -17,6 +17,11 @@ public class GangLeaveCommand extends Command {
             return true;
         }
 
+        if (gameClient.getHabbo().getHabboRoleplayStats().getGangPosition() == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_leave_cant_is_owner"));
+            return true;
+        }
+
         if (gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().getRank() == GuildRank.OWNER) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_leave_cant_is_owner"));
             return true;

@@ -79,7 +79,6 @@ public class HabboRoleplayStats implements Runnable {
     private int corporationID;
     private int corporationPositionID;
     private Integer gangID;
-    private Integer gangPositionID;
     @Getter
     private boolean isDead;
 
@@ -147,9 +146,6 @@ public class HabboRoleplayStats implements Runnable {
     }
 
     public GuildMember getGangPosition() {
-        if (this.gangPositionID == null) {
-            return null;
-        }
         return Emulator.getGameEnvironment().getGuildManager().getGuildMember(this.gangID, this.habbo.getHabboInfo().getId());
     }
 
@@ -198,7 +194,6 @@ public class HabboRoleplayStats implements Runnable {
         this.corporationID = set.getInt("corporation_id");
         this.corporationPositionID = set.getInt("corporation_position_id");
         this.gangID = set.getInt("gang_id") != 0 ? set.getInt("gang_id") : null;
-        this.gangPositionID = set.getInt("gang_position_id") != 0 ? set.getInt("gang_position_id") : null;
     }
 
     public void dispose() {
@@ -209,7 +204,7 @@ public class HabboRoleplayStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, armor_now = ?, armor_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, gang_position_id = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, armor_now = ?, armor_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.healthNow);
                 statement.setInt(2, this.healthMax);
                 statement.setInt(3, this.energyNow);
@@ -222,10 +217,7 @@ public class HabboRoleplayStats implements Runnable {
                 if (this.gangID != null) statement.setInt(9, this.gangID);
                 if (this.gangID == null) statement.setNull(9, Types.INTEGER);
 
-                if (this.gangPositionID != null) statement.setInt(10, this.gangPositionID);
-                if (this.gangPositionID == null) statement.setNull(10, Types.INTEGER);
-
-                statement.setInt(7, this.habbo.getHabboInfo().getId());
+                statement.setInt(9, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

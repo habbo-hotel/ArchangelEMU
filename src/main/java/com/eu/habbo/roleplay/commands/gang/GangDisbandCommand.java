@@ -18,7 +18,12 @@ public class GangDisbandCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().getRank() == GuildRank.OWNER) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getGangPosition() == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_disband_not_allowed"));
+            return true;
+        }
+
+        if (gameClient.getHabbo().getHabboRoleplayStats().getGangPosition().getRank() != GuildRank.OWNER) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_disband_not_allowed"));
             return true;
         }
