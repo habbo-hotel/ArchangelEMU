@@ -38,6 +38,12 @@ public class FacilityHospitalsManager {
     }
 
     public void removeUserToHeal(Habbo user) {
+        if (this.usersToHeal.isEmpty()) {
+            return;
+        }
+        if (this.usersToHeal.get(user.getHabboInfo().getId()) == null) {
+            return;
+        }
         this.usersToHeal.remove(user);
         user.shout(Emulator.getTexts().getValue("roleplay.hospital.stops_healing"));
     }

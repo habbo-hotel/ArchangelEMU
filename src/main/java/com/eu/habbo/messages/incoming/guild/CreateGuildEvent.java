@@ -2,17 +2,16 @@ package com.eu.habbo.messages.incoming.guild;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildType;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.guild.GuildCreatedMessageComposer;
 import com.eu.habbo.messages.outgoing.guild.GuildEditFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guild.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
-import com.eu.habbo.habbohotel.guilds.GuildType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -70,6 +69,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
             StringBuilder badge = createBadge(count);
 
+
             Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), type, roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
 
             r.getRoomInfo().setGuild(guild);
@@ -81,10 +81,10 @@ public class CreateGuildEvent extends GuildBadgeEvent {
             }
 
             this.client.sendResponse(new PurchaseOKMessageComposer());
-            this.client.sendResponse(new GuildCreatedMessageComposer(guild));
-            for (Habbo habbo : r.getRoomUnitManager().getCurrentHabbos().values()) {
-                habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
-            }
+            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HabboGroupDetailsMessageComposer(guild, this.client, false, null).compose());
+            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new GuildCreatedMessageComposer(guild).compose());
+            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HabboGroupDetailsMessageComposer(guild,this.client, false, null).compose());
+
             r.refreshGuild(guild);
 
             Emulator.getPluginManager().fireEvent(new GuildPurchasedEvent(guild, this.client.getHabbo()));

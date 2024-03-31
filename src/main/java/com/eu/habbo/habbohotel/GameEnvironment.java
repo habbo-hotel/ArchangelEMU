@@ -26,6 +26,7 @@ import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
+import com.eu.habbo.roleplay.TimeOfDayManager;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.weapons.WeaponsManager;
 import lombok.Getter;
@@ -61,6 +62,7 @@ public class GameEnvironment {
     private CalendarManager calendarManager;
     private CorpManager corpManager;
     private WeaponsManager weaponsManager;
+    private TimeOfDayManager timeOfDayManager;
 
 
     public void load() throws Exception {
@@ -89,6 +91,7 @@ public class GameEnvironment {
         this.calendarManager = new CalendarManager();
         this.corpManager = CorpManager.getInstance();
         this.weaponsManager = WeaponsManager.getInstance();
+        this.timeOfDayManager = TimeOfDayManager.getInstance();
 
         this.roomManager.loadPublicRooms();
         this.navigatorManager.loadNavigator();

@@ -118,6 +118,7 @@ public class GuildManager {
 
             if (type == GuildType.Gang) {
                 habbo.getHabboRoleplayStats().setGang(guild.getId());
+                habbo.shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_create_success").replace("%gang%", guild.getName()));
             }
 
         } catch (SQLException e) {
