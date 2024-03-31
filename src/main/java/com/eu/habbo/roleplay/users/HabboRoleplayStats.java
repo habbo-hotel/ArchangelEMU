@@ -204,7 +204,7 @@ public class HabboRoleplayStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, armor_now = ?, armor_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.healthNow);
                 statement.setInt(2, this.healthMax);
                 statement.setInt(3, this.energyNow);
@@ -217,7 +217,7 @@ public class HabboRoleplayStats implements Runnable {
                 if (this.gangID != null) statement.setInt(9, this.gangID);
                 if (this.gangID == null) statement.setNull(9, Types.INTEGER);
 
-                statement.setInt(9, this.habbo.getHabboInfo().getId());
+                statement.setInt(10, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

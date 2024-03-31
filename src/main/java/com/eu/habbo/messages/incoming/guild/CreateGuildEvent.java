@@ -53,41 +53,43 @@ public class CreateGuildEvent extends GuildBadgeEvent {
                 return;
             }
 
-            if (r.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
-                if (r.getRoomInfo().getGuild() == null) {
-                    int colorOne = this.packet.readInt();
-                    int colorTwo = this.packet.readInt();
-
-                    int count = this.packet.readInt();
-
-                    StringBuilder badge = createBadge(count);
-
-                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), type, roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
-
-                    r.getRoomInfo().setGuild(guild);
-                    r.getRoomRightsManager().removeAllRights(); //TODO Check if this is needed
-                    r.setNeedsUpdate(true);
-
-                    if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {
-                        Emulator.getBadgeImager().generate(guild);
-                    }
-
-                    this.client.sendResponse(new PurchaseOKMessageComposer());
-                    this.client.sendResponse(new GuildCreatedMessageComposer(guild));
-                    for (Habbo habbo : r.getRoomUnitManager().getCurrentHabbos().values()) {
-                        habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
-                    }
-                    r.refreshGuild(guild);
-
-                    Emulator.getPluginManager().fireEvent(new GuildPurchasedEvent(guild, this.client.getHabbo()));
-
-                    Emulator.getGameEnvironment().getGuildManager().addGuild(guild);
-                }
-            } else {
+            if (r.getRoomInfo().getOwnerInfo().getId() != this.client.getHabbo().getHabboInfo().getId()) {
                 String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getRoomInfo().getName().replace("%owner%", r.getRoomInfo().getOwnerInfo().getUsername()));
                 ScripterManager.scripterDetected(this.client, message);
                 log.info(message);
             }
+
+            if (r.getRoomInfo().getGuild() != null) {
+                return;
+            }
+
+            int colorOne = this.packet.readInt();
+            int colorTwo = this.packet.readInt();
+
+            int count = this.packet.readInt();
+
+            StringBuilder badge = createBadge(count);
+
+            Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), type, roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
+
+            r.getRoomInfo().setGuild(guild);
+            r.getRoomRightsManager().removeAllRights();
+            r.setNeedsUpdate(true);
+
+            if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {
+                Emulator.getBadgeImager().generate(guild);
+            }
+
+            this.client.sendResponse(new PurchaseOKMessageComposer());
+            this.client.sendResponse(new GuildCreatedMessageComposer(guild));
+            for (Habbo habbo : r.getRoomUnitManager().getCurrentHabbos().values()) {
+                habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
+            }
+            r.refreshGuild(guild);
+
+            Emulator.getPluginManager().fireEvent(new GuildPurchasedEvent(guild, this.client.getHabbo()));
+
+            Emulator.getGameEnvironment().getGuildManager().addGuild(guild);
         }
     }
 }

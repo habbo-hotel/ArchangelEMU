@@ -1,5 +1,8 @@
 package com.eu.habbo.roleplay.corp;
 
+import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.roleplay.database.CorpPositionRepository;
 import com.eu.habbo.roleplay.database.CorpRepository;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
@@ -24,6 +27,25 @@ public class CorpManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(CorpManager.class);
 
     private TIntObjectHashMap<Corp> corporations;
+
+    public void createCorp(Guild guild, String tags) {
+        CorpRepository.getInstance().upsertCorp(guild.getId(), tags);
+        CorpPositionRepository.getInstance().upsertCorpPosition(
+                guild.getId(),
+                1,
+                Emulator.getTexts().getValue("roleplay.corp.default_position_name"),
+                Emulator.getTexts().getValue("roleplay.corp.default_position_desc"),
+                0,
+                "-",
+                "-",
+                false,
+                false,
+                false,
+                false
+        );
+        CorpPosition newPosition = CorpPositionRepository.getInstance().getCorpPosition(guild.getId(), 1);
+        Emulator.getGameEnvironment().getHabboManager().getHabbo(guild.getOwnerId()).getHabboRoleplayStats().setCorp(guild.getId(), newPosition.getOrderID());
+    }
 
     public Corp getCorpByID(int corporationID) {
         return this.corporations.get(corporationID);

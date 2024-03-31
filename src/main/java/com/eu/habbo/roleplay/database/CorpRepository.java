@@ -34,11 +34,32 @@ public class CorpRepository {
         }
     }
 
+    public Corp getCorpByGuildID(int guildID) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations WHERE guild_id = ? ORDER BY guild_id ASC LIMIT 1")) {
+            statement.setInt(1, guildID);
+
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    return new Corp(set);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+        return null;
+    }
+
+
     public void upsertCorp(Corp corp) {
+        this.upsertCorp(corp.getGuild().getId(), corp.getTags().toString());
+    }
+
+    public void upsertCorp(int guildID, String tags) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations (guild_id, tags) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild_id = VALUES(guild_id), name = VALUES(name), tags = VALUES(tags)")) {
-                statement.setInt(1, corp.getGuild().getId());
-                statement.setString(2, String.join(";", corp.getTags()));
+                statement.setInt(1, guildID);
+                statement.setString(2, String.join(";", tags));
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
