@@ -1,16 +1,18 @@
 package com.eu.habbo.roleplay.corps;
 
+import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.database.CorporationPositionRepository;
 import com.eu.habbo.roleplay.database.CorporationRepository;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,17 +20,11 @@ import java.util.List;
 public class Corporation  implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CorporationPosition.class);
-    private int id;
-    private int userID;
-    @Setter
-    private int roomID;
-    @Setter
-    private String name;
-    @Setter
-    private String description;
     @Getter
-    @Setter
-    private String badgeCode;
+    private final Guild guild;
+    @Getter
+    private List<String> tags;
+    @Getter
     private TIntObjectHashMap<CorporationPosition> positions;
 
     public CorporationPosition getPositionByOrderID(int orderID) {
@@ -41,6 +37,8 @@ public class Corporation  implements Runnable {
         }
         return null;
     }
+
+    @Getter
     private TIntObjectHashMap<Habbo> invitedUsers;
 
     public void addInvitedUser(Habbo habbo) {
@@ -55,26 +53,16 @@ public class Corporation  implements Runnable {
         this.invitedUsers.remove(habbo.getHabboInfo().getId());
     }
 
-    @Getter
-    private List<String> tags;
 
     public CorporationPosition getPositionByID(int positionID) {
         return this.positions.get(positionID);
     }
 
     public Corporation(ResultSet set) throws SQLException {
-        this.load(set);
-    }
-
-    public void load(ResultSet set) throws SQLException {
-        this.id = set.getInt("id");
-        this.userID = set.getInt("user_id");
-        this.name = set.getString("name");
-        this.description = set.getString("description");
-        this.badgeCode = set.getString("badge_code");
-        this.roomID = set.getInt("room_id");
+        int guildID = set.getInt("guild_id");
+        this.guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildID);
         this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
-        this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions();
+        this.positions = CorporationPositionRepository.getInstance().getAllCorporationPositions(this.guild.getId());
         this.invitedUsers = new TIntObjectHashMap<>();
     }
 

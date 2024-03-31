@@ -66,11 +66,11 @@ public class CorpSuperHireCommand extends Command {
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_superhire_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())
-                .replace("%corp%", matchingCorp.getName())
+                .replace("%corp%", matchingCorp.getGuild().getName())
                 .replace("%position%", matchingPosition.getName()));
 
         targetedHabbo.shout(Emulator.getTexts().getValue("generic.roleplay.started_new_job").
-                replace("%corp%", matchingCorp.getName())
+                replace("%corp%", matchingCorp.getGuild().getName())
                 .replace("%position%", matchingPosition.getName()));
 
         return true;

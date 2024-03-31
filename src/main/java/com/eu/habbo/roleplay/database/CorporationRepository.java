@@ -36,13 +36,9 @@ public class CorporationRepository {
 
     public void upsertCorporation(Corporation corporation) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations (room_id, user_id, name, description, tags) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE room_id = VALUES(room_id), name = VALUES(name), description = VALUES(description), tags = VALUES(tags)")) {
-                statement.setInt(1, corporation.getRoomID());
-                statement.setInt(2, corporation.getUserID());
-                statement.setString(3, corporation.getName());
-                statement.setString(4, corporation.getDescription());
-                statement.setString(5, String.join(";", corporation.getTags()));
-                statement.setInt(6, corporation.getId());
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations (guild_id, tags) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild_id = VALUES(guild_id), name = VALUES(name), tags = VALUES(tags)")) {
+                statement.setInt(1, corporation.getGuild().getId());
+                statement.setString(2, String.join(";", corporation.getTags()));
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

@@ -49,7 +49,7 @@ public class CorpFireUserCommand extends Command {
 
         Corporation welfareCorp = GovernmentManager.getInstance().getWelfareCorp();
 
-        gameClient.getHabbo().getHabboRoleplayStats().setCorporation(welfareCorp.getId(), welfareCorp.getPositionByOrderID(1).getId());
+        gameClient.getHabbo().getHabboRoleplayStats().setCorporation(welfareCorp.getGuild().getId(), welfareCorp.getPositionByOrderID(1).getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_fire_success").replace("%username%", targetedHabbo.getHabboInfo().getUsername()));
         targetedHabbo.shout(Emulator.getTexts().getValue("commands.roleplay.cmd_fire_impacted"));

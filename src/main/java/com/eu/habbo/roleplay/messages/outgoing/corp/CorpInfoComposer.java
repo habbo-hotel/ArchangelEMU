@@ -15,12 +15,12 @@ public class CorpInfoComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         Corporation matchingCorp = CorporationManager.getInstance().getCorporationByID(this.corpID);
         this.response.init(Outgoing.corpInfoComposer);
-        this.response.appendInt(matchingCorp.getId());;
-        this.response.appendInt(matchingCorp.getUserID());;
-        this.response.appendInt(matchingCorp.getRoomID());
-        this.response.appendString(matchingCorp.getName());
-        this.response.appendString(matchingCorp.getDescription());
-        this.response.appendString(matchingCorp.getBadgeCode());
+        this.response.appendInt(matchingCorp.getGuild().getId());;
+        this.response.appendInt(matchingCorp.getGuild().getOwnerId());;
+        this.response.appendInt(matchingCorp.getGuild().getRoomId());
+        this.response.appendString(matchingCorp.getGuild().getName());
+        this.response.appendString(matchingCorp.getGuild().getDescription());
+        this.response.appendString(matchingCorp.getGuild().getBadge());
         return this.response;
     }
 }

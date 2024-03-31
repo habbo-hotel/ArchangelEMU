@@ -32,7 +32,7 @@ public class HabboRoleplayStats implements Runnable {
     private static HabboRoleplayStats createNewStats(Habbo habbo) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_users_stats (user_id, corporation_id, corporation_position_id) VALUES (?, ?, ?)")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
-            statement.setInt(2, GovernmentManager.getInstance().getWelfareCorp().getId());
+            statement.setInt(2, GovernmentManager.getInstance().getWelfareCorp().getGuild().getId());
             statement.setInt(3,GovernmentManager.getInstance().getWelfareCorp().getPositionByOrderID(1).getId());
             statement.executeUpdate();
         } catch (SQLException e) {

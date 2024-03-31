@@ -36,7 +36,7 @@ public class CorpPromoteCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getId() != targetedHabbo.getHabboRoleplayStats().getCorporation().getId()) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getGuild().getId() != targetedHabbo.getHabboRoleplayStats().getCorporation().getGuild().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_demote_not_allowed"));
             return true;
         }
@@ -63,15 +63,15 @@ public class CorpPromoteCommand extends Command {
             return true;
         }
 
-        targetedHabbo.getHabboRoleplayStats().setCorporation(targetedHabbo.getHabboRoleplayStats().getCorporation().getId(), newPosition.getId());
+        targetedHabbo.getHabboRoleplayStats().setCorporation(targetedHabbo.getHabboRoleplayStats().getCorporation().getGuild().getId(), newPosition.getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_promote_success")
                 .replace("%username%", targetedHabbo.getHabboInfo().getUsername())
-                .replace("%corp%", targetedHabbo.getHabboRoleplayStats().getCorporation().getName())
+                .replace("%corp%", targetedHabbo.getHabboRoleplayStats().getCorporation().getGuild().getName())
                 .replace("%position%", targetedHabbo.getHabboRoleplayStats().getCorporationPosition().getName()));
 
         targetedHabbo.shout(Emulator.getTexts().getValue("generic.roleplay.started_new_job").
-                replace("%corp%", targetedHabbo.getHabboRoleplayStats().getCorporation().getName())
+                replace("%corp%", targetedHabbo.getHabboRoleplayStats().getCorporation().getGuild().getName())
                 .replace("%position%", newPosition.getName()));
 
         return true;

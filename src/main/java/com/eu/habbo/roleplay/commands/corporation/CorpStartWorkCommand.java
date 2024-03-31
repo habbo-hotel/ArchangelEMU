@@ -18,7 +18,7 @@ public class CorpStartWorkCommand extends Command {
             return true;
         }
 
-        Corporation userEmployer = Emulator.getGameEnvironment().getCorporationManager().getCorporationByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getId());
+        Corporation userEmployer = Emulator.getGameEnvironment().getCorporationManager().getCorporationByID(gameClient.getHabbo().getHabboRoleplayStats().getCorporation().getGuild().getId());
 
         if (userEmployer == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_company_does_not_exist"));
@@ -32,14 +32,14 @@ public class CorpStartWorkCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != userEmployer.getRoomID()) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != userEmployer.getGuild().getRoomId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_not_in_boundaries"));
             return true;
         }
 
         Emulator.getGameEnvironment().getCorporationManager().getCorporationsShiftManager().startUserShift(gameClient.getHabbo());
         String userStartedWorkMessage = Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_success")
-                .replace("%corp%", userEmployer.getName())
+                .replace("%corp%", userEmployer.getGuild().getName())
                 .replace("%position%", userPosition.getName());
 
         gameClient.getHabbo().shout(userStartedWorkMessage);

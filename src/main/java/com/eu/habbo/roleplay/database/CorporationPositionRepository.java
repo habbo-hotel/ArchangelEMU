@@ -22,9 +22,11 @@ public class CorporationPositionRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CorporationPositionRepository.class);
 
-    public TIntObjectHashMap<CorporationPosition> getAllCorporationPositions() {
+    public TIntObjectHashMap<CorporationPosition> getAllCorporationPositions(int corporationId) {
         TIntObjectHashMap<CorporationPosition> corpPositions = new TIntObjectHashMap<>();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_corporations_positions ORDER BY id ASC")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_corporations_positions WHERE corporation_id = ? ORDER BY id ASC")) {
+            statement.setInt(1, corporationId);
+            ResultSet set = statement.executeQuery();
             while (set.next()) {
                 corpPositions.put(set.getInt("id"), new CorporationPosition(set));
             }
