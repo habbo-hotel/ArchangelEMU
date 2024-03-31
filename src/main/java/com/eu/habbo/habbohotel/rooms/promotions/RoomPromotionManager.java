@@ -48,11 +48,6 @@ public class RoomPromotionManager extends IRoomManager {
         return room.getRoomInfo().isPromoted();
     }
 
-    public String getPromotionDesc() {
-        return this.promotion != null ? this.promotion.getDescription() : "";
-
-    }
-
     public void createPromotion(String title, String description, int category) {
         room.getRoomInfo().setPromoted(true);
 

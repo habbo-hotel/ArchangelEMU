@@ -21,6 +21,7 @@ public class RoomPromotion {
 
     private String title;
 
+    @Getter
     private String description;
 
     private int endTimestamp;

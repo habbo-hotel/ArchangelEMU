@@ -21,6 +21,8 @@ public class CorpPosition implements Runnable {
     @Setter
     private String description;
     @Setter
+    private String activity;
+    @Setter
     private int salary;
     @Setter
     private String maleFigure;
@@ -49,6 +51,7 @@ public class CorpPosition implements Runnable {
         this.orderID = set.getInt("order_id");
         this.name = set.getString("name");
         this.description = set.getString("description");
+        this.activity = set.getString("activity");
         this.salary = set.getInt("salary");
         this.maleFigure = set.getString("male_figure");
         this.femaleFigure = set.getString("female_figure");

@@ -193,24 +193,9 @@ public class RoomInfo {
         return this.guild != null;
     }
 
-    public String getOwnerName() {
-        return this.getOwnerInfo().getUsername();
-    }
 
     public boolean isRoomOwner(Habbo owner) {
         return this.ownerInfo.getId() == owner.getHabboInfo().getId() || owner.hasPermissionRight(Permission.ACC_ANYROOMOWNER);
-    }
-
-    public String[] filterAnything() {
-        return new String[]{this.getOwnerInfo().getUsername(), this.getGuildName(), this.getDescription()};
-    }
-
-    public String getGuildName() {
-        if (this.guild == null) {
-            return "";
-        }
-
-        return this.guild.getName();
     }
 
     public void setName(String name) {

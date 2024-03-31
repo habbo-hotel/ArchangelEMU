@@ -46,6 +46,7 @@ public class CorpShiftManager {
         String jobUniform = habbo.getHabboInfo().getGender() == HabboGender.M ? habbo.getHabboRoleplayStats().getCorpPosition().getMaleFigure() : habbo.getHabboRoleplayStats().getCorpPosition().getFemaleFigure();
         habbo.getHabboInfo().changeClothes(jobUniform);
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
+        habbo.getHabboInfo().setMotto(habbo.getHabboRoleplayStats().getCorpPosition().getActivity());
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
         habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(habbo).compose());
     }
@@ -88,6 +89,7 @@ public class CorpShiftManager {
         if (!startNewShift) {
             habbo.shout(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_stopped"));
             habbo.getHabboInfo().changeClothes(userShift.getOldLook());
+            habbo.getHabboInfo().setMotto(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_motto"));
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             if (habbo.getRoomUnit().getRoom() != null) {
                 habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
