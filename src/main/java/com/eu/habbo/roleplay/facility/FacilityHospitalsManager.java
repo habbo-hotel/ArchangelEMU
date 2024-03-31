@@ -48,7 +48,14 @@ public class FacilityHospitalsManager {
 
     public void startHealingProcess() {
         Runnable healTask = () -> {
+            if (usersToHeal.isEmpty()) {
+                this.stopHealingProcess();
+            }
             for (Habbo user : usersToHeal) {
+                if (user.getHabboRoleplayStats().getHealthNow() >= user.getHabboRoleplayStats().getHealthMax()) {
+                    this.removeUserToHeal(user);
+                    return;
+                }
                 user.getHabboRoleplayStats().setHealth(user.getHabboRoleplayStats().getHealthNow() + 5);
             }
         };

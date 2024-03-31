@@ -114,6 +114,16 @@ public abstract class RoomUnit extends RoomEntity {
     public void cycle() {
         if(this.isWalking()) {
             this.processWalking();
+            Collection<RoomUnit> roomUnits = this.getRoom().getRoomUnitManager().getRoomUnitsAt(this.currentPosition);
+            this.getRoom().getRoomItemManager().getItemsAt(this.currentPosition).forEach(item -> {
+                roomUnits.forEach(roomUnit -> {
+                    try {
+                        item.onWalkOn(roomUnit, this.room, new Object[0]);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            });
         } else {
             this.stopWalking();
         }
