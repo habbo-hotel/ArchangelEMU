@@ -50,14 +50,13 @@ public class CorpRepository {
         return null;
     }
 
-
     public void upsertCorp(Corp corp) {
         this.upsertCorp(corp.getGuild().getId(), corp.getTags().toString());
     }
 
     public void upsertCorp(int guildID, String tags) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations (guild_id, tags) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild_id = VALUES(guild_id), name = VALUES(name), tags = VALUES(tags)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_corporations (guild_id, tags) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild_id = VALUES(guild_id), tags = VALUES(tags)")) {
                 statement.setInt(1, guildID);
                 statement.setString(2, String.join(";", tags));
                 statement.executeUpdate();

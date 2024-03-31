@@ -44,7 +44,7 @@ public class CorpManager {
                 false
         );
         CorpPosition newPosition = CorpPositionRepository.getInstance().getCorpPosition(guild.getId(), 1);
-        Emulator.getGameEnvironment().getHabboManager().getHabbo(guild.getOwnerId()).getHabboRoleplayStats().setCorp(guild.getId(), newPosition.getOrderID());
+        Emulator.getGameEnvironment().getHabboManager().getHabbo(guild.getOwnerId()).getHabboRoleplayStats().setCorp(guild.getId(), newPosition.getId());
     }
 
     public Corp getCorpByID(int corporationID) {
