@@ -1,12 +1,12 @@
 package com.eu.habbo.messages.incoming.guild;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.guilds.GuildChangedNameEvent;
-import com.eu.habbo.roleplay.guilds.GuildType;
+import com.eu.habbo.habbohotel.guilds.GuildType;
 
 public class UpdateGuildIdentityEvent extends MessageHandler {
     @Override

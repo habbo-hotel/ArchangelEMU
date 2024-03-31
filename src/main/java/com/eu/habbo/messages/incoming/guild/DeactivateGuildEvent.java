@@ -1,8 +1,8 @@
 package com.eu.habbo.messages.incoming.guild;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.guilds.Guild;
-import com.eu.habbo.roleplay.guilds.GuildMember;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;

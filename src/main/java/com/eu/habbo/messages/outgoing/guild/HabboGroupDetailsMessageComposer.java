@@ -2,10 +2,10 @@ package com.eu.habbo.messages.outgoing.guild;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.guilds.Guild;
-import com.eu.habbo.roleplay.guilds.GuildMember;
-import com.eu.habbo.roleplay.guilds.GuildMembershipStatus;
-import com.eu.habbo.roleplay.guilds.GuildRank;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildMember;
+import com.eu.habbo.habbohotel.guilds.GuildMembershipStatus;
+import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;

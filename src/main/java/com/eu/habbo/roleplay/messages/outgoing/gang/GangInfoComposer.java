@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

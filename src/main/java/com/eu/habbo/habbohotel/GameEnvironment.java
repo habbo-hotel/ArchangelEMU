@@ -12,7 +12,7 @@ import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.commands.CommandsManager;
 import com.eu.habbo.habbohotel.crafting.CraftingManager;
 import com.eu.habbo.habbohotel.guides.GuideManager;
-import com.eu.habbo.roleplay.guilds.GuildManager;
+import com.eu.habbo.habbohotel.guilds.GuildManager;
 import com.eu.habbo.habbohotel.hotelview.HotelViewManager;
 import com.eu.habbo.habbohotel.items.ItemManager;
 import com.eu.habbo.habbohotel.modtool.ModToolManager;

@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.games.tag.BunnyrunGame;
 import com.eu.habbo.habbohotel.games.tag.IceTagGame;
 import com.eu.habbo.habbohotel.games.tag.RollerskateGame;
 import com.eu.habbo.habbohotel.games.wired.WiredGame;
-import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.navigation.NavigatorFilterComparator;

@@ -1,6 +1,6 @@
 package com.eu.habbo.plugin.events.guilds.forums;
 
-import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.plugin.Event;
 

@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.SoundTrack;

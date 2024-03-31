@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.outgoing.guild.forums;
 
-import com.eu.habbo.roleplay.guilds.forums.ForumThread;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;

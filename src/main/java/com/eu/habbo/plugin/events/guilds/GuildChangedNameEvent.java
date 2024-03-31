@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.guilds;
 
-import com.eu.habbo.roleplay.guilds.Guild;
-import com.eu.habbo.roleplay.guilds.GuildType;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildType;
 import lombok.Getter;
 
 @Getter

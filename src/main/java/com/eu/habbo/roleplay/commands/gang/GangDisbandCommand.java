@@ -3,8 +3,8 @@ package com.eu.habbo.roleplay.commands.gang;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.guilds.Guild;
-import com.eu.habbo.roleplay.guilds.GuildRank;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildRank;
 
 public class GangDisbandCommand extends Command {
     public GangDisbandCommand() {

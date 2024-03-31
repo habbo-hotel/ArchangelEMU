@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.guilds;
+package com.eu.habbo.habbohotel.guilds;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;

@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.guilds.forums;
+package com.eu.habbo.habbohotel.guilds.forums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
