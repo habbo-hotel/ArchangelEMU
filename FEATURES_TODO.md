@@ -16,6 +16,7 @@
 # Corporations
 - Job skills: Paramedic, Nurse, Police Officer
 - Ability to work anywhere for defined roles
+- Move shift system to room cycle
 
 # Police
 - Stun players

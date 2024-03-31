@@ -342,7 +342,6 @@ public class RoomUnitManager extends IRoomManager {
                 List<Integer> rollerFurniIds = new ArrayList<>();
                 List<Integer> rolledUnitIds = new ArrayList<>();
 
-
                 room.getRoomSpecialTypes().getRollers().forEachValue(roller -> {
 
                     RoomItem newRoller = null;

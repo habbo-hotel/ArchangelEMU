@@ -438,7 +438,7 @@ public class Outgoing {
 
     public static final int corpPositionInfoComposer = 9004;
 
-    public static final int gangPositionInfoComposer = 9005;
+    public static final int userWardrobeOpenComposer = 9005;
 
 
 }
