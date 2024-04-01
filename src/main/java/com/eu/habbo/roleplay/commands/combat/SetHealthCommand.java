@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-
 public class SetHealthCommand extends Command {
     public SetHealthCommand() {
         super("cmd_sethealth");

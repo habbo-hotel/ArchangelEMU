@@ -45,7 +45,6 @@ public class EscortCommand extends Command {
         }
 
         if (gameClient.getHabbo().getHabboRoleplayStats().getIsEscorting() != null && gameClient.getHabbo().getHabboRoleplayStats().getIsEscorting().getHabboInfo().getId() == targetedHabbo.getHabboInfo().getId()) {
-            targetedHabbo.getHabboRoleplayStats().setEscortedBy(null);
             gameClient.getHabbo().getHabboRoleplayStats().setIsEscorting(null);
             return true;
         }

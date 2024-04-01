@@ -152,11 +152,18 @@ public class HabboRoleplayStats implements Runnable {
         this.habbo.getRoomUnit().setCanWalk(isDead);
 
         if (this.isDead) {
+
+            if (this.habbo.getHabboRoleplayStats().getIsEscorting() != null) {
+                this.habbo.getHabboRoleplayStats().setIsEscorting(null);
+            }
+
             this.habbo.shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
             Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
+
             if (hospitalRoom == null) {
                 return;
             }
+
             this.habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
             THashSet<RoomItem> hospitalBedItems = hospitalRoom.getRoomSpecialTypes().getItemsOfType(InteractionHospitalBed.class);
             for (RoomItem hospitalBedItem : hospitalBedItems) {
@@ -167,6 +174,7 @@ public class HabboRoleplayStats implements Runnable {
                 }
                 this.habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
             }
+
         }
 
 
@@ -192,12 +200,17 @@ public class HabboRoleplayStats implements Runnable {
     }
 
     public void setIsEscorting(Habbo user) {
-        this.isEscorting = user;
-        if (isEscorting == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_stop"));
-            return;
+        Habbo oldUser = this.isEscorting;
+        if (oldUser != null && oldUser != user) {
+            oldUser.getHabboRoleplayStats().setEscortedBy(null);
         }
-        this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_start").replace(":username", user.getHabboInfo().getUsername()));
+        if (oldUser == null && user == null) {
+            this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_stop"));
+        }
+        if (user != null) {
+            this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_start").replace(":username", user.getHabboInfo().getUsername()));
+        }
+        this.isEscorting = user;
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 

@@ -17,7 +17,6 @@ public class EscortUserAction implements Runnable {
 
             if (this.user.getHabboRoleplayStats().getIsEscorting() == null || this.userBeingEscorted.getHabboRoleplayStats().getEscortedBy() == null) {
                 this.user.getHabboRoleplayStats().setIsEscorting(null);
-                this.userBeingEscorted.getHabboRoleplayStats().setEscortedBy(null);
                 return;
             }
 

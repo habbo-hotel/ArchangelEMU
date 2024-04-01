@@ -22,6 +22,11 @@ public class RoleplayHelper {
 
         String targetedUsername = params[1];
 
+        if (gameClient.getHabbo().getHabboRoleplayStats().isStunned() || gameClient.getHabbo().getHabboRoleplayStats().isCuffed() || gameClient.getHabbo().getHabboRoleplayStats().getEscortedBy() != null || gameClient.getHabbo().getHabboRoleplayStats().isDead()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.generic.not_allowed"));
+            return null;
+        }
+
         if (targetedUsername == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found"));
             return null;
