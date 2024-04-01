@@ -11,8 +11,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FacilityPrisonManager {
 
-    public static String PRISON_ROOM_TAG = "prison";
-
+    public static String PRISON_TAG = "prison";
+    
     private static FacilityPrisonManager instance;
 
     public static FacilityPrisonManager getInstance() {
@@ -29,7 +29,7 @@ public class FacilityPrisonManager {
         LOGGER.info("Prison Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
     public Room getPrison() {
-        return FacilityManager.getFirstRoomWithTag(FacilityPrisonManager.PRISON_ROOM_TAG);
+        return FacilityManager.getFirstRoomWithTag(FacilityPrisonManager.PRISON_TAG);
     }
 
     public PrisonSentence getPrisonTime(Habbo user) {

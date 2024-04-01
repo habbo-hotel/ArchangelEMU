@@ -81,6 +81,10 @@ public class HabboRoleplayStats implements Runnable {
     private Integer gangID;
     @Getter
     private boolean isDead;
+    @Getter
+    private boolean isStunned;
+    @Getter
+    private boolean isCuffed;
 
     public void setHealth(int healthCurrent) {
         this.setHealth(healthCurrent, false);
@@ -104,9 +108,7 @@ public class HabboRoleplayStats implements Runnable {
         if (this.healthNow > 0 && this.isDead) {
             this.setIsDead(false);
         }
-
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
-
     }
 
     public Corp getCorp() {
@@ -143,6 +145,7 @@ public class HabboRoleplayStats implements Runnable {
 
     public void setIsDead(boolean isDead) {
         this.isDead = isDead;
+        this.habbo.getRoomUnit().setCanWalk(isDead);
 
         if (this.isDead) {
             this.habbo.shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
@@ -162,6 +165,18 @@ public class HabboRoleplayStats implements Runnable {
                 this.habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
             }
         }
+    }
+
+    public void setIsStunned(boolean isStunned) {
+        this.isStunned = isStunned;
+        this.habbo.getRoomUnit().setCanWalk(isStunned);
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+    }
+
+    public void setIsCuffed(boolean isCuffed) {
+        this.isCuffed = isCuffed;
+        if (!this.isStunned) this.habbo.getRoomUnit().setCanWalk(isCuffed);
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
     public int getDamageModifier() {

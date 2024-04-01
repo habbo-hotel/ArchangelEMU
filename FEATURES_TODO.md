@@ -1,5 +1,6 @@
 # Game
 - Day and night system
+- Bank system
 
 # Combat
 - Cover system that deflects bullets 

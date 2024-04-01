@@ -20,6 +20,9 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboInfo().getCredits());
         this.response.appendInt(0); // TODO: Bank
         this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isDead());
+        this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isStunned());
+        this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isCuffed());
+        this.response.appendBoolean(CorpShiftManager.getInstance().isUserWorking(this.habbo));
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthMax());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getEnergyNow());
@@ -28,7 +31,6 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerMax());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorp().getGuild().getId());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorpPosition().getId());
-        this.response.appendBoolean(CorpShiftManager.getInstance().isUserWorking(this.habbo));
         if (this.habbo.getHabboRoleplayStats().getGang() != null) {
             this.response.appendInt(this.habbo.getHabboRoleplayStats().getGang().getId());
         } else {
