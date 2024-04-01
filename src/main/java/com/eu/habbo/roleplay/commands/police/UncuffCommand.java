@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.corp.Corp;
-import com.eu.habbo.roleplay.facility.FacilityPrisonManager;
+import com.eu.habbo.roleplay.corp.CorpType;
 
 public class UncuffCommand extends Command {
     public UncuffCommand() {
@@ -28,7 +28,7 @@ public class UncuffCommand extends Command {
             return true;
         }
 
-        if (!corp.getTags().contains(FacilityPrisonManager.PRISON_TAG)) {
+        if (!corp.getTags().contains(CorpType.POLICE)) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.police_only"));
             return true;
         }

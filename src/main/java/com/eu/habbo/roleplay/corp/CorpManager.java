@@ -41,6 +41,7 @@ public class CorpManager {
                 false,
                 false,
                 false,
+                false,
                 false
         );
         CorpPosition newPosition = CorpPositionRepository.getInstance().getCorpPosition(guild.getId(), 1);

@@ -40,6 +40,9 @@ public class CorpPosition implements Runnable {
     @Getter
     @Setter
     private boolean canDemote;
+    @Getter
+    @Setter
+    private boolean canWorkAnywhere;
 
     public CorpPosition(ResultSet set) throws SQLException {
         this.load(set);
@@ -59,6 +62,7 @@ public class CorpPosition implements Runnable {
         this.canFire = set.getInt("can_fire") == 1;
         this.canPromote = set.getInt("can_promote") == 1;
         this.canDemote = set.getInt("can_demote") == 1;
+        this.canWorkAnywhere = set.getInt("can_work_anywhere") == 1;
     }
 
     @Override
