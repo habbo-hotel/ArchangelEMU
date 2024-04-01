@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
+import com.eu.habbo.roleplay.corp.CorpShiftManager;
 import com.eu.habbo.roleplay.facility.FacilityHospitalManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
@@ -187,6 +188,10 @@ public class HabboRoleplayStats implements Runnable {
             damageModifier += random.nextInt(equippedWeapon.getMaxDamage() - equippedWeapon.getMinDamage() + equippedWeapon.getMaxDamage());
         }
         return damageModifier;
+    }
+
+    public boolean isWorking() {
+        return CorpShiftManager.getInstance().isUserWorking(this.habbo);
     }
 
     private HabboRoleplayStats(ResultSet set, Habbo habbo) throws SQLException {

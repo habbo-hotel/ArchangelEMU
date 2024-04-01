@@ -65,6 +65,10 @@ import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
+import com.eu.habbo.roleplay.messages.incoming.police.PoliceArrestEvent;
+import com.eu.habbo.roleplay.messages.incoming.police.PoliceCuffEvent;
+import com.eu.habbo.roleplay.messages.incoming.police.PoliceStunEvent;
+import com.eu.habbo.roleplay.messages.incoming.police.PoliceUncuffEvent;
 import com.eu.habbo.roleplay.messages.incoming.users.UserRoleplayStatsQueryComposer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -963,7 +967,15 @@ public enum Incoming {
 
     corpPositionInfoQueryEvent(8018, CorpPositionInfoQueryEvent.class),
 
-    timeOfDayQueryEvent(8019, TimeOfDayQueryEvent.class);
+    timeOfDayQueryEvent(8019, TimeOfDayQueryEvent.class),
+
+    policeArrestEvent(8020, PoliceArrestEvent.class),
+
+    policeCuffEvent(8021, PoliceCuffEvent.class),
+
+    policeStunEvent(8022, PoliceStunEvent.class),
+
+    policeUncuffEvent(8023, PoliceUncuffEvent.class);
 
 
     private final int messageId;

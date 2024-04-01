@@ -33,6 +33,11 @@ public class UncuffCommand extends Command {
             return true;
         }
 
+        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
+            return true;
+        }
+
         if (!targetedHabbo.getHabboRoleplayStats().isCuffed()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_uncuff_user_isnt_cuffed").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
             return true;
