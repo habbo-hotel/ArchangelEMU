@@ -39,7 +39,8 @@ public class CuffCommand extends Command {
         }
 
         if (targetedHabbo.getHabboRoleplayStats().isCuffed()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_cuff_already_stunned").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
+            targetedHabbo.getHabboRoleplayStats().setIsCuffed(false);
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay_cmd_uncuff_success").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
             return true;
         }
 

@@ -570,6 +570,8 @@ public class RoomManager {
         if (CorpShiftManager.getInstance().isUserWorking(habbo)) {
             CorpShiftManager.getInstance().stopUserShift(habbo, false, false);
         }
+
+        habbo.getHabboInfo().setHomeRoom(room.getRoomInfo().getId());
     }
 
     void openRoom(Habbo habbo, Room room, RoomTile spawnLocation) {

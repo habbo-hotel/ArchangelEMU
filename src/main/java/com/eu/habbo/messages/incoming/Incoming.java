@@ -972,8 +972,6 @@ public enum Incoming {
 
     policeStunEvent(8022, PoliceStunEvent.class),
 
-    policeUncuffEvent(8023, PoliceUncuffEvent.class),
-
     policeEscortEvent(8024, PoliceEscortEvent.class);
 
 

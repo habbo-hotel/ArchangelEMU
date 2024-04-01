@@ -39,7 +39,8 @@ public class StunCommand extends Command {
         }
 
         if (targetedHabbo.getHabboRoleplayStats().isStunned()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stun_already_stunned").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
+            targetedHabbo.getHabboRoleplayStats().setIsStunned(false);
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stun_unstunned_user").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
             return true;
         }
 

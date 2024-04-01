@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomSpecialTypes;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -159,7 +158,6 @@ public class HabboRoleplayStats implements Runnable {
                 return;
             }
             this.habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
-            RoomSpecialTypes types = hospitalRoom.getRoomSpecialTypes();
             THashSet<RoomItem> hospitalBedItems = hospitalRoom.getRoomSpecialTypes().getItemsOfType(InteractionHospitalBed.class);
             for (RoomItem hospitalBedItem : hospitalBedItems) {
                 List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(hospitalRoom.getLayout());
