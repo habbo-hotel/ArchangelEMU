@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class FacilityManager {
     private static FacilityManager instance;
 
@@ -16,17 +17,19 @@ public class FacilityManager {
         return instance;
     }
 
-    @Getter
-    private final FacilityHospitalsManager facilityHospitalsManager;
+    private final FacilityHospitalManager facilityHospitalManager;
+
+    private  final FacilityPrisonManager facilityPrisonManager;
 
     private FacilityManager() {
-        this.facilityHospitalsManager =FacilityHospitalsManager.getInstance();
-        this.facilityHospitalsManager.cycle();
+        this.facilityHospitalManager = FacilityHospitalManager.getInstance();
+        this.facilityPrisonManager = FacilityPrisonManager.getInstance();
+        this.facilityHospitalManager.cycle();
     }
 
     public void cycle(Room room) {
-        if (room.getRoomInfo().getId() == FacilityHospitalsManager.getInstance().getHospital().getRoomInfo().getId()) {
-            FacilityHospitalsManager.getInstance().cycle();
+        if (room.getRoomInfo().getId() == FacilityHospitalManager.getInstance().getHospital().getRoomInfo().getId()) {
+            FacilityHospitalManager.getInstance().cycle();
         }
     }
 

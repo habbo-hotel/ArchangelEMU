@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
+import com.eu.habbo.roleplay.facility.FacilityHospitalManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ public class InteractionHospitalBed extends InteractionDefault {
         if (this.habbo.getHabboRoleplayStats().getHealthNow() >= this.habbo.getHabboRoleplayStats().getHealthMax()) {
             return;
         }
-        FacilityHospitalsManager.getInstance().addUserToHeal(this.habbo);
+        FacilityHospitalManager.getInstance().addUserToHeal(this.habbo);
     }
 
     @Override
@@ -45,6 +45,6 @@ public class InteractionHospitalBed extends InteractionDefault {
         if (this.habbo == null) {
             return;
         }
-        FacilityHospitalsManager.getInstance().removeUserToHeal(this.habbo);
+        FacilityHospitalManager.getInstance().removeUserToHeal(this.habbo);
     }
 }

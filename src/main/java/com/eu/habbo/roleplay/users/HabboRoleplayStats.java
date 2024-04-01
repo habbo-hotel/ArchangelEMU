@@ -1,6 +1,8 @@
 package com.eu.habbo.roleplay.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomSpecialTypes;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -9,10 +11,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
-import com.eu.habbo.roleplay.facility.FacilityHospitalsManager;
+import com.eu.habbo.roleplay.facility.FacilityHospitalManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
-import com.eu.habbo.habbohotel.guilds.Guild;
-import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
@@ -146,7 +146,7 @@ public class HabboRoleplayStats implements Runnable {
 
         if (this.isDead) {
             this.habbo.shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
-            Room hospitalRoom = FacilityHospitalsManager.getInstance().getHospital();
+            Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
             if (hospitalRoom == null) {
                 return;
             }

@@ -1,3 +1,6 @@
+# Game
+- Day and night system
+
 # Combat
 - Cover system that deflects bullets 
 - Item health

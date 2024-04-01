@@ -9,27 +9,27 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class FacilityHospitalsManager {
+public class FacilityHospitalManager {
 
     public static String HOSPITAL_ROOM_TAG = "hospital";
 
-    private static FacilityHospitalsManager instance;
+    private static FacilityHospitalManager instance;
 
-    public static FacilityHospitalsManager getInstance() {
+    public static FacilityHospitalManager getInstance() {
         if (instance == null) {
-            instance = new FacilityHospitalsManager();
+            instance = new FacilityHospitalManager();
         }
         return instance;
     }
-    private static final Logger LOGGER = LoggerFactory.getLogger(FacilityHospitalsManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FacilityHospitalManager.class);
     private final List<Habbo> usersToHeal;
-    private FacilityHospitalsManager() {
+    private FacilityHospitalManager() {
         long millis = System.currentTimeMillis();
         this.usersToHeal = new CopyOnWriteArrayList<>();
         LOGGER.info("Hospital Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
     public Room getHospital() {
-        return FacilityManager.getFirstRoomWithTag(FacilityHospitalsManager.HOSPITAL_ROOM_TAG);
+        return FacilityManager.getFirstRoomWithTag(FacilityHospitalManager.HOSPITAL_ROOM_TAG);
     }
 
     public void addUserToHeal(Habbo user) {
@@ -44,7 +44,7 @@ public class FacilityHospitalsManager {
         if (this.usersToHeal.get(user.getHabboInfo().getId()) == null) {
             return;
         }
-        this.usersToHeal.remove(user);
+        this.usersToHeal.remove(user.getHabboInfo().getId());
         user.shout(Emulator.getTexts().getValue("roleplay.hospital.stops_healing"));
     }
 
