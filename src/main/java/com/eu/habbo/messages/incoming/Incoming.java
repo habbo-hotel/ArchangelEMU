@@ -63,6 +63,7 @@ import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
+import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
 import com.eu.habbo.roleplay.messages.incoming.users.UserRoleplayStatsQueryComposer;
 import lombok.Getter;
@@ -960,7 +961,9 @@ public enum Incoming {
 
     gangInfoQueryEvent(8017, GangInfoQueryEvent.class),
 
-    corpPositionInfoQueryEvent(8018, CorpPositionInfoQueryEvent.class);
+    corpPositionInfoQueryEvent(8018, CorpPositionInfoQueryEvent.class),
+
+    timeOfDayQueryEvent(8019, TimeOfDayQueryEvent.class);
 
 
     private final int messageId;
