@@ -14,19 +14,21 @@ public class EscortUserAction implements Runnable {
     @Override
     public void run() {
         if (this.user != null && this.user.getRoomUnit() != null && this.userBeingEscorted != null && this.userBeingEscorted.getRoomUnit() != null) {
+
+            if (this.user.getHabboRoleplayStats().getIsEscorting() == null || this.userBeingEscorted.getHabboRoleplayStats().getEscortedBy() == null) {
+                this.user.getHabboRoleplayStats().setIsEscorting(null);
+                this.userBeingEscorted.getHabboRoleplayStats().setEscortedBy(null);
+                return;
+            }
+
             RoomTile target = this.user.getRoomUnit().getRoom().getLayout().getTileInFront(this.user.getRoomUnit().getCurrentPosition(), Math.abs((this.user.getRoomUnit().getBodyRotation().getValue() + this.directionOffset + 4) % 8));
 
             if (target != null && target.getX() >= 0 && target.getY() >= 0) {
                 this.userBeingEscorted.getRoomUnit().walkTo(target);
                 this.userBeingEscorted.getRoomUnit().setCanWalk(true);
-
-                if (target.distance(this.userBeingEscorted.getRoomUnit().getCurrentPosition()) <= 2) {
-                    Emulator.getThreading().run(this, 200);
-                } else {
-                    this.user.getHabboRoleplayStats().setIsEscorting(null);
-                    this.userBeingEscorted.getHabboRoleplayStats().setEscortedBy(null);
-                }
             }
+
+            Emulator.getThreading().run(this, 20);
         }
     }
 }
