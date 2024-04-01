@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
+import com.eu.habbo.roleplay.actions.EscortUserAction;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpType;
 
@@ -43,14 +44,13 @@ public class EscortCommand extends Command {
             return true;
         }
 
-
+        if (gameClient.getHabbo().getHabboRoleplayStats().getIsEscorting() != null && gameClient.getHabbo().getHabboRoleplayStats().getIsEscorting().getHabboInfo().getId() == targetedHabbo.getHabboInfo().getId()) {
+            targetedHabbo.getHabboRoleplayStats().setEscortedBy(null);
+            gameClient.getHabbo().getHabboRoleplayStats().setIsEscorting(null);
+            return true;
+        }
 
         if (targetedHabbo.getHabboRoleplayStats().getEscortedBy() != null) {
-            if (targetedHabbo.getHabboRoleplayStats().getEscortedBy() == gameClient.getHabbo().getHabboInfo().getId()) {
-                targetedHabbo.getHabboRoleplayStats().setEscortedBy(null);
-                gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_stop").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
-                return true;
-            }
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_escort_in_progress").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
             return true;
         }
@@ -67,9 +67,9 @@ public class EscortCommand extends Command {
             return true;
         }
 
-        targetedHabbo.getHabboRoleplayStats().setEscortedBy(gameClient.getHabbo().getHabboInfo().getId());
-
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_success").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
+        gameClient.getHabbo().getHabboRoleplayStats().setIsEscorting(targetedHabbo.getClient().getHabbo());
+        targetedHabbo.getHabboRoleplayStats().setEscortedBy(gameClient.getHabbo());
+        Emulator.getThreading().run(new EscortUserAction(gameClient.getHabbo(), targetedHabbo, 0));
 
         return true;
     }

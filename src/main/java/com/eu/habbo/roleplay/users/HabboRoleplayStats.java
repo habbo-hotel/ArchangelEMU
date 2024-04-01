@@ -87,7 +87,9 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private boolean isCuffed;
     @Getter
-    private Integer escortedBy;
+    private Habbo escortedBy;
+    @Getter
+    private Habbo isEscorting;
 
     public void setHealth(int healthCurrent) {
         this.setHealth(healthCurrent, false);
@@ -168,6 +170,9 @@ public class HabboRoleplayStats implements Runnable {
                 this.habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
             }
         }
+
+
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
     public void setIsStunned(boolean isStunned) {
@@ -182,9 +187,19 @@ public class HabboRoleplayStats implements Runnable {
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
-    public void setEscortedBy(Integer escortedBy) {
+    public void setEscortedBy(Habbo escortedBy) {
         this.escortedBy = escortedBy;
-        if (!this.isCuffed) this.habbo.getRoomUnit().setCanWalk(escortedBy != 1);
+        if (!this.isCuffed) this.habbo.getRoomUnit().setCanWalk(escortedBy != null);
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+    }
+
+    public void setIsEscorting(Habbo user) {
+        this.isEscorting = user;
+        if (isEscorting == null) {
+            this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_stop"));
+            return;
+        }
+        this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_start").replace(":username", user.getHabboInfo().getUsername()));
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
