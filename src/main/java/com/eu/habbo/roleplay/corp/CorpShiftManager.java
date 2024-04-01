@@ -36,7 +36,7 @@ public class CorpShiftManager {
         this.activeUserShifts = new HashMap<>();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.startShiftManager();
-        LOGGER.info("Corporations Shift Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Corp Shift Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
 

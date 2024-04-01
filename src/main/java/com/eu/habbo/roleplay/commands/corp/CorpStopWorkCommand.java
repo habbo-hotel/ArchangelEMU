@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.roleplay.corp.CorporationShift;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 
 public class CorpStopWorkCommand extends Command {
     public CorpStopWorkCommand() {
@@ -22,7 +23,7 @@ public class CorpStopWorkCommand extends Command {
 
         Emulator.getGameEnvironment().getCorpManager().getCorpShiftManager().stopUserShift(gameClient.getHabbo());
         gameClient.getHabbo().getHabboInfo().setLook(userShift.getOldLook());
-        // Trigger user look changed
+        gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
         return true;
     }
 }

@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpPosition;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 
 public class CorpStartWorkCommand extends Command {
     public CorpStartWorkCommand() {
@@ -43,6 +44,9 @@ public class CorpStartWorkCommand extends Command {
                 .replace("%position%", userPosition.getName());
 
         gameClient.getHabbo().shout(userStartedWorkMessage);
+
+
+        gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
 
         return true;
     }

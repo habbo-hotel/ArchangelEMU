@@ -86,6 +86,8 @@ public class HabboRoleplayStats implements Runnable {
     private boolean isStunned;
     @Getter
     private boolean isCuffed;
+    @Getter
+    private Integer escortedBy;
 
     public void setHealth(int healthCurrent) {
         this.setHealth(healthCurrent, false);
@@ -177,6 +179,12 @@ public class HabboRoleplayStats implements Runnable {
     public void setIsCuffed(boolean isCuffed) {
         this.isCuffed = isCuffed;
         if (!this.isStunned) this.habbo.getRoomUnit().setCanWalk(isCuffed);
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+    }
+
+    public void setEscortedBy(Integer escortedBy) {
+        this.escortedBy = escortedBy;
+        if (!this.isCuffed) this.habbo.getRoomUnit().setCanWalk(escortedBy != 1);
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 

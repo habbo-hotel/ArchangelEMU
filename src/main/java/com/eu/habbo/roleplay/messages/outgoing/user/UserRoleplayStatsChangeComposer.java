@@ -23,6 +23,7 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isStunned());
         this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isCuffed());
         this.response.appendBoolean(CorpShiftManager.getInstance().isUserWorking(this.habbo));
+        this.response.appendInt(this.habbo.getHabboRoleplayStats().getEscortedBy() != null ? this.habbo.getHabboRoleplayStats().getEscortedBy() : 0);
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthMax());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getEnergyNow());

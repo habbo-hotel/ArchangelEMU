@@ -39,10 +39,7 @@ import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
 import com.eu.habbo.roleplay.commands.corp.*;
 import com.eu.habbo.roleplay.commands.gang.*;
-import com.eu.habbo.roleplay.commands.police.ArrestCommand;
-import com.eu.habbo.roleplay.commands.police.CuffCommand;
-import com.eu.habbo.roleplay.commands.police.StunCommand;
-import com.eu.habbo.roleplay.commands.police.UncuffCommand;
+import com.eu.habbo.roleplay.commands.police.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -343,6 +340,7 @@ public class CommandsManager {
         // Police
         addCommand(new ArrestCommand());
         addCommand(new CuffCommand());
+        addCommand(new EscortCommand());
         addCommand(new StunCommand());
         addCommand(new UncuffCommand());
     }
