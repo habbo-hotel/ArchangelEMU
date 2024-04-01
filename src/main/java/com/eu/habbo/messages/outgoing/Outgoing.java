@@ -440,5 +440,7 @@ public class Outgoing {
 
     public static final int userWardrobeOpenComposer = 9005;
 
+    public static final int timeOfDayComposer = 9006;
+
 
 }

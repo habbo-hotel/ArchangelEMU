@@ -26,7 +26,7 @@ import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
-import com.eu.habbo.roleplay.TimeOfDayManager;
+import com.eu.habbo.roleplay.game.TimeOfDayManager;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.weapons.WeaponsManager;
 import lombok.Getter;
