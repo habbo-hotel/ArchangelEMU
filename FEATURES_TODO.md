@@ -23,9 +23,6 @@
 - Move shift system to room cycle
 
 # Police
-- Stun players
-- Handcuff players
-- Escort cuffed players
 - Ability for players to break handcuffs of other players
 - Sentence user to jail (must be in the police station)
 

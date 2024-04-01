@@ -30,6 +30,11 @@ of the [Archangel nitro roleplay edit](https://github.com/habbo-hotel/nitro-rp)
 - Ability to demote players
 - Automatically stop shift if the user leaves the workplace
 
+# Police
+- Stun players
+- Handcuff players
+- Escort cuffed players
+- 
 # Gangs
 - Create and manage gangs
 - Invite players to your gang
