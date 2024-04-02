@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
+import com.eu.habbo.roleplay.RoomType;
 import com.eu.habbo.roleplay.users.HabboWeapon;
 
 
@@ -18,6 +19,11 @@ public class AttackCommand extends Command {
         Habbo targetedHabbo = RoleplayHelper.getInstance().getTarget(gameClient, params);
 
         if (targetedHabbo == null) {
+            return true;
+        }
+
+        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getTags().contains(RoomType.PASSIVE)) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.generic.passive_room"));
             return true;
         }
 

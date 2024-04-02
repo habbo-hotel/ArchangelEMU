@@ -3,6 +3,7 @@ package com.eu.habbo.roleplay.facility;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.RoomType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +11,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FacilityPrisonManager {
-
-    public static String PRISON_TAG = "prison";
     
     private static FacilityPrisonManager instance;
 
@@ -29,7 +28,7 @@ public class FacilityPrisonManager {
         LOGGER.info("Prison Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
     public Room getPrison() {
-        return FacilityManager.getFirstRoomWithTag(FacilityPrisonManager.PRISON_TAG);
+        return FacilityManager.getFirstRoomWithTag(RoomType.PRISON);
     }
 
     public PrisonSentence getPrisonTime(Habbo user) {
