@@ -39,12 +39,6 @@ public class CorpStartWorkCommand extends Command {
         }
 
         Emulator.getGameEnvironment().getCorpManager().getCorpShiftManager().startUserShift(gameClient.getHabbo());
-        String userStartedWorkMessage = Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_success")
-                .replace("%corp%", userEmployer.getGuild().getName())
-                .replace("%position%", userPosition.getName());
-
-        gameClient.getHabbo().shout(userStartedWorkMessage);
-
 
         gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
 

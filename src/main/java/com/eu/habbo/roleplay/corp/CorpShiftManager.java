@@ -42,6 +42,11 @@ public class CorpShiftManager {
 
     public void startUserShift(Habbo habbo) {
         this.activeUserShifts.put(habbo.getHabboInfo().getId(), new CorporationShift(habbo));
+        habbo.shout(Emulator.getTexts()
+                .getValue("commands.roleplay.cmd_start_work_success")
+                .replace("%corp%", habbo.getHabboRoleplayStats().getCorp().getGuild().getName())
+                .replace("%position%", habbo.getHabboRoleplayStats().getCorpPosition().getName())
+        );
 
         String jobUniform = habbo.getHabboInfo().getGender() == HabboGender.M ? habbo.getHabboRoleplayStats().getCorpPosition().getMaleFigure() : habbo.getHabboRoleplayStats().getCorpPosition().getFemaleFigure();
         habbo.getHabboInfo().changeClothes(jobUniform);
@@ -49,6 +54,7 @@ public class CorpShiftManager {
         habbo.getHabboInfo().setMotto(habbo.getHabboRoleplayStats().getCorpPosition().getActivity());
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
         habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(habbo).compose());
+        this.cycleUserShift(habbo);
     }
 
     public void stopUserShift(Habbo habbo) {
@@ -101,25 +107,33 @@ public class CorpShiftManager {
     public void startShiftManager() {
         Runnable userShift = () -> {
             for (CorporationShift shift : activeUserShifts.values()) {
-                long currentTime = System.currentTimeMillis();
-                if (currentTime >= shift.getEndTime()) {
-                    this.stopUserShift(shift.getHabbo(), true, true);
-                    return;
-                }
-
-                long ONE_MINUTE_IN_MS = 60000;
-
-                long timeLeft = (shift.getEndTime() - currentTime) / ONE_MINUTE_IN_MS + 1;
-
-                shift.getHabbo().shout(Emulator.getTexts()
-                        .getValue("commands.roleplay.corporation_shift_time_left")
-                        .replace(":minutes", Long.toString(timeLeft))
-                );
+               this.cycleUserShift(shift.getHabbo());
             }
         };
 
         // Schedule the task to run every 5 seconds
         scheduler.scheduleAtFixedRate(userShift, 0, 60, TimeUnit.SECONDS);
+    }
+
+    private void cycleUserShift(Habbo habbo) {
+        CorporationShift shift = this.activeUserShifts.get(habbo.getHabboInfo().getId());
+        if (shift == null) {
+            return;
+        }
+        long currentTime = System.currentTimeMillis();
+        if (currentTime >= shift.getEndTime()) {
+            this.stopUserShift(shift.getHabbo(), true, true);
+            return;
+        }
+
+        long ONE_MINUTE_IN_MS = 60000;
+
+        long timeLeft = (shift.getEndTime() - currentTime) / ONE_MINUTE_IN_MS + 1;
+
+        shift.getHabbo().shout(Emulator.getTexts()
+                .getValue("commands.roleplay.corporation_shift_time_left")
+                .replace(":minutes", Long.toString(timeLeft))
+        );
     }
 
     public void stopShiftManager() {
