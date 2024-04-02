@@ -567,7 +567,7 @@ public class RoomManager {
             habbo.getRoomUnit().setLoadingRoom(null);
         }
 
-        if (CorpShiftManager.getInstance().isUserWorking(habbo)) {
+        if (CorpShiftManager.getInstance().isUserWorking(habbo) && !habbo.getHabboRoleplayStats().getCorpPosition().isCanWorkAnywhere()) {
             CorpShiftManager.getInstance().stopUserShift(habbo, false, false);
         }
 
