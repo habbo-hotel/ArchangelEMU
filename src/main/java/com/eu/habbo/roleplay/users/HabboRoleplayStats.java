@@ -187,13 +187,13 @@ public class HabboRoleplayStats implements Runnable {
 
     public void setIsStunned(boolean isStunned) {
         this.isStunned = isStunned;
-        this.habbo.getRoomUnit().setCanWalk(isStunned);
+        this.habbo.getRoomUnit().setCanWalk(!isStunned);
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
     public void setIsCuffed(boolean isCuffed) {
         this.isCuffed = isCuffed;
-        if (!this.isStunned) this.habbo.getRoomUnit().setCanWalk(isCuffed);
+        if (!this.isStunned) this.habbo.getRoomUnit().setCanWalk(!isCuffed);
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 

@@ -68,6 +68,10 @@ public class ArrestCommand extends Command {
             return true;
         }
 
+        gameClient.getHabbo().getHabboRoleplayStats().setIsEscorting(null);
+        targetedHabbo.getHabboRoleplayStats().setIsCuffed(false);
+        targetedHabbo.getHabboRoleplayStats().setIsStunned(false);
+
         FacilityPrisonManager.getInstance().addPrisonTime(targetedHabbo, crime, prisonTime);
 
         return true;
