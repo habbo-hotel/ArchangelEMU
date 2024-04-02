@@ -41,7 +41,7 @@ public class FacilityHospitalManager {
         if (this.usersToHeal.isEmpty()) {
             return;
         }
-        if (this.usersToHeal.get(user.getHabboInfo().getId()) == null) {
+        if (this.usersToHeal.contains(user)) {
             return;
         }
         this.usersToHeal.remove(user.getHabboInfo().getId());
