@@ -16,12 +16,12 @@ import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
-import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -164,8 +164,11 @@ public class HabboRoleplayStats implements Runnable {
                 return;
             }
 
-            this.habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
-            THashSet<RoomItem> hospitalBedItems = hospitalRoom.getRoomSpecialTypes().getItemsOfType(InteractionHospitalBed.class);
+            if (this.habbo.getRoomUnit().getRoom().getRoomInfo().getId() != hospitalRoom.getRoomInfo().getId()) {
+                this.habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
+            }
+
+            Collection<RoomItem> hospitalBedItems = hospitalRoom.getRoomItemManager().getItemsOfType(InteractionHospitalBed.class);
             for (RoomItem hospitalBedItem : hospitalBedItems) {
                 List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(hospitalRoom.getLayout());
                 RoomTile firstAvailableHospitalBedTile = hospitalBedRoomTiles.get(0);
