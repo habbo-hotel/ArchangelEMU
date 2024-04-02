@@ -1,9 +1,8 @@
-package com.eu.habbo.roleplay.facility;
+package com.eu.habbo.roleplay.room;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.RoomType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

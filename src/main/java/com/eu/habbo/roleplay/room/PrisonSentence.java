@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.facility;
+package com.eu.habbo.roleplay.room;
 
 import com.eu.habbo.habbohotel.users.Habbo;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay;
+package com.eu.habbo.roleplay.room;
 
 public class RoomType {
 

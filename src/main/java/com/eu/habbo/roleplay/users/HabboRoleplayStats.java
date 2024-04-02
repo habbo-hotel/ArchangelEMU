@@ -11,7 +11,7 @@ import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.corp.CorpShiftManager;
-import com.eu.habbo.roleplay.facility.FacilityHospitalManager;
+import com.eu.habbo.roleplay.room.FacilityHospitalManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;

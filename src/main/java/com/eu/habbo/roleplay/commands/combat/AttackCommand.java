@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
-import com.eu.habbo.roleplay.RoomType;
+import com.eu.habbo.roleplay.room.RoomType;
 import com.eu.habbo.roleplay.users.HabboWeapon;
 
 
