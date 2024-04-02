@@ -61,18 +61,10 @@ public class CorpShiftManager {
             habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_no_shift"));
             return;
         }
-        Corp userEmployer = habbo.getHabboRoleplayStats().getCorp();
-        if (userEmployer == null) {
-            habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
-            return;
-        }
         CorpPosition userPosition =  habbo.getHabboRoleplayStats().getCorpPosition();
-        if (userPosition == null) {
-            habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_cannot_pay_no_job"));
-            return;
-        }
 
         if (shiftCompleted) {
+            habbo.whisper(Emulator.getTexts().getValue("commands.roleplay.corporation_shift_paid").replace(":salary", String.valueOf(userPosition.getSalary())));
             habbo.giveCredits(userPosition.getSalary());
         }
 
@@ -117,13 +109,12 @@ public class CorpShiftManager {
 
                 long ONE_MINUTE_IN_MS = 60000;
 
-                long timeLeft = (shift.getEndTime() - currentTime) / ONE_MINUTE_IN_MS;
-                long shiftLength = CorporationShift.SHIFT_LENGTH_IN_MS / ONE_MINUTE_IN_MS;
+                long timeLeft = (shift.getEndTime() - currentTime) / ONE_MINUTE_IN_MS + 1;
 
-                String shiftTimeLeftMsg = Emulator.getTexts().getValue("commands.roleplay.corporation_shift_time_left")
-                        .replace("%timeLeft%", Long.toString(timeLeft))
-                        .replace("%shiftLength%", Long.toString(shiftLength));
-                shift.getHabbo().shout(shiftTimeLeftMsg);
+                shift.getHabbo().shout(Emulator.getTexts()
+                        .getValue("commands.roleplay.corporation_shift_time_left")
+                        .replace(":minutes", Long.toString(timeLeft))
+                );
             }
         };
 
