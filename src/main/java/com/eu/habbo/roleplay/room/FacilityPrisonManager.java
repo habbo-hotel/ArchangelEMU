@@ -2,10 +2,14 @@ package com.eu.habbo.roleplay.room;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.items.interactions.InteractionPrisonBench;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -36,9 +40,26 @@ public class FacilityPrisonManager {
         }
         return this.usersInJail.get(user.getHabboInfo().getId());
     }
-    public void addPrisonTime(Habbo user, String crime, int timeLeft) {
-        this.usersInJail.add(new PrisonSentence(user, crime, timeLeft, 0));
-        user.shout(Emulator.getTexts().getValue("roleplay.prison.starts_sentence"));
+    public void addPrisonTime(Habbo habbo, String crime, int timeLeft) {
+        this.usersInJail.add(new PrisonSentence(habbo, crime, timeLeft, 0));
+
+        Room prison = FacilityPrisonManager.getInstance().getPrison();
+
+        if (habbo.getRoomUnit().getRoom().getRoomInfo().getId() != prison.getRoomInfo().getId()) {
+            habbo.goToRoom(prison.getRoomInfo().getId());
+        }
+
+        Collection<RoomItem> prisonBenches = prison.getRoomItemManager().getItemsOfType(InteractionPrisonBench.class);
+        for (RoomItem hospitalBedItem : prisonBenches) {
+            List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(prison.getLayout());
+            RoomTile firstAvailableHospitalBedTile = hospitalBedRoomTiles.get(0);
+            if (firstAvailableHospitalBedTile == null) {
+                return;
+            }
+            habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
+        }
+
+        habbo.shout(Emulator.getTexts().getValue("roleplay.prison.starts_sentence"));
     }
 
     public void removePrisonTime(Habbo user) {

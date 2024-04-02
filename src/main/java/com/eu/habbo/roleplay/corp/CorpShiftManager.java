@@ -126,13 +126,17 @@ public class CorpShiftManager {
             return;
         }
 
-        long ONE_MINUTE_IN_MS = 60000;
+        long timeLeftInSeconds = (shift.getEndTime() - currentTime) / 1000 + 1;
+        long minutesLeft = timeLeftInSeconds / 60;
+        long secondsLeft = timeLeftInSeconds % 60;
 
-        long timeLeft = (shift.getEndTime() - currentTime) / ONE_MINUTE_IN_MS + 1;
+        String timeLeftMessage = minutesLeft > 0
+                ? minutesLeft + " minute" + (minutesLeft != 1 ? "s" : "") + " left"
+                :  secondsLeft + " second" + (secondsLeft != 1 ? "s" : "") + " left";
 
         shift.getHabbo().shout(Emulator.getTexts()
                 .getValue("commands.roleplay.corporation_shift_time_left")
-                .replace(":minutes", Long.toString(timeLeft))
+                .replace(":timeLeft", timeLeftMessage)
         );
     }
 

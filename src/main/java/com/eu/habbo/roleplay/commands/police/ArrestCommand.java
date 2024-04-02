@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpType;
+import com.eu.habbo.roleplay.room.FacilityPrisonManager;
 
 public class ArrestCommand extends Command {
     public ArrestCommand() {
@@ -18,6 +19,13 @@ public class ArrestCommand extends Command {
         Habbo targetedHabbo = RoleplayHelper.getInstance().getTarget(gameClient, params);
 
         if (targetedHabbo == null) {
+            return true;
+        }
+
+        String crime = params[2];
+        int prisonTime = Integer.parseInt(params[3]);
+
+        if (crime == null || prisonTime <= 0) {
             return true;
         }
 
@@ -60,7 +68,7 @@ public class ArrestCommand extends Command {
             return true;
         }
 
-        // TODO rest when i want to
+        FacilityPrisonManager.getInstance().addPrisonTime(targetedHabbo, crime, prisonTime);
 
         return true;
     }
