@@ -7,12 +7,14 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitManager;
 import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
+import com.eu.habbo.habbohotel.rooms.items.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -189,7 +191,7 @@ public abstract class RoomUnit extends RoomEntity {
      *         In such cases, the method also returns {@code false}.
     */
     public boolean walkTo(RoomTile goalLocation) {
-        if(!goalLocation.isWalkable() && !this.room.canSitOrLayAt(goalLocation)) {
+        if(this.canWalk && !goalLocation.isWalkable() && !this.room.canSitOrLayAt(goalLocation)) {
             return false;
         }
 
@@ -212,10 +214,36 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public RoomUnit setLocation(RoomTile location) {
-        if (location != null) {
-            this.setCurrentPosition(location);
-            this.targetPosition = location;
+        if (location == null) {
+            return this;
         }
+
+        this.setCurrentPosition(location);
+        this.targetPosition = location;
+
+        if (this.room == null) {
+            return this;
+        }
+
+        RoomItemManager roomItemManager = this.room.getRoomItemManager();
+        RoomUnitManager roomUnitManager = this.room.getRoomUnitManager();
+
+        roomItemManager.getItemsAt(location)
+                .stream()
+                .findFirst()
+                .ifPresent(item -> {
+                    roomUnitManager.getRoomUnitsAt(location)
+                            .stream()
+                            .findFirst()
+                            .ifPresent(unit -> {
+                                try {
+                                    item.onWalkOn(unit, this.room, null);
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                });
+
         return this;
     }
 

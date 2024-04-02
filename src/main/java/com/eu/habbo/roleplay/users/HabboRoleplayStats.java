@@ -158,6 +158,7 @@ public class HabboRoleplayStats implements Runnable {
             }
 
             this.habbo.shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
+            this.habbo.getRoomUnit().setCanWalk(false);
             Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
 
             if (hospitalRoom == null) {

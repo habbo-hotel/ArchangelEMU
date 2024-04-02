@@ -41,10 +41,10 @@ public class FacilityHospitalManager {
         if (this.usersToHeal.isEmpty()) {
             return;
         }
-        if (this.usersToHeal.contains(user)) {
-            return;
+        if (!user.getHabboRoleplayStats().isCuffed() && !user.getHabboRoleplayStats().isStunned()) {
+            user.getRoomUnit().setCanWalk(true);
         }
-        this.usersToHeal.remove(user.getHabboInfo().getId());
+        this.usersToHeal.remove(user);
         user.shout(Emulator.getTexts().getValue("roleplay.hospital.stops_healing"));
     }
 
