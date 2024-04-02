@@ -342,6 +342,7 @@ public class CommandsManager {
         addCommand(new CuffCommand());
         addCommand(new EscortCommand());
         addCommand(new StunCommand());
+        addCommand(new ReleaseCommand());
     }
 
     public void dispose() {

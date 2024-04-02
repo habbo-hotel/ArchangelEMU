@@ -131,8 +131,8 @@ public class CorpShiftManager {
         long secondsLeft = timeLeftInSeconds % 60;
 
         String timeLeftMessage = minutesLeft > 0
-                ? minutesLeft + " minute" + (minutesLeft != 1 ? "s" : "") + " left"
-                :  secondsLeft + " second" + (secondsLeft != 1 ? "s" : "") + " left";
+                ? minutesLeft + " minute" + (minutesLeft != 1 ? "s" : "")
+                :  secondsLeft + " second" + (secondsLeft != 1 ? "s" : "");
 
         shift.getHabbo().shout(Emulator.getTexts()
                 .getValue("commands.roleplay.corporation_shift_time_left")
