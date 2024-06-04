@@ -495,10 +495,6 @@ public class RoomManager {
     public void enterRoom(Habbo habbo, int roomId, String password, boolean forceEnter, RoomTile spawnLocation) {
         Room room = this.getRoom(roomId, true);
 
-        if (habbo.getHabboRoleplayStats().isDead()) {
-            return;
-        }
-
         if (room == null) {
             log.error("User (ID: {}) is trying to enter a corrupted room (ID: {})", habbo.getHabboInfo().getId(), roomId);
             return;

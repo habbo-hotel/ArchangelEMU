@@ -14,14 +14,13 @@ public class SetHealthCommand extends Command {
         String targetedUsername = params[1];
 
         if (targetedUsername == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found"));
             return true;
         }
 
         Habbo targetedHabbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(params[1]);
 
         if (targetedHabbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found").replace(":username", targetedUsername));
             return true;
         }
 
