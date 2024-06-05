@@ -1,6 +1,8 @@
 package com.eu.habbo.roleplay.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.commands.list.LayCommand;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -153,7 +155,6 @@ public class HabboRoleplayStats implements Runnable {
 
     public void setIsDead(boolean isDead) {
         this.isDead = isDead;
-        this.habbo.getRoomUnit().setCanWalk(isDead);
 
         if (this.isDead) {
 
@@ -163,25 +164,16 @@ public class HabboRoleplayStats implements Runnable {
 
             this.habbo.shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
             this.habbo.getRoomUnit().setCanWalk(false);
-            Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
 
-            if (hospitalRoom == null) {
-                return;
-            }
+            int deadTeleportDelay = Emulator.getConfig().getInt("roleplay.dead.delay", 10000);
 
-            if (this.habbo.getRoomUnit().getRoom().getRoomInfo().getId() != hospitalRoom.getRoomInfo().getId()) {
-                this.habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
-            }
+            new LayCommand().handle(habbo.getClient(), new String[0]);
 
-            Collection<RoomItem> hospitalBedItems = hospitalRoom.getRoomItemManager().getItemsOfType(InteractionHospitalBed.class);
-            for (RoomItem hospitalBedItem : hospitalBedItems) {
-                List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(hospitalRoom.getLayout());
-                RoomTile firstAvailableHospitalBedTile = hospitalBedRoomTiles.get(0);
-                if (firstAvailableHospitalBedTile == null) {
-                    return;
-                }
-                this.habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
-            }
+            this.habbo.shout(Emulator.getTexts().getValue("roleplay.dead.teleporting_to_hospital_delay").replace(":seconds", String.valueOf(deadTeleportDelay / 1000)));
+
+            Emulator.getThreading().run(() -> {
+                FacilityHospitalManager.getInstance().sendToHospital(this.habbo);
+            },  deadTeleportDelay);
 
         }
 

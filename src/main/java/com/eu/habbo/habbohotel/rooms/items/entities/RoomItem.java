@@ -471,7 +471,13 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
     public List<RoomTile> getOccupyingTiles(RoomLayout layout) {
         List<RoomTile> tiles = new ArrayList<>();
 
-        Rectangle rect = RoomLayout.getRectangle(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        Rectangle rect = RoomLayout.getRectangle(
+                this.getCurrentPosition().getX(),
+                this.getCurrentPosition().getY(),
+                this.getBaseItem().getWidth(),
+                this.getBaseItem().getLength(),
+                this.getRotation()
+        );
 
         for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
             for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {

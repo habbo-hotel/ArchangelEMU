@@ -32,11 +32,6 @@ public class RoleplayHelper {
             return null;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().isDead()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_you_are_dead"));
-            return null;
-        }
-
         Habbo targetedHabbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(targetedUsername);
 
         if (targetedHabbo == null) {

@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.incoming.rooms.users;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
@@ -26,6 +27,7 @@ public class MoveAvatarEvent extends MessageHandler {
         }
 
         if (habbo.getHabboRoleplayStats().isDead()) {
+            habbo.whisper(Emulator.getTexts().getValue("roleplay.dead.you_cant_walk"));
             return;
         }
 

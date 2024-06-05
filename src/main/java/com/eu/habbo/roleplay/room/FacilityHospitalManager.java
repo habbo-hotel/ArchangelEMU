@@ -1,11 +1,16 @@
 package com.eu.habbo.roleplay.room;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.list.LayCommand;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -28,6 +33,22 @@ public class FacilityHospitalManager {
     }
     public Room getHospital() {
         return FacilityManager.getFirstRoomWithTag(RoomType.HOSPITAL);
+    }
+
+    public void sendToHospital(Habbo habbo) {
+        Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
+
+        habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
+
+        Collection<RoomItem> hospitalBedItems = hospitalRoom.getRoomItemManager().getItemsOfType(InteractionHospitalBed.class);
+        for (RoomItem hospitalBedItem : hospitalBedItems) {
+            List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(hospitalRoom.getLayout());
+            RoomTile firstAvailableHospitalBedTile = hospitalBedRoomTiles.get(0);
+            if (firstAvailableHospitalBedTile == null) {
+                return;
+            }
+            habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
+        }
     }
 
     public void addUserToHeal(Habbo user) {

@@ -14,6 +14,7 @@ import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
 import com.eu.habbo.messages.outgoing.users.UserRightsMessageComposer;
 import com.eu.habbo.plugin.events.users.UserRankChangedEvent;
 import com.eu.habbo.plugin.events.users.UserRegisteredEvent;
+import com.eu.habbo.roleplay.room.FacilityHospitalManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
