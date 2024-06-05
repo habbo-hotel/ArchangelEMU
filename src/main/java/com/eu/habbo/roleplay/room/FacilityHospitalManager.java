@@ -38,7 +38,9 @@ public class FacilityHospitalManager {
     public void sendToHospital(Habbo habbo) {
         Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
 
-        habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
+        if (habbo.getRoomUnit().getRoom().getRoomInfo().getId() != hospitalRoom.getRoomInfo().getId()) {
+            habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
+        }
 
         Collection<RoomItem> hospitalBedItems = hospitalRoom.getRoomItemManager().getItemsOfType(InteractionHospitalBed.class);
         for (RoomItem hospitalBedItem : hospitalBedItems) {

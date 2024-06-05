@@ -311,6 +311,10 @@ public class SSOTicketEvent extends MessageHandler {
                     }
 
                     HabboRoleplayStats rpStats = this.client.getHabbo().getHabboRoleplayStats();
+                    if (rpStats.isDead()) {
+                        FacilityHospitalManager.getInstance().sendToHospital(client.getHabbo());
+                        return;
+                    }
                     RoomTile lastUserPos = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getClosestWalkableTile(rpStats.getLastPosX(),rpStats.getLastPosY());
                     this.client.getHabbo().getRoomUnit().setLocation(lastUserPos);
                 }, 250);
@@ -333,7 +337,6 @@ public class SSOTicketEvent extends MessageHandler {
 
                     this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
                 }
-
             } else {
                 Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
                 LOGGER.warn("Someone tried to login with a non-existing SSO token! Closed connection...");
