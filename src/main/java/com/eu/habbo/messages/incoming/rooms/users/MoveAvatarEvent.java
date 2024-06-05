@@ -25,6 +25,10 @@ public class MoveAvatarEvent extends MessageHandler {
             return;
         }
 
+        if (habbo.getHabboRoleplayStats().isDead()) {
+            return;
+        }
+
         RoomHabbo roomHabbo = this.client.getHabbo().getRoomUnit();
 
         if(roomHabbo == null) {
