@@ -5,8 +5,13 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
+import com.eu.habbo.roleplay.messages.outgoing.combat.CombatDelayComposer;
 import com.eu.habbo.roleplay.room.RoomType;
 import com.eu.habbo.roleplay.users.HabboWeapon;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class AttackCommand extends Command {
@@ -18,7 +23,15 @@ public class AttackCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboRoleplayStats().getCombatBlocked()) {
             gameClient.getHabbo().whisper("You need to wait a bit before attacking again.");
-            return true;
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+            Runnable task = () -> {
+                gameClient.sendResponse(new CombatDelayComposer(gameClient.getHabbo()));
+                if (!gameClient.getHabbo().getHabboRoleplayStats().getCombatBlocked()) {
+                    executor.shutdown();
+                }
+            };
+            executor.scheduleAtFixedRate(task, 0, 1, TimeUnit.SECONDS);
         }
 
         gameClient.getHabbo().getHabboRoleplayStats().setLastAttackTime(System.currentTimeMillis());
