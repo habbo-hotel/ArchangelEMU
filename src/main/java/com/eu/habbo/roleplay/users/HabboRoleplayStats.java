@@ -131,6 +131,11 @@ public class HabboRoleplayStats implements Runnable {
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
+    public void depleteEnergy(int energyDepleted) {
+        this.energyNow = this.energyNow < energyDepleted ? 0 : this.energyNow - energyDepleted;
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+    }
+
     public Corp getCorp() {
         return CorpManager.getInstance().getCorpByID(this.corporationID);
     }

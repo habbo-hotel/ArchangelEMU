@@ -61,6 +61,13 @@ public class AttackCommand extends Command {
             return true;
         }
 
+        int totalEnergy = Emulator.getConfig().getInt("roleplay.attack.energy", 8);
+
+        if (totalEnergy > gameClient.getHabbo().getHabboRoleplayStats().getEnergyNow()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.out_of_energy").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
+            return true;
+        }
+
         int totalDamage = targetedHabbo.getHabboRoleplayStats().getDamageModifier();
 
         if (equippedWeapon != null) {
@@ -85,6 +92,13 @@ public class AttackCommand extends Command {
                 .getValue("commands.roleplay.user_health_remaining")
                 .replace(":currentHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
                 .replace(":maximumHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
+        );
+
+        gameClient.getHabbo().getHabboRoleplayStats().depleteEnergy(totalEnergy);
+        targetedHabbo.shout(Emulator.getTexts()
+                .getValue("commands.roleplay.user_energy_remaining")
+                .replace(":energyNow", Integer.toString(targetedHabbo.getHabboRoleplayStats().getEnergyNow()))
+                .replace(":energyMax", Integer.toString(targetedHabbo.getHabboRoleplayStats().getEnergyMax()))
         );
 
         return true;
