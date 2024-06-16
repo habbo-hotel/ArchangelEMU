@@ -91,7 +91,20 @@ public class HabboRoleplayStats implements Runnable {
     private short lastPosY;
     @Setter
     @Getter
-    private  Map<String, Long> lastAttackTime = new HashMap<>();
+    private long lastAttackTime;
+
+    public boolean getCombatBlocked() {
+        long currentTime = System.currentTimeMillis();
+        int ATTACK_TIMEOUT = Emulator.getConfig().getInt("roleplay.attack.delay", 2000);
+        return (currentTime - this.lastAttackTime < ATTACK_TIMEOUT);
+    }
+
+    public int getCombatDelayRemaining() {
+        long currentTime = System.currentTimeMillis();
+        int ATTACK_TIMEOUT = Emulator.getConfig().getInt("roleplay.attack.delay", 2000);
+        long timeElapsed = currentTime - this.lastAttackTime;
+        return (int) Math.max(0, Math.ceil((ATTACK_TIMEOUT - timeElapsed) / 1000.0));
+    }
 
     public void setHealth(int healthCurrent) {
         this.setHealth(healthCurrent, false);

@@ -16,19 +16,12 @@ public class AttackCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        String userId = gameClient.getHabbo().getHabboInfo().getUsername(); // assuming username is unique
-
-        long currentTime = System.currentTimeMillis();
-        long lastTime = gameClient.getHabbo().getHabboRoleplayStats().getLastAttackTime().getOrDefault(userId, 0L);
-
-        int ATTACK_TIMEOUT = Emulator.getConfig().getInt("roleplay.attack.delay", 2000);
-
-        if (currentTime - lastTime < ATTACK_TIMEOUT) {
+        if (gameClient.getHabbo().getHabboRoleplayStats().getCombatBlocked()) {
             gameClient.getHabbo().whisper("You need to wait a bit before attacking again.");
             return true;
         }
 
-        gameClient.getHabbo().getHabboRoleplayStats().getLastAttackTime().put(userId, currentTime);
+        gameClient.getHabbo().getHabboRoleplayStats().setLastAttackTime(System.currentTimeMillis());
 
         Habbo targetedHabbo = RoleplayHelper.getInstance().getTarget(gameClient, params);
 

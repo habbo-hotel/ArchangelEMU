@@ -444,5 +444,7 @@ public class Outgoing {
 
     public static final int myWeaponListComposer = 9007;
 
+    public static final int combatDelayComposer = 9008;
+
 
 }
