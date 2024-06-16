@@ -1,31 +1,25 @@
 package com.eu.habbo.roleplay.users;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.commands.list.LayCommand;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.corp.CorpShiftManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
-import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.room.FacilityHospitalManager;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class HabboRoleplayStats implements Runnable {
 
@@ -95,6 +89,9 @@ public class HabboRoleplayStats implements Runnable {
     private short lastPosX;
     @Getter
     private short lastPosY;
+    @Setter
+    @Getter
+    private  Map<String, Long> lastAttackTime = new HashMap<>();
 
     public void setHealth(int healthCurrent) {
         this.setHealth(healthCurrent, false);

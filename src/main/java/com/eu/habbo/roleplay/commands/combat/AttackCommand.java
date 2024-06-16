@@ -13,8 +13,22 @@ public class AttackCommand extends Command {
     public AttackCommand() {
         super("cmd_attack");
     }
+
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
+        String userId = gameClient.getHabbo().getHabboInfo().getUsername(); // assuming username is unique
+
+        long currentTime = System.currentTimeMillis();
+        long lastTime = gameClient.getHabbo().getHabboRoleplayStats().getLastAttackTime().getOrDefault(userId, 0L);
+
+        int ATTACK_TIMEOUT = Emulator.getConfig().getInt("roleplay.attack.delay", 2000);
+
+        if (currentTime - lastTime < ATTACK_TIMEOUT) {
+            gameClient.getHabbo().whisper("You need to wait a bit before attacking again.");
+            return true;
+        }
+
+        gameClient.getHabbo().getHabboRoleplayStats().getLastAttackTime().put(userId, currentTime);
 
         Habbo targetedHabbo = RoleplayHelper.getInstance().getTarget(gameClient, params);
 
@@ -61,8 +75,8 @@ public class AttackCommand extends Command {
 
         targetedHabbo.getHabboRoleplayStats().setHealth(targetedHabbo.getHabboRoleplayStats().getHealthNow() - totalDamage);
 
-        targetedHabbo.shout(Emulator.getTexts().
-                getValue("commands.roleplay.user_health_remaining")
+        targetedHabbo.shout(Emulator.getTexts()
+                .getValue("commands.roleplay.user_health_remaining")
                 .replace(":currentHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
                 .replace(":maximumHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
         );
