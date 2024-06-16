@@ -57,6 +57,7 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadItemsManagerEvent;
+import com.eu.habbo.roleplay.items.interactions.InteractionCashRegister;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.items.interactions.InteractionPrisonBench;
 import com.eu.habbo.roleplay.items.interactions.InteractionWardrobe;
@@ -355,7 +356,7 @@ public class ItemManager {
 
         this.interactionsList.add(new ItemInteraction(InteractionHospitalBed.HOSPITAL_BED_INTERACTION_TYPE, InteractionHospitalBed.class));
         this.interactionsList.add(new ItemInteraction(InteractionPrisonBench.PRISON_BENCH_INTERACTION_TYPE, InteractionPrisonBench.class));
-        this.interactionsList.add(new ItemInteraction(InteractionWardrobe.WARDROBE_INTERACTION_TYPE, InteractionWardrobe.class));
+        this.interactionsList.add(new ItemInteraction(InteractionCashRegister.CASH_REGISTER_INTERACTION_TYPE, InteractionCashRegister.class));
     }
 
 
