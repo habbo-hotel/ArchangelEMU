@@ -1,6 +1,8 @@
-package com.eu.habbo.habbohotel.users.inventory;
+package com.eu.habbo.habbohotel.guilds.inventory;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.guilds.GuildInventory;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -30,19 +32,19 @@ public class ItemsComponent {
     @Getter
     private final TIntObjectMap<RoomItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
-    private final HabboInventory inventory;
+    private final GuildInventory inventory;
 
-    public ItemsComponent(HabboInventory inventory, Habbo habbo) {
+    public ItemsComponent(GuildInventory inventory, Guild guild) {
         this.inventory = inventory;
-        this.items.putAll(loadItems(habbo));
+        this.items.putAll(loadItems(guild));
     }
 
-    public static THashMap<Integer, RoomItem> loadItems(Habbo habbo) {
+    public static THashMap<Integer, RoomItem> loadItems(Guild guild) {
         THashMap<Integer, RoomItem> itemsList = new THashMap<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM items WHERE room_id = ? AND user_id = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM items WHERE room_id = ? AND guild_id = ?")) {
             statement.setInt(1, 0);
-            statement.setInt(2, habbo.getHabboInfo().getId());
+            statement.setInt(2, guild.getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     try {
