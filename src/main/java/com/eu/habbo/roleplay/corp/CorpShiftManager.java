@@ -44,8 +44,8 @@ public class CorpShiftManager {
         this.activeUserShifts.put(habbo.getHabboInfo().getId(), new CorporationShift(habbo));
         habbo.shout(Emulator.getTexts()
                 .getValue("commands.roleplay.cmd_start_work_success")
-                .replace("%corp%", habbo.getHabboRoleplayStats().getCorp().getGuild().getName())
-                .replace("%position%", habbo.getHabboRoleplayStats().getCorpPosition().getName())
+                .replace(":corp", habbo.getHabboRoleplayStats().getCorp().getGuild().getName())
+                .replace(":position", habbo.getHabboRoleplayStats().getCorpPosition().getName())
         );
 
         String jobUniform = habbo.getHabboInfo().getGender() == HabboGender.M ? habbo.getHabboRoleplayStats().getCorpPosition().getMaleFigure() : habbo.getHabboRoleplayStats().getCorpPosition().getFemaleFigure();
