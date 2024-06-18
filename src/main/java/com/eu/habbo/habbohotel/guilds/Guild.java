@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.guilds;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboInventory;
+import com.eu.habbo.roleplay.guilds.GuildInventory;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.Setter;

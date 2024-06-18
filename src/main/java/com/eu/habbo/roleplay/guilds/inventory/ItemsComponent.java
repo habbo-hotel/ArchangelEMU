@@ -1,12 +1,10 @@
-package com.eu.habbo.habbohotel.guilds.inventory;
+package com.eu.habbo.roleplay.guilds.inventory;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
-import com.eu.habbo.habbohotel.guilds.GuildInventory;
+import com.eu.habbo.roleplay.guilds.GuildInventory;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
-import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.plugin.events.inventory.InventoryItemAddedEvent;
 import com.eu.habbo.plugin.events.inventory.InventoryItemRemovedEvent;
 import com.eu.habbo.plugin.events.inventory.InventoryItemsAddedEvent;
@@ -32,10 +30,7 @@ public class ItemsComponent {
     @Getter
     private final TIntObjectMap<RoomItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
-    private final GuildInventory inventory;
-
-    public ItemsComponent(GuildInventory inventory, Guild guild) {
-        this.inventory = inventory;
+    public ItemsComponent(Guild guild) {
         this.items.putAll(loadItems(guild));
     }
 
