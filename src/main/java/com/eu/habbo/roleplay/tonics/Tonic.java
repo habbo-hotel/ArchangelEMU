@@ -15,8 +15,6 @@ public class Tonic  {
     private String displayName;
     private String uniqueName;
     @Setter
-    private String type;
-    @Setter
     private int healthDiff;
     @Setter
     private int energyDiff;
@@ -35,7 +33,6 @@ public class Tonic  {
         this.id = set.getInt("id");
         this.displayName = set.getString("display_name");
         this.uniqueName = set.getString("unique_name");
-        this.type = set.getString("type");
         this.healthDiff = set.getInt("health_diff");
         this.energyDiff = set.getInt("energy_diff");
         this.weight = set.getInt("weight");
