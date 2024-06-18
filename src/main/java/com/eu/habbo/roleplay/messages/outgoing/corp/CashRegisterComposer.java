@@ -12,7 +12,7 @@ public class CashRegisterComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CashRegisterComposer);
+        this.response.init(Outgoing.cashRegisterComposer);
         return this.response;
     }
 }

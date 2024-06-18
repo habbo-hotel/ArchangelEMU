@@ -446,7 +446,9 @@ public class Outgoing {
 
     public static final int combatDelayComposer = 9008;
 
-    public static final int CashRegisterComposer = 9009;
+    public static final int cashRegisterComposer = 9009;
+
+    public static final int invoiceReceivedComposer = 9010;
 
 
 }

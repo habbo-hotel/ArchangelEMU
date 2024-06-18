@@ -33,7 +33,4 @@ public class License {
         this.updatedAt = set.getInt("updated_at");
     }
 
-
-
-
 }
