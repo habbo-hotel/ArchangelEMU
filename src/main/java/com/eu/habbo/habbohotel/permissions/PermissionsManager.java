@@ -89,16 +89,13 @@ public class PermissionsManager {
     private void loadFixedCommands() {
         String[] fixedCommandNames = {
                 "cmd_about",
-                "cmd_arcturus",
                 "cmd_commands",
-                "cmd_habnam",
                 "cmd_lay",
                 "cmd_mute_bots",
                 "cmd_mute_pets",
                 "cmd_plugins",
                 "cmd_sit",
                 "cmd_stand",
-                "cmd_test"
         };
 
         for(String command : fixedCommandNames) {

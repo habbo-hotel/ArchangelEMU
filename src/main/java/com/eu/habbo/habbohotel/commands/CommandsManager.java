@@ -196,7 +196,6 @@ public class CommandsManager {
         addCommand(new AddYoutubePlaylistCommand());
         addCommand(new AlertCommand());
         addCommand(new AllowTradingCommand());
-        addCommand(new ArcturusCommand());
         addCommand(new BadgeCommand());
         addCommand(new BanCommand());
         addCommand(new BlockAlertCommand());
@@ -223,7 +222,6 @@ public class CommandsManager {
         addCommand(new FreezeCommand());
         addCommand(new GiftCommand());
         addCommand(new GiveRankCommand());
-        addCommand(new HabnamCommand());
         addCommand(new HandItemCommand());
         addCommand(new HappyHourCommand());
         addCommand(new HideWiredCommand());
@@ -288,7 +286,6 @@ public class CommandsManager {
         addCommand(new SuperPullCommand());
         addCommand(new TakeBadgeCommand());
         addCommand(new TeleportCommand());
-        addCommand(new TestCommand());
         addCommand(new TransformCommand());
         addCommand(new UnbanCommand());
         addCommand(new UnloadRoomCommand());

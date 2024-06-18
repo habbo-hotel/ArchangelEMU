@@ -4,6 +4,7 @@ import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceState;
 import com.eu.habbo.habbohotel.users.inventory.*;
+import com.eu.habbo.roleplay.inventory.LicensesComponent;
 import com.eu.habbo.roleplay.inventory.TonicsComponent;
 import com.eu.habbo.roleplay.inventory.WeaponsComponent;
 import gnu.trove.set.hash.THashSet;
@@ -33,6 +34,10 @@ public class HabboInventory {
     @Setter
     @Getter
     private TonicsComponent tonicsComponent;
+
+    @Setter
+    @Getter
+    private LicensesComponent licensesComponent;
 
     public HabboInventory(Habbo habbo) {
         this.habbo = habbo;
@@ -80,6 +85,12 @@ public class HabboInventory {
 
         try {
             this.tonicsComponent = new TonicsComponent(this.habbo);
+        } catch (Exception e) {
+            log.error("Caught exception", e);
+        }
+
+        try {
+            this.licensesComponent = new LicensesComponent(this.habbo);
         } catch (Exception e) {
             log.error("Caught exception", e);
         }

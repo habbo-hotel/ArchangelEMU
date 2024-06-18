@@ -23,9 +23,12 @@ public class GovernmentManager {
     }
 
     private Corp welfareCorp;
+    @Getter
+    private LicenseManager licenseManager;
 
     private GovernmentManager() {
         long millis = System.currentTimeMillis();
+        this.licenseManager = LicenseManager.getInstance();
         this.welfareCorp = CorpManager.getInstance().getCorpsByTag(GovernmentManager.WELFARE_CORP_TAG).get(0);
         if (this.welfareCorp == null) {
            throw new RuntimeException("GovernmentManager expected a welfare corp to exist.  Please create one in rp_corporations");
