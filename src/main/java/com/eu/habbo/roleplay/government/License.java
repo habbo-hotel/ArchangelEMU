@@ -12,7 +12,7 @@ public class License {
     private int id;
     @Setter
     private int userID;
-    private int licenseType;
+    private LicenseType licenseType;
     @Setter
     private int expiresOn;
     @Setter
@@ -27,7 +27,7 @@ public class License {
     public void load(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.userID = set.getInt("user_id");
-        this.licenseType = set.getInt("license_type");
+        this.licenseType = LicenseType.fromValue(set.getInt("license_type"));
         this.expiresOn = set.getInt("expires_on");
         this.createdAt = set.getInt("created_at");
         this.updatedAt = set.getInt("updated_at");

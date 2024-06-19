@@ -24,8 +24,8 @@ public class HabboLicense {
     private int userID;
 
     public HabboLicense(ResultSet set) throws SQLException {
-        this.license = LicenseManager.getInstance().getLicenseByID(set.getInt("license_id"));
-        this.licenseID = set.getInt("weapon_id");
+        this.license = LicenseManager.getInstance().getLicenseByID(set.getInt("id"));
+        this.licenseID = set.getInt("id");
         this.userID = set.getInt("user_id");
     }
 
@@ -36,7 +36,7 @@ public class HabboLicense {
 
     public void insert() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_users_licenses (license_type, user_id, expires_on) VALUES (?, ?, ?)")) {
-            statement.setInt(1, this.license.getLicenseType());
+            statement.setInt(1, this.license.getLicenseType().getValue());
             statement.setInt(2, this.userID);
             statement.setInt(3, this.license.getExpiresOn());
             statement.execute();
@@ -47,7 +47,7 @@ public class HabboLicense {
 
     public void delete() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM rp_users_licenses WHERE license_type = ? AND user_id = ?")) {
-            statement.setInt(1, this.license.getLicenseType());
+            statement.setInt(1, this.license.getLicenseType().getValue());
             statement.setInt(2, this.userID);
             statement.execute();
         } catch (SQLException e) {

@@ -21,8 +21,6 @@ public class InvoiceReceivedComposer extends MessageComposer {
         this.response.appendInt(this.billingStatement.chargedByCorpID);
         this.response.appendInt(this.billingStatement.amountCharged);
         this.response.appendInt(this.billingStatement.amountPaid);
-        this.response.appendInt(this.billingStatement.createdAt);
-        this.response.appendInt(this.billingStatement.updatedAt);
         return this.response;
     }
 }

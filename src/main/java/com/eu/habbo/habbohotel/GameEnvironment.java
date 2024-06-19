@@ -26,9 +26,9 @@ import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
-import com.eu.habbo.roleplay.billing.BillingManager;
 import com.eu.habbo.roleplay.game.TimeOfDayManager;
 import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.government.BillingManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.tonics.TonicsManager;
 import com.eu.habbo.roleplay.weapons.WeaponsManager;
@@ -138,6 +138,7 @@ public class GameEnvironment {
         this.hotelViewManager.dispose();
         this.subscriptionManager.dispose();
         this.calendarManager.dispose();
+        this.corpManager.dispose();
         log.info("GameEnvironment -> Disposed!");
     }
 

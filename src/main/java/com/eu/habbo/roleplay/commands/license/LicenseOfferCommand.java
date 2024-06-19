@@ -5,9 +5,9 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
-import com.eu.habbo.roleplay.billing.BillingManager;
 import com.eu.habbo.roleplay.billing.BillingStatement;
 import com.eu.habbo.roleplay.billing.items.WeaponLicenseBillingItem;
+import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.messages.outgoing.billing.InvoiceReceivedComposer;
 
 public class LicenseOfferCommand extends Command {
@@ -28,23 +28,25 @@ public class LicenseOfferCommand extends Command {
             return true;
         }
 
-        String license = params[2];
+        if (params[2] == null) {
 
-        if (license == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_not_found"));
             return true;
         }
 
-        int licenseType = Integer.parseInt(license);
+        LicenseType licenseType = LicenseType.fromValue(Integer.parseInt(params[2]));
+
 
         if (targetedHabbo.getInventory().getLicensesComponent().getLicenseByType(licenseType) != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_already_exists"));
             return true;
         }
 
-        BillingStatement statement = BillingManager.getInstance().createBillingStatement(new WeaponLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+        BillingStatement statement = BillingStatement.create(new WeaponLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
 
         gameClient.sendResponse(new InvoiceReceivedComposer(statement));
+
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.license_offered").replace(":license", licenseType.name()).replace(":username", targetedHabbo.getHabboInfo().getUsername()));
 
         return true;
     }

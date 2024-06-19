@@ -43,4 +43,8 @@ public class GovernmentManager {
         }
         LOGGER.info("Government Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
+
+    public void dispose() {
+        this.licenseManager.dispose();
+    }
 }

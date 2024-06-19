@@ -1,7 +1,6 @@
 package com.eu.habbo.roleplay.government;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.weapons.Weapon;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -14,12 +13,6 @@ import java.sql.Statement;
 
 @Getter
 public class LicenseManager {
-
-    public static int DRIVER_LICENSE_TYPE = 1;
-    public static int WEAPON_LICENSE_TYPE = 1;
-    public static int FARMING_LICENSE_TYPE = 1;
-    public static int FISHING_LICENSE_TYPE = 1;
-    public static int MINING_LICENSE_TYPE = 1;
 
     private static LicenseManager instance;
 
@@ -36,6 +29,8 @@ public class LicenseManager {
 
     private LicenseManager() {
         long millis = System.currentTimeMillis();
+        this.licenses = new TIntObjectHashMap<>();
+        this.loadLicenses();
         LOGGER.info("License Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
@@ -49,7 +44,7 @@ public class LicenseManager {
 
     private void loadLicenses() {
         this.licenses.clear();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_user ORDER BY id ASC")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM rp_users_licenses ORDER BY id ASC")) {
             while (set.next()) {
                 License license = null;
                 if (!this.licenses.containsKey(set.getInt("id"))) {

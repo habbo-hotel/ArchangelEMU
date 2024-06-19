@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
+import com.eu.habbo.roleplay.government.LicenseType;
 
 public class LicenseHelper {
 
@@ -34,7 +35,7 @@ public class LicenseHelper {
             return false;
         }
 
-        int licenseType = Integer.parseInt(license);
+        LicenseType licenseType = LicenseType.fromValue(Integer.parseInt(license));
 
         if (targetedHabbo.getInventory().getLicensesComponent().getLicenseByType(licenseType) != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_already_exists"));

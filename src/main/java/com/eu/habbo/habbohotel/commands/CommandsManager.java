@@ -39,6 +39,8 @@ import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
 import com.eu.habbo.roleplay.commands.corp.*;
 import com.eu.habbo.roleplay.commands.gang.*;
+import com.eu.habbo.roleplay.commands.license.LicenseAcceptCommand;
+import com.eu.habbo.roleplay.commands.license.LicenseOfferCommand;
 import com.eu.habbo.roleplay.commands.police.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -333,6 +335,10 @@ public class CommandsManager {
         addCommand(new GangInviteDeclineCommand());
         addCommand(new GangKickCommand());
         addCommand(new GangLeaveCommand());
+
+        // License
+        addCommand(new LicenseAcceptCommand());
+        addCommand(new LicenseOfferCommand());
 
         // Police
         addCommand(new ArrestCommand());
