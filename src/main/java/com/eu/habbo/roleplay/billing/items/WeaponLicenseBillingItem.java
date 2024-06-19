@@ -34,7 +34,7 @@ public class WeaponLicenseBillingItem implements BillingItem{
 
     @Override
     public int getChargedByCorpID() {
-        return GovernmentManager.getInstance().getStatePoliceCorp().getGuild().getId();
+        return GovernmentManager.getInstance().getPoliceCorp().getGuild().getId();
     }
 
     @Override

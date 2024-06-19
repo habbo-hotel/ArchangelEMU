@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class Corp implements Runnable {
@@ -23,7 +23,7 @@ public class Corp implements Runnable {
     @Getter
     private final Guild guild;
     @Getter
-    private List<String> tags;
+    private Set<CorpTag> tags;
     @Getter
     private TIntObjectHashMap<CorpPosition> positions;
 
@@ -60,7 +60,16 @@ public class Corp implements Runnable {
 
     public Corp(ResultSet set) throws SQLException {
         this.guild = Emulator.getGameEnvironment().getGuildManager().getGuild(set.getInt("guild_id"));
-        this.tags = Arrays.stream(set.getString("tags").split(";")).toList();
+        this.tags = new HashSet<>(Arrays.stream(set.getString("tags").split(","))
+               .map(String::trim)
+               .map(tagValue -> {
+                   try {
+                       return CorpTag.fromValue(tagValue);
+                   } catch (IllegalArgumentException e) {
+                       return null; // or handle default value
+                   }
+               })
+               .toList());
         this.positions = CorpPositionRepository.getInstance().getAllCorporationPositions(this.guild.getId());
         this.invitedUsers = new TIntObjectHashMap<>();
     }

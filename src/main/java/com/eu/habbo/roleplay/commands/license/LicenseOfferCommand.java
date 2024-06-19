@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.billing.BillingStatement;
 import com.eu.habbo.roleplay.billing.items.WeaponLicenseBillingItem;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.messages.outgoing.billing.InvoiceReceivedComposer;
 
@@ -36,15 +37,49 @@ public class LicenseOfferCommand extends Command {
 
         LicenseType licenseType = LicenseType.fromValue(Integer.parseInt(params[2]));
 
-
         if (targetedHabbo.getInventory().getLicensesComponent().getLicenseByType(licenseType) != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_already_exists"));
             return true;
         }
 
+        if (licenseType == LicenseType.DRIVER) {
+            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.DRIVING_AUTHORITY)) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+                return true;
+            }
+        }
+
+        if (licenseType == LicenseType.FARMING) {
+            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.FARMING_AUTHORITY)) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+                return true;
+            }
+        }
+
+        if (licenseType == LicenseType.FISHING) {
+            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.FISHING_AUTHORITY)) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+                return true;
+            }
+        }
+
+        if (licenseType == LicenseType.MINING) {
+            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.MINING_AUTHORITY)) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+                return true;
+            }
+        }
+
+        if (licenseType == LicenseType.WEAPON) {
+            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.WEAPONS_AUTHORITY)) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+                return true;
+            }
+        }
+
         BillingStatement statement = BillingStatement.create(new WeaponLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
 
-        gameClient.sendResponse(new InvoiceReceivedComposer(statement));
+        targetedHabbo.getClient().sendResponse(new InvoiceReceivedComposer(statement));
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.license_offered").replace(":license", licenseType.name()).replace(":username", targetedHabbo.getHabboInfo().getUsername()));
 

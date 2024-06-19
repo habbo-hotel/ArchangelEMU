@@ -10,8 +10,8 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CorpManager {
 
@@ -63,18 +63,13 @@ public class CorpManager {
         return null;
     }
 
-    public List<Corp> getCorpsByTag(String tag) {
-        List<Corp> corporationsWithTag = new ArrayList<>();
-        int[] keys = corporations.keys();
-        for (int key : keys) {
-            Corp corp = corporations.get(key);
-            List<String> tags = corp.getTags();
-            if (tags != null && tags.contains(tag)) {
-                corporationsWithTag.add(corp);
-            }
+    public List<Corp> getCorpsByTag(CorpTag tag) {
+        if (corporations == null || corporations.isEmpty()) {
+            return Collections.emptyList();
         }
-
-        return corporationsWithTag;
+        return corporations.valueCollection().stream()
+                .filter(corp -> corp.getTags() != null && corp.getTags().contains(tag))
+                .collect(Collectors.toList());
     }
 
     @Getter
