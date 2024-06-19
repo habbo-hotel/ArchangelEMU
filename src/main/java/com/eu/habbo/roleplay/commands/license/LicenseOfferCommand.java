@@ -72,7 +72,7 @@ public class LicenseOfferCommand extends Command {
 
         if (licenseType == LicenseType.WEAPON) {
             if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.WEAPONS_AUTHORITY)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed").replace(":license", licenseType.name()));
                 return true;
             }
         }
