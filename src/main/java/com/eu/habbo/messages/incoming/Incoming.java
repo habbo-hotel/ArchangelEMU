@@ -61,6 +61,7 @@ import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
+import com.eu.habbo.roleplay.messages.incoming.billing.PayBillEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
@@ -978,7 +979,9 @@ public enum Incoming {
 
     equipWeaponEvent(8025, EquipWeaponEvent.class),
 
-    listMyWeaponsEvent(8026, ListMyWeaponsEvent.class);
+    listMyWeaponsEvent(8026, ListMyWeaponsEvent.class),
+
+    payBillEvent(8027, PayBillEvent.class);
 
 
     private final int messageId;

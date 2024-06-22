@@ -28,7 +28,6 @@ import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
 import com.eu.habbo.roleplay.game.TimeOfDayManager;
 import com.eu.habbo.roleplay.corp.CorpManager;
-import com.eu.habbo.roleplay.government.BillingManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.tonics.TonicsManager;
 import com.eu.habbo.roleplay.weapons.WeaponsManager;
@@ -66,7 +65,6 @@ public class GameEnvironment {
     private CorpManager corpManager;
     private WeaponsManager weaponsManager;
     private GovernmentManager governmentManager;
-    private BillingManager billingManager;
     private TonicsManager tonicsManager;
     private TimeOfDayManager timeOfDayManager;
 
@@ -98,7 +96,6 @@ public class GameEnvironment {
         this.corpManager = CorpManager.getInstance();
         this.weaponsManager = WeaponsManager.getInstance();
         this.governmentManager = GovernmentManager.getInstance();
-        this.billingManager = BillingManager.getInstance();
         this.tonicsManager = TonicsManager.getInstance();
         this.timeOfDayManager = TimeOfDayManager.getInstance();
 

@@ -2,6 +2,7 @@ package com.eu.habbo.roleplay.inventory;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.database.HabboLicenseRepository;
 import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.users.HabboLicense;
 import gnu.trove.map.hash.THashMap;
@@ -18,7 +19,7 @@ public class LicensesComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(LicensesComponent.class);
 
     @Getter
-    private final THashMap<Integer, HabboLicense> licenses = new THashMap<Integer, HabboLicense>();
+    private final THashMap<LicenseType, HabboLicense> licenses = new THashMap<LicenseType, HabboLicense>();
 
     public final Habbo habbo;
     public LicensesComponent(Habbo habbo) {
@@ -27,7 +28,7 @@ public class LicensesComponent {
             statement.setInt(1, habbo.getHabboInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    this.licenses.put(set.getInt("id"), new HabboLicense(set));
+                    this.licenses.put(LicenseType.fromValue(set.getInt("license_type")), HabboLicense.fromSet(set));
                 }
             }
         } catch (SQLException e) {
@@ -37,15 +38,15 @@ public class LicensesComponent {
 
     public HabboLicense getLicenseByType(LicenseType licenseType) {
         for (HabboLicense license : licenses.values()) {
-            if (license.getLicense().getLicenseType() == licenseType) {
+            if (license.getLicenseType() == licenseType) {
                 return license;
             }
         }
         return null;
     }
 
-    public void createLicense(int licenseType) {
-        HabboLicense license = new HabboLicense(licenseType, habbo.getHabboInfo().getId());
+    public void createLicense(LicenseType licenseType) {
+        HabboLicense license = HabboLicenseRepository.getInstance().create(licenseType, habbo.getHabboInfo().getId());
         this.licenses.put(licenseType, license);
     }
 

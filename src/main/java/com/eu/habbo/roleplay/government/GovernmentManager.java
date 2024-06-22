@@ -27,12 +27,8 @@ public class GovernmentManager {
     private final Corp welfareCorp;
     private final Corp weaponsCorp;
 
-    @Getter
-    private LicenseManager licenseManager;
-
     private GovernmentManager() {
         long millis = System.currentTimeMillis();
-        this.licenseManager = LicenseManager.getInstance();
 
         this.farmingCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.FARMING_AUTHORITY).get(0);
         if (this.farmingCorp == null) {
@@ -65,9 +61,5 @@ public class GovernmentManager {
         }
 
         LOGGER.info("Government Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
-    }
-
-    public void dispose() {
-        this.licenseManager.dispose();
     }
 }

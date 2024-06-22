@@ -34,12 +34,12 @@ import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
+import com.eu.habbo.roleplay.commands.billing.PayBillCommand;
 import com.eu.habbo.roleplay.commands.combat.AttackCommand;
 import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
 import com.eu.habbo.roleplay.commands.corp.*;
 import com.eu.habbo.roleplay.commands.gang.*;
-import com.eu.habbo.roleplay.commands.license.LicenseAcceptCommand;
 import com.eu.habbo.roleplay.commands.license.LicenseOfferCommand;
 import com.eu.habbo.roleplay.commands.police.*;
 import lombok.Getter;
@@ -337,7 +337,6 @@ public class CommandsManager {
         addCommand(new GangLeaveCommand());
 
         // License
-        addCommand(new LicenseAcceptCommand());
         addCommand(new LicenseOfferCommand());
 
         // Police
@@ -346,6 +345,7 @@ public class CommandsManager {
         addCommand(new EscortCommand());
         addCommand(new StunCommand());
         addCommand(new ReleaseCommand());
+        addCommand(new PayBillCommand());
     }
 
     public void dispose() {

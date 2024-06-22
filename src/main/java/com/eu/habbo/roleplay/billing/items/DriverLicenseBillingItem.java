@@ -5,29 +5,29 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.government.LicenseType;
 
-public class WeaponLicenseBillingItem implements BillingItem{
+public class DriverLicenseBillingItem implements BillingItem{
 
     private  int userID;
     private int chargedByUserID;
 
-    public WeaponLicenseBillingItem(int userID, int chargedByUserID) {
+    public DriverLicenseBillingItem(int userID, int chargedByUserID) {
         this.userID = userID;
         this.chargedByUserID = chargedByUserID;
     }
 
     @Override
     public BillType getType() {
-        return BillType.WEAPON_LICENSE;
+        return BillType.DRIVER_LICENSE;
     }
 
     @Override
     public String getTitle() {
-        return "Weapon License";
+        return "Driver License";
     }
 
     @Override
     public String getDescription() {
-        return "Fee for background check and processing";
+        return "Fee for road maintenance and processing";
     }
 
     @Override
@@ -57,7 +57,7 @@ public class WeaponLicenseBillingItem implements BillingItem{
 
     @Override
     public void onBillPaid(Habbo habbo) {
-        habbo.getInventory().getLicensesComponent().createLicense(LicenseType.WEAPON);
+        habbo.getInventory().getLicensesComponent().createLicense(LicenseType.DRIVER);
         habbo.shout(Emulator.getTexts().getValue("roleplay.license.received").replace(":license", this.getTitle()));
     }
 }

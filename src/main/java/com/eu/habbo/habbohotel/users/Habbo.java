@@ -29,6 +29,7 @@ import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
@@ -243,7 +244,10 @@ public class Habbo extends Avatar implements Runnable {
 
         this.getHabboInfo().addCredits(event.getCredits());
 
-        if (this.client != null) this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
+        if (this.client != null) {
+            this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
+            this.client.sendResponse(new UserRoleplayStatsChangeComposer(this.client.getHabbo()));
+        }
     }
 
 
