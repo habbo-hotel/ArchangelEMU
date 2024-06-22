@@ -435,20 +435,14 @@ public class Outgoing {
     public static final int userRoleplayStatsChangeComposer = 9001;
     public static final int corpInfoComposer = 9002;
     public static final int gangInfoComposer = 9003;
-
     public static final int corpPositionInfoComposer = 9004;
-
     public static final int userWardrobeOpenComposer = 9005;
-
     public static final int timeOfDayComposer = 9006;
-
     public static final int myWeaponListComposer = 9007;
-
     public static final int combatDelayComposer = 9008;
-
     public static final int cashRegisterComposer = 9009;
-
     public static final int invoiceReceivedComposer = 9010;
+    public static final int taxFeeComposer = 9011;
 
 
 }
