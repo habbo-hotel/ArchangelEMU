@@ -100,22 +100,6 @@ public class NewNavigatorSearchEvent extends MessageHandler {
         } catch (Exception e) {
             log.error("Caught exception", e);
         }
-
-        /*
-        try
-        {
-
-            List<SearchResultList> resultLists = new ArrayList<>(filter.getResult(this.client.getHabbo(), field, part, category != null ? category.getId() : -1));
-            filter.filter(field.field, part, resultLists);
-
-            Collections.sort(resultLists);
-            this.client.sendResponse(new NewNavigatorSearchResultsComposer(view, query, resultLists));
-        }
-        catch (Exception e)
-        {
-            log.error("Caught exception", e);
-        }
-        */
     }
 
     private ArrayList<SearchResultList> toQueryResults(List<SearchResultList> resultLists) {

@@ -23,8 +23,6 @@ public class NavigatorHotelFilter extends NavigatorFilter {
         List<SearchResultList> resultLists = new ArrayList<>();
 
         int i = 0;
-        resultLists.add(new SearchResultList(i, "popular", "", SearchAction.NONE, habbo.getHabboStats().getNavigatorWindowSettings().getListModeForCategory("popular", ListMode.fromType(Emulator.getConfig().getInt("hotel.navigator.popular.listtype"))), habbo.getHabboStats().getNavigatorWindowSettings().getDisplayModeForCategory("popular"), Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("popular", habbo), false, showInvisible, DisplayOrder.ORDER_NUM, -1));
-        i++;
 
         for (Map.Entry<Integer, List<Room>> set : Emulator.getGameEnvironment().getRoomManager().getPopularRoomsByCategory(Emulator.getConfig().getInt("hotel.navigator.popular.category.maxresults")).entrySet()) {
             if (!set.getValue().isEmpty()) {
