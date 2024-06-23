@@ -163,15 +163,15 @@ public class Habbo extends Avatar implements Runnable {
         log.info("{} logging out in " + (logoutDelay/1000) + " seconds", this.habboInfo.getUsername());
         this.shout(Emulator.getTexts().getValue("roleplay.generic.logout_started").replace(":seconds", String.valueOf(logoutDelay / 1000)));
 
-        RoomTile currPos = this.getRoomUnit().getCurrentPosition();
-        this.habboInfo.setHomeRoom(this.getRoomUnit().getRoom().getRoomInfo().getId());
-        this.habboRoleplayStats.setLastPos(currPos.getX(), currPos.getY());
 
         Emulator.getThreading().run(() -> {
             this.disconnecting = true;
 
             try {
                 if (this.getRoomUnit().getRoom() != null) {
+                    RoomTile currPos = this.getRoomUnit().getCurrentPosition();
+                    this.habboInfo.setHomeRoom(this.getRoomUnit().getRoom().getRoomInfo().getId());
+                    this.habboRoleplayStats.setLastPos(currPos.getX(), currPos.getY());
                     Emulator.getGameEnvironment().getRoomManager().leaveRoom(this, this.getRoomUnit().getRoom());
                 }
                 if (this.getHabboInfo().getRoomQueueId() > 0) {

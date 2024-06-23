@@ -32,7 +32,7 @@ public class CallTaxiCommand extends Command {
 
         int roomID = Integer.parseInt(params[1]);
 
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() == roomID) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null && gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() == roomID ) {
             return true;
         }
 
