@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
+import com.eu.habbo.roleplay.messages.outgoing.taxi.TaxiDispatchedComposer;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.room.RoomType;
 
@@ -53,6 +54,9 @@ public class CallTaxiCommand extends Command {
             return true;
         }
 
+        int taxiDelay = Integer.parseInt(Emulator.getConfig().getValue("roleplay.taxi.delay_secs", "20"));
+        long arrivesAt = (System.currentTimeMillis() / 1000) + taxiDelay;
+
         gameClient.getHabbo().getHabboInfo().setCredits(gameClient.getHabbo().getHabboInfo().getCredits() - taxiFee);
         gameClient.getHabbo().shout(
                 Emulator.getTexts()
@@ -62,8 +66,7 @@ public class CallTaxiCommand extends Command {
         );
         gameClient.sendResponse(new CreditBalanceComposer(gameClient.getHabbo()));
         gameClient.sendResponse(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()));
-
-        int taxiDelay = Integer.parseInt(Emulator.getConfig().getValue("roleplay.taxi.delay_secs", "20"));
+        gameClient.sendResponse(new TaxiDispatchedComposer(targetedRoom.getRoomInfo().getId(), arrivesAt));
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         Set<Integer> scheduledSeconds = new HashSet<>();
@@ -87,11 +90,16 @@ public class CallTaxiCommand extends Command {
         }
 
         executor.schedule(() -> {
+            gameClient.getHabbo().shout(Emulator.getTexts()
+                    .getValue("roleplay.taxi.picked_up")
+                    .replace(":fee", String.valueOf(taxiFee))
+            );
             Emulator.getGameEnvironment().getRoomManager().enterRoom(gameClient.getHabbo(), targetedRoom.getRoomInfo().getId(), targetedRoom.getRoomInfo().getPassword(), false);
+            executor.schedule(() -> {
+                gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.taxi.arrived"));
+                executor.shutdown();
+                }, 1, TimeUnit.SECONDS);
         }, taxiDelay, TimeUnit.SECONDS);
-
-        executor.shutdown();
-
         return true;
     }
 }

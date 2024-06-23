@@ -8,12 +8,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TaxiDispatchedComposer extends MessageComposer {
 
-    private final int arrivesAt;
+    private final int roomID;
+    private final long arrivesAt;
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.taxiDispatchedComposer);
-        this.response.appendInt(this.arrivesAt);
+        this.response.appendInt(this.roomID);
+        this.response.appendInt(Integer.parseInt(String.valueOf(this.arrivesAt)));
         return this.response;
     }
 }
