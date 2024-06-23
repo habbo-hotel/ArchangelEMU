@@ -358,6 +358,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionTreadmill.INTERACTION_TYPE, InteractionTreadmill.class));
         this.interactionsList.add(new ItemInteraction(InteractionWeightBench.INTERACTION_TYPE, InteractionWeightBench.class));
         this.interactionsList.add(new ItemInteraction(InteractionEmployeeGate.INTERACTION_TYPE, InteractionEmployeeGate.class));
+        this.interactionsList.add(new ItemInteraction(InteractionTollGate.INTERACTION_TYPE, InteractionTollGate.class));
     }
 
 
