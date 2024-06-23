@@ -539,7 +539,7 @@ public class HabboRoleplayStats implements Runnable {
                 statement.setInt(18, this.farmingXP);
                 statement.setInt(19, this.weaponXP);
 
-                statement.setInt(12, this.habbo.getHabboInfo().getId());
+                statement.setInt(20, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
