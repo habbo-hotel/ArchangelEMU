@@ -7,6 +7,8 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 @Getter
 public class GovernmentManager {
 
@@ -30,34 +32,52 @@ public class GovernmentManager {
     private GovernmentManager() {
         long millis = System.currentTimeMillis();
 
-        this.farmingCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.FARMING_AUTHORITY).get(0);
-        if (this.farmingCorp == null) {
-            throw new RuntimeException("GovernmentManager expected a state farming corp to exist.  Please create one in rp_corporations");
+        List<Corp> farmingCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.FARMING_AUTHORITY);
+        if (farmingCorps.isEmpty()) {
+            GovernmentManager.LOGGER.warn("GovernmentManager expected a state farming corp to exist.  Please create one in rp_corporations");
+            this.farmingCorp = null;
+        } else {
+            this.farmingCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.FARMING_AUTHORITY).get(0);
         }
 
-        this.fishingCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.FISHING_AUTHORITY).get(0);
-        if (this.fishingCorp == null) {
-            throw new RuntimeException("GovernmentManager expected a fishing corp to exist.  Please create one in rp_corporations");
+        List<Corp> fishingCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.FISHING_AUTHORITY);
+        if (fishingCorps.isEmpty()) {
+            GovernmentManager.LOGGER.warn("GovernmentManager expected a fishing corp to exist.  Please create one in rp_corporations");
+            this.fishingCorp = null;
+        } else {
+            this.fishingCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.FISHING_AUTHORITY).get(0);
         }
 
-        this.miningCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.MINING_AUTHORITY).get(0);
-        if (this.miningCorp == null) {
-            throw new RuntimeException("GovernmentManager expected a mining corp to exist.  Please create one in rp_corporations");
+        List<Corp> miningCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.MINING_AUTHORITY);
+        if (miningCorps.isEmpty()) {
+            GovernmentManager.LOGGER.warn("GovernmentManager expected a mining corp to exist.  Please create one in rp_corporations");
+            this.miningCorp = null;
+        } else {
+            this.miningCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.MINING_AUTHORITY).get(0);
         }
 
-        this.policeCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.POLICE).get(0);
-        if (this.policeCorp == null) {
-            throw new RuntimeException("GovernmentManager expected a police corp to exist.  Please create one in rp_corporations");
+        List<Corp> policeCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.POLICE);
+        if (policeCorps.isEmpty()) {
+            GovernmentManager.LOGGER.warn("GovernmentManager expected a police corp to exist.  Please create one in rp_corporations");
+            this.policeCorp = null;
+        } else {
+            this.policeCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.POLICE).get(0);
         }
 
-        this.weaponsCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.WEAPONS_AUTHORITY).get(0);
-        if (this.weaponsCorp == null) {
-            throw new RuntimeException("GovernmentManager expected a weapons corp to exist.  Please create one in rp_corporations");
+        List<Corp> weaponsCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.WEAPONS_AUTHORITY);
+        if (weaponsCorps.isEmpty()) {
+            GovernmentManager.LOGGER.warn("GovernmentManager expected a weapons corp to exist.  Please create one in rp_corporations");
+            this.weaponsCorp = null;
+        } else {
+            this.weaponsCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.WEAPONS_AUTHORITY).get(0);
         }
 
-        this.welfareCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.WELFARE).get(0);
-        if (this.welfareCorp == null) {
-            throw new RuntimeException("GovernmentManager expected a welfare corp to exist.  Please create one in rp_corporations");
+        List<Corp> welfareCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.WELFARE);
+        if (welfareCorps.isEmpty()) {
+            GovernmentManager.LOGGER.warn("GovernmentManager expected a welfare corp to exist.  Please create one in rp_corporations");
+            this.welfareCorp = null;
+        } else {
+            this.welfareCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.WELFARE).get(0);
         }
 
         LOGGER.info("Government Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
