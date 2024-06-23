@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.PermissionGroup;
+import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +37,7 @@ public class HabboInfo implements Runnable {
     private PermissionGroup permissionGroup;
     private int credits;
     private int lastOnline;
+    @Setter
     private int homeRoom;
     private boolean online;
     private int roomQueueId;

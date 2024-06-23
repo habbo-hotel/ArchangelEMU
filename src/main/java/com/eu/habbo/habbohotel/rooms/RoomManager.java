@@ -46,6 +46,7 @@ import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
+import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 import com.eu.habbo.messages.outgoing.users.RemainingMutePeriodComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomFloorItemsLoadEvent;
@@ -576,12 +577,6 @@ public class RoomManager {
             habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
             habbo.getRoomUnit().setLoadingRoom(null);
         }
-
-        if (CorpShiftManager.getInstance().isUserWorking(habbo) && !habbo.getHabboRoleplayStats().getCorpPosition().isCanWorkAnywhere()) {
-            CorpShiftManager.getInstance().stopUserShift(habbo, false, false);
-        }
-
-        habbo.getHabboInfo().setHomeRoom(room.getRoomInfo().getId());
     }
 
     void openRoom(Habbo habbo, Room room, RoomTile spawnLocation) {
@@ -665,6 +660,14 @@ public class RoomManager {
                 AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomEntry"));
             }
         }
+
+
+        if (CorpShiftManager.getInstance().isUserWorking(habbo) && !habbo.getHabboRoleplayStats().getCorpPosition().isCanWorkAnywhere()) {
+            CorpShiftManager.getInstance().stopUserShift(habbo, false, false);
+        }
+
+        habbo.getHabboInfo().setHomeRoom(room.getRoomInfo().getId());
+        habbo.getClient().sendResponse(new NavigatorSettingsComposer(habbo.getHabboInfo().getHomeRoom(), habbo.getHabboInfo().getHomeRoom()));
     }
 
     public void enterRoom(final Habbo habbo, final Room room) {
