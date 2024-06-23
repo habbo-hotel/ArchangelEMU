@@ -357,6 +357,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionHospitalBed.HOSPITAL_BED_INTERACTION_TYPE, InteractionHospitalBed.class));
         this.interactionsList.add(new ItemInteraction(InteractionPrisonBench.PRISON_BENCH_INTERACTION_TYPE, InteractionPrisonBench.class));
         this.interactionsList.add(new ItemInteraction(InteractionCashRegister.CASH_REGISTER_INTERACTION_TYPE, InteractionCashRegister.class));
+        this.interactionsList.add(new ItemInteraction(InteractionWardrobe.WARDROBE_INTERACTION_TYPE, InteractionWardrobe.class));
     }
 
 
