@@ -10,6 +10,7 @@ import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.corp.CorpShiftManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
+import com.eu.habbo.roleplay.level.*;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.room.FacilityHospitalManager;
 import com.eu.habbo.roleplay.weapons.Weapon;
@@ -89,6 +90,84 @@ public class HabboRoleplayStats implements Runnable {
     private short lastPosX;
     @Getter
     private short lastPosY;
+
+    @Setter
+    @Getter
+    private int playerXP;
+    public PlayerLevel getPlayerLevel() {
+        return new PlayerLevel(this.playerXP, 1, 1);
+    }
+
+    @Getter
+    private int strengthXP;
+    public void addStrengthXP(int xp) {
+        this.strengthXP += xp;
+        this.playerXP += xp;
+    }
+    public StrengthLevel getStrengthLevel() {
+        return new StrengthLevel(this.strengthXP, 1, 1);
+    }
+
+    @Getter
+    private int accuracyXP;
+    public void addAccuracyXP(int xp) {
+        this.accuracyXP += xp;
+        this.playerXP += xp;
+    }
+    public AccuracyLevel getAccuracyLevel() {
+        return new AccuracyLevel(this.accuracyXP, 1, 1);
+    }
+
+    @Getter
+    private int staminaXP;
+    public void addStaminaXP(int xp) {
+        this.staminaXP += xp;
+        this.playerXP += xp;
+    }
+    public StaminaLevel getStaminaLevel() {
+        return new StaminaLevel(this.staminaXP, 1, 1);
+    }
+    @Getter
+    private int meleeXP;
+    public void addMeleeXP(int xp) {
+        this.meleeXP += xp;
+        this.playerXP += xp;
+    }
+    public MeleeLevel getMeleeLevel() {
+        return new MeleeLevel(this.meleeXP, 1, 1);
+    }
+
+    @Getter
+    private int farmingXP;
+    public void addFarmingXP(int xp) {
+        this.farmingXP += xp;
+        this.playerXP += xp;
+    }
+    public FarmingLevel getFarmingLevel() {
+        return new FarmingLevel(this.farmingXP, 1, 1);
+    }
+
+    @Getter
+    private int fishingXP;
+    public void addFishingXP(int xp) {
+        this.fishingXP += xp;
+        this.playerXP += xp;
+    }
+    public FishingLevel getFishingLevel() {
+        return new FishingLevel(this.fishingXP, 1, 1);
+    }
+
+    @Getter
+    private int miningXP;
+    public void addMiningXP(int xp) {
+        this.miningXP += xp;
+        this.playerXP += xp;
+    }
+
+    public MiningLevel getMiningLevel() {
+        return new MiningLevel(this.miningXP, 1, 1);
+    }
+
     @Setter
     @Getter
     private long lastAttackTime;
@@ -262,6 +341,13 @@ public class HabboRoleplayStats implements Runnable {
         this.gangID = set.getInt("gang_id") != 0 ? set.getInt("gang_id") : null;
         this.lastPosX = set.getShort("last_pos_x");
         this.lastPosY = set.getShort("last_pos_y");
+        this.playerXP = set.getInt("player_xp");
+        this.staminaXP = set.getInt("stamina_xp");
+        this.accuracyXP = set.getInt("accuracy_xp");
+        this.meleeXP = set.getInt("melee_xp");
+        this.farmingXP = set.getInt("farming_xp");
+        this.fishingXP = set.getInt("fishing_xp");
+        this.miningXP = set.getInt("mining_xp");
     }
 
     public void dispose() {
@@ -272,7 +358,7 @@ public class HabboRoleplayStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, melee_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.healthNow);
                 statement.setInt(2, this.healthMax);
                 statement.setInt(3, this.energyNow);
@@ -281,12 +367,18 @@ public class HabboRoleplayStats implements Runnable {
                 statement.setInt(6, this.hungerMax);
                 statement.setInt(7, this.corporationID);
                 statement.setInt(8, this.corporationPositionID);
-
                 if (this.gangID != null) statement.setInt(9, this.gangID);
                 if (this.gangID == null) statement.setNull(9, Types.INTEGER);
 
                 statement.setShort(10, this.lastPosX);
                 statement.setShort(11, this.lastPosY);
+                statement.setInt(12, this.playerXP);
+                statement.setInt(13, this.staminaXP);
+                statement.setInt(14, this.accuracyXP);
+                statement.setInt(15, this.meleeXP);
+                statement.setInt(16, this.farmingXP);
+                statement.setInt(17, this.fishingXP);
+                statement.setInt(18, this.farmingXP);
 
                 statement.setInt(12, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
