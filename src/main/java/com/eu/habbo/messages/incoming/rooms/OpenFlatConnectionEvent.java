@@ -37,54 +37,6 @@ public class OpenFlatConnectionEvent extends MessageHandler {
                 this.client.getHabbo().getRoomUnit().setTeleporting(false);
             }
 
-            if ("cat" == "dog") {
-                Room newRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
-                int taxiFee = Emulator.getConfig().getInt("roleplay.taxi.fee", 20);
-                int taxiDelay = Integer.parseInt(Emulator.getConfig().getValue("roleplay.taxi.delay_secs", "20"));
-
-                if (this.client.getHabbo().getHabboInfo().getCredits() < taxiFee) {
-                    this.client.getHabbo().shout(Emulator.getTexts().getValue("roleplay.taxi.cant_afford"));
-                    return;
-                }
-
-                this.client.getHabbo().getHabboInfo().setCredits(this.client.getHabbo().getHabboInfo().getCredits() - taxiFee);
-                this.client.getHabbo().shout(
-                        Emulator.getTexts()
-                                .getValue("roleplay.taxi.dispatched")
-                                .replace(":roomName", newRoom.getRoomInfo().getName())
-                                .replace(":roomID", String.valueOf(newRoom.getRoomInfo().getId()))
-                );
-                this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
-                this.client.sendResponse(new UserRoleplayStatsChangeComposer(this.client.getHabbo()));
-
-                ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-                Set<Integer> scheduledSeconds = new HashSet<>();
-
-                int countdownInterval = 5;
-                for (int i = 1; i <= 4; i++) {
-                    int countdownSeconds = i * countdownInterval;
-
-                    if (countdownSeconds <= taxiDelay && !scheduledSeconds.contains(countdownSeconds)) {
-                        scheduledSeconds.add(countdownSeconds); // Mark countdownSeconds as scheduled
-
-                        int delaySeconds = taxiDelay - countdownSeconds; // Calculate delay
-
-                        executor.schedule(() -> {
-                            this.client.getHabbo().shout(Emulator.getTexts()
-                                    .getValue("roleplay.taxi.eta")
-                                    .replace(":seconds", String.valueOf(countdownSeconds))
-                            );
-                        }, delaySeconds, TimeUnit.SECONDS);
-                    }
-                }
-
-                executor.schedule(() -> {
-                    Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), roomId, password, false);
-                }, taxiDelay, TimeUnit.SECONDS);
-
-                executor.shutdown();
-            }
-
             Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), roomId, password, false);
         }
     }

@@ -32,6 +32,10 @@ public class CallTaxiCommand extends Command {
 
         int roomID = Integer.parseInt(params[1]);
 
+        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() == roomID) {
+            return true;
+        }
+
         Room targetedRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(roomID);
 
         if (targetedRoom == null) {
@@ -46,7 +50,7 @@ public class CallTaxiCommand extends Command {
             return true;
         }
 
-        if (targetedRoom.getRoomInfo().getTags().contains(RoomType.TAXI)) {
+        if (!targetedRoom.getRoomInfo().getTags().contains(RoomType.TAXI)) {
             gameClient.getHabbo().whisper(Emulator.getTexts()
                     .getValue("roleplay.taxi.not_available")
                     .replace(":roomname", targetedRoom.getRoomInfo().getName())
