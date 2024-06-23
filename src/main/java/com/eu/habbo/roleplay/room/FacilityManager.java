@@ -23,13 +23,19 @@ public class FacilityManager {
 
     private FacilityManager() {
         this.facilityHospitalManager = FacilityHospitalManager.getInstance();
-        this.facilityPrisonManager = FacilityPrisonManager.getInstance();
         this.facilityHospitalManager.cycle();
+
+        this.facilityPrisonManager = FacilityPrisonManager.getInstance();
+        this.facilityPrisonManager.cycle();
     }
 
     public void cycle(Room room) {
         if (room.getRoomInfo().getId() == FacilityHospitalManager.getInstance().getHospital().getRoomInfo().getId()) {
             FacilityHospitalManager.getInstance().cycle();
+        }
+
+        if (room.getRoomInfo().getId() == FacilityPrisonManager.getInstance().getPrison().getRoomInfo().getId()) {
+            FacilityPrisonManager.getInstance().cycle();
         }
     }
 
