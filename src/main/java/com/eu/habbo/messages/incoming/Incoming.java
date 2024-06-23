@@ -66,7 +66,8 @@ import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
-import com.eu.habbo.roleplay.messages.incoming.game.TaxiFeeQueryEvent;
+import com.eu.habbo.roleplay.messages.incoming.taxi.CallTaxiEvent;
+import com.eu.habbo.roleplay.messages.incoming.taxi.TaxiFeeQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
 import com.eu.habbo.roleplay.messages.incoming.police.*;
@@ -984,7 +985,9 @@ public enum Incoming {
 
     payBillEvent(8027, PayBillEvent.class),
 
-    taxiFeeQueryEvent(8028, TaxiFeeQueryEvent.class);
+    taxiFeeQueryEvent(8028, TaxiFeeQueryEvent.class),
+
+    callTaxiEvent(8029, CallTaxiEvent.class);
 
 
     private final int messageId;

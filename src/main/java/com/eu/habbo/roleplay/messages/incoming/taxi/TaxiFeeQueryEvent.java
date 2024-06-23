@@ -1,7 +1,7 @@
-package com.eu.habbo.roleplay.messages.incoming.game;
+package com.eu.habbo.roleplay.messages.incoming.taxi;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.roleplay.messages.outgoing.game.TaxiFeeComposer;
+import com.eu.habbo.roleplay.messages.outgoing.taxi.TaxiFeeComposer;
 
 public class TaxiFeeQueryEvent extends MessageHandler {
     @Override

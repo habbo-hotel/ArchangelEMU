@@ -42,6 +42,7 @@ import com.eu.habbo.roleplay.commands.corp.*;
 import com.eu.habbo.roleplay.commands.gang.*;
 import com.eu.habbo.roleplay.commands.license.LicenseOfferCommand;
 import com.eu.habbo.roleplay.commands.police.*;
+import com.eu.habbo.roleplay.commands.taxi.CallTaxiCommand;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -346,6 +347,9 @@ public class CommandsManager {
         addCommand(new StunCommand());
         addCommand(new ReleaseCommand());
         addCommand(new PayBillCommand());
+
+        // Taxi
+        addCommand(new CallTaxiCommand());
     }
 
     public void dispose() {
