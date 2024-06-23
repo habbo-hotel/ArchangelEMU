@@ -289,6 +289,16 @@ public class HabboRoleplayStats implements Runnable {
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
+    public void addEnergy(int energyGained, String action) {
+        this.energyNow = (this.energyNow + energyGained) > this.energyMax ? this.energyMax : this.energyNow + energyGained;
+        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.energy.gained")
+                .replace(":action", action)
+                .replace(":energy", String.valueOf(energyGained))
+        );
+    }
+
     public void depleteEnergy(int energyDepleted) {
         this.energyNow = this.energyNow < energyDepleted ? 0 : this.energyNow - energyDepleted;
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());

@@ -572,11 +572,7 @@ public class RoomUnitManager extends IRoomManager {
 
             room.getRoomTraxManager().cycle();
         } else {
-
-            if (this.roomIdleCycles < 60)
-                this.roomIdleCycles++;
-            else
-                this.dispose();
+            this.roomIdleCycles++;
         }
 
         return foundRightHolder;

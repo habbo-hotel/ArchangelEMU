@@ -29,23 +29,46 @@ public class RoomHabbo extends RoomAvatar {
 
     private boolean cmdTeleportEnabled;
 
-//    @Setter
-//    private boolean isKicked;
     private int kickCount;
     private int idleTicks;
     private boolean isSleeping;
-//    private final HashSet<Integer> overridableTiles;
+
+    @Getter
+    private RoomTile lastRoomTile;
+    private int ticksSinceLastReplenish = 0;
 
     public RoomHabbo() {
         super();
         this.cmdTeleportEnabled = false;
-//        this.isKicked = false;
-//        this.overridableTiles = new HashSet<>();
     }
 
     @Override
     public void cycle() {
         super.cycle();
+
+        if (this.getCurrentPosition() == this.lastRoomTile) {
+            this.incrementIdleTicks();
+        } else {
+            this.resetIdleTicks();
+        }
+
+        this.lastRoomTile = this.getCurrentPosition();
+
+        int energyReplenishIdleTime = Emulator.getConfig().getInt("roleplay.energy.replenish_idle_time", 4);
+
+        if (this.idleTicks >= energyReplenishIdleTime) {
+            this.ticksSinceLastReplenish += 1;
+
+            if (this.ticksSinceLastReplenish >= energyReplenishIdleTime) {
+                this.ticksSinceLastReplenish = 0;
+
+                if (this.unit.getHabboRoleplayStats().getEnergyNow() < this.unit.getHabboRoleplayStats().getEnergyMax()) {
+                    this.unit.getHabboRoleplayStats().addEnergy(Emulator.getConfig().getInt("roleplay.energy.replenish_amount", 5), "resting");
+                }
+            }
+        } else {
+            this.ticksSinceLastReplenish = 0;
+        }
     }
 
     @Override
