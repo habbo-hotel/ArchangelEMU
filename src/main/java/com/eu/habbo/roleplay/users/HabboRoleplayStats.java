@@ -130,8 +130,22 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int meleeXP;
     public void addMeleeXP(int xp) {
+        int currentMeleeLevel = this.getMeleeLevel().getCurrentLevel();
         this.meleeXP += xp;
         this.playerXP += xp;
+        int updatedMeleeLevel = this.getMeleeLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getMeleeLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentMeleeLevel != updatedMeleeLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getMeleeLevel().getType())
+                    .replace(":level", String.valueOf(updatedMeleeLevel))
+            );
+        }
     }
     public MeleeLevel getMeleeLevel() {
         return new MeleeLevel(this.meleeXP, 1, 1);
@@ -140,8 +154,22 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int farmingXP;
     public void addFarmingXP(int xp) {
+        int currentFarmingLevel = this.getFarmingLevel().getCurrentLevel();
         this.farmingXP += xp;
         this.playerXP += xp;
+        int updatedFarmingLevel = this.getFarmingLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getFarmingLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentFarmingLevel != updatedFarmingLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getMeleeLevel().getType())
+                    .replace(":level", String.valueOf(updatedFarmingLevel))
+            );
+        }
     }
     public FarmingLevel getFarmingLevel() {
         return new FarmingLevel(this.farmingXP, 1, 1);
@@ -150,8 +178,22 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int fishingXP;
     public void addFishingXP(int xp) {
+        int currentFishingLevel = this.getFishingLevel().getCurrentLevel();
         this.fishingXP += xp;
         this.playerXP += xp;
+        int updatedFishingLevel = this.getFishingLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getFishingLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentFishingLevel != updatedFishingLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getMeleeLevel().getType())
+                    .replace(":level", String.valueOf(updatedFishingLevel))
+            );
+        }
     }
     public FishingLevel getFishingLevel() {
         return new FishingLevel(this.fishingXP, 1, 1);
@@ -160,12 +202,49 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int miningXP;
     public void addMiningXP(int xp) {
+        int currentMiningLevel = this.getMiningLevel().getCurrentLevel();
         this.miningXP += xp;
         this.playerXP += xp;
+        int updatedMiningLevel = this.getMiningLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getMiningLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentMiningLevel != updatedMiningLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getMeleeLevel().getType())
+                    .replace(":level", String.valueOf(updatedMiningLevel))
+            );
+        }
     }
-
     public MiningLevel getMiningLevel() {
         return new MiningLevel(this.miningXP, 1, 1);
+    }
+
+    @Getter
+    private int weaponXP;
+    public void addWeaponXP(int xp) {
+        int currentWeaponLevel = this.getWeaponLevel().getCurrentLevel();
+        this.weaponXP += xp;
+        this.playerXP += xp;
+        int updatedWeaponLevel = this.getWeaponLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getWeaponLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentWeaponLevel != updatedWeaponLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getMeleeLevel().getType())
+                    .replace(":level", String.valueOf(updatedWeaponLevel))
+            );
+        }
+    }
+    public WeaponLevel getWeaponLevel() {
+        return new WeaponLevel(this.weaponXP, 1, 1);
     }
 
     @Setter
@@ -313,9 +392,18 @@ public class HabboRoleplayStats implements Runnable {
         this.lastPosY = y;
     }
 
-    public int getDamageModifier() {
+    public int getDamageModifier(HabboWeapon weapon) {
         Random random = new Random();
-        int damageModifier = random.nextInt(10) + 1;
+        int damageModifier = 0;
+
+        if (weapon == null) {
+            damageModifier = random.nextInt(2 * this.getStrengthLevel().getCurrentLevel()) + this.getMeleeLevel().getCurrentLevel();
+        }
+
+        if (weapon != null) {
+            damageModifier = random.nextInt(2 * this.getAccuracyLevel().getCurrentLevel()) + this.getWeaponLevel().getCurrentLevel();
+        }
+
         if (this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon() != null) {
             Weapon equippedWeapon = this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon().getWeapon();
             damageModifier += random.nextInt(equippedWeapon.getMaxDamage() - equippedWeapon.getMinDamage() + equippedWeapon.getMaxDamage());
@@ -358,7 +446,7 @@ public class HabboRoleplayStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, melee_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, melee_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ?, weapon-xp = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.healthNow);
                 statement.setInt(2, this.healthMax);
                 statement.setInt(3, this.energyNow);
@@ -379,6 +467,7 @@ public class HabboRoleplayStats implements Runnable {
                 statement.setInt(16, this.farmingXP);
                 statement.setInt(17, this.fishingXP);
                 statement.setInt(18, this.farmingXP);
+                statement.setInt(19, this.weaponXP);
 
                 statement.setInt(12, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();

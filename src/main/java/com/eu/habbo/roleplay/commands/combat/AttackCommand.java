@@ -68,7 +68,7 @@ public class AttackCommand extends Command {
             return true;
         }
 
-        int totalDamage = targetedHabbo.getHabboRoleplayStats().getDamageModifier();
+        int totalDamage = targetedHabbo.getHabboRoleplayStats().getDamageModifier(equippedWeapon);
 
         if (equippedWeapon != null) {
             String hitSuccessMessage = equippedWeapon.getWeapon().getAttackMessage()
@@ -76,6 +76,7 @@ public class AttackCommand extends Command {
                     .replace(":damage", Integer.toString(totalDamage))
                     .replace(":displayName", equippedWeapon.getWeapon().getDisplayName());
             gameClient.getHabbo().shout(hitSuccessMessage);
+            gameClient.getHabbo().getHabboRoleplayStats().addWeaponXP(totalDamage);
         }
 
         if (equippedWeapon == null) {
@@ -84,6 +85,7 @@ public class AttackCommand extends Command {
                     .replace(":username", targetedHabbo.getHabboInfo().getUsername())
                     .replace(":damage", Integer.toString(totalDamage));
             gameClient.getHabbo().shout(hitSuccessMessage);
+            gameClient.getHabbo().getHabboRoleplayStats().addMeleeXP(totalDamage);
         }
 
         targetedHabbo.getHabboRoleplayStats().setHealth(targetedHabbo.getHabboRoleplayStats().getHealthNow() - totalDamage);
