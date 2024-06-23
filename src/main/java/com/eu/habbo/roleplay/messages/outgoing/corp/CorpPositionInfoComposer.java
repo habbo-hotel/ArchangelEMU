@@ -26,6 +26,7 @@ public class CorpPositionInfoComposer extends MessageComposer {
         this.response.appendBoolean(matchingPosition.isCanFire());
         this.response.appendBoolean(matchingPosition.isCanPromote());
         this.response.appendBoolean(matchingPosition.isCanDemote());
+        this.response.appendBoolean(matchingPosition.isCanWorkAnywhere());
         return this.response;
     }
 }

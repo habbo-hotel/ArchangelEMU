@@ -21,6 +21,7 @@ public class CorpInfoComposer extends MessageComposer {
         this.response.appendString(matchingCorp.getGuild().getName());
         this.response.appendString(matchingCorp.getGuild().getDescription());
         this.response.appendString(matchingCorp.getGuild().getBadge());
+        this.response.appendString(matchingCorp.getTags().toString());
         return this.response;
     }
 }
