@@ -505,6 +505,7 @@ public class HabboRoleplayStats implements Runnable {
         this.farmingXP = set.getInt("farming_xp");
         this.fishingXP = set.getInt("fishing_xp");
         this.miningXP = set.getInt("mining_xp");
+        this.weaponXP = set.getInt("weapon_xp");
     }
 
     public void dispose() {
@@ -515,7 +516,7 @@ public class HabboRoleplayStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, melee_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ?, weapon-xp = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, melee_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ?, weapon_xp = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.healthNow);
                 statement.setInt(2, this.healthMax);
                 statement.setInt(3, this.energyNow);
