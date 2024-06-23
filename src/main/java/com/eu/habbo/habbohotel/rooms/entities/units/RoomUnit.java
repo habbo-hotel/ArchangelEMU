@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.stat.regression.ModelSpecificationException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -520,30 +521,31 @@ public abstract class RoomUnit extends RoomEntity {
     public void processWalking() {
         this.statuses.entrySet().removeIf(entry -> entry.getKey().isRemoveWhenWalking());
 
-        if(this.getNextPosition() != null) {
-            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
+        if (this.getNextPosition() != null) {
+            Collection<Habbo> habbosAtCurrentPosition = this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition());
+            for (Habbo h : habbosAtCurrentPosition) {
                 try {
                     h.getRoomUnit().getCurrentItem().onWalkOff(h.getRoomUnit(), this.room, null);
-                } catch (Exception ignored) {
-
+                } catch (Exception ex) {
+                    // Handle other exceptions appropriately
                 }
             }
             this.setCurrentPosition(this.getNextPosition());
             this.setCurrentZ(this.getNextZ());
         }
 
-        if(this.path != null && !this.path.isEmpty()) {
+        if (this.path != null && !this.path.isEmpty()) {
             RoomTile next = this.path.poll();
 
-            if(this.path.size() > 1 && (this.cmdFastWalkEnabled || this.temporalFastWalkEnabled)) {
+            if (this.path.size() > 1 && (this.cmdFastWalkEnabled || this.temporalFastWalkEnabled)) {
                 next = this.path.poll();
             }
 
-            if(next == null || !this.isValidTile(next)) {
+            if (next == null || !this.isValidTile(next)) {
                 this.path.clear();
                 this.findPath();
 
-                if(this.path.isEmpty()) {
+                if (this.path.isEmpty()) {
                     return;
                 }
 
@@ -559,15 +561,17 @@ public abstract class RoomUnit extends RoomEntity {
             this.nextZ = nextHeight;
         } else {
             this.stopWalking();
-            for (Habbo h : this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition())) {
+            Collection<Habbo> habbosAtCurrentPosition = this.room.getRoomUnitManager().getHabbosAt(this.getCurrentPosition());
+            for (Habbo h : habbosAtCurrentPosition) {
                 try {
                     h.getRoomUnit().getCurrentItem().onWalkOn(h.getRoomUnit(), this.room, null);
-                } catch (Exception ignored) {
-
+                } catch (Exception ex) {
+                    // Handle other exceptions appropriately
                 }
             }
         }
     }
+
 
     private RoomRotation handleNextRotation(RoomTile next) {
         return RoomRotation.values()[Rotation.Calculate(this.currentPosition.getX(), this.currentPosition.getY(), next.getX(), next.getY())];
