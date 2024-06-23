@@ -233,41 +233,60 @@ public class RoomLayout {
     }
 
     /// AMG
-    public Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalkthroughRetry) {
+    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalktroughRetry) {
         if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.getState() == RoomTileState.INVALID)
             return new LinkedList<>();
 
-        PriorityQueue<RoomTile> openList = new PriorityQueue<>();
-        HashSet<RoomTile> closedList = new HashSet<>();
+        LinkedList<RoomTile> openList = new LinkedList<>();
+        List<RoomTile> closedList = new LinkedList<>();
         openList.add(oldTile.copy());
 
         RoomTile doorTile = this.room.getLayout().getDoorTile();
 
         while (!openList.isEmpty()) {
-            RoomTile current = openList.poll();
+            RoomTile current = this.lowestFInOpen(openList);
             if (current.getX() == newTile.getX() && current.getY() == newTile.getY()) {
                 return this.calcPath(this.findTile(openList, oldTile.getX(), oldTile.getY()), current);
             }
 
             closedList.add(current);
+            openList.remove(current);
 
-            for (RoomTile currentAdj : this.getAdjacent(openList, current, newTile, roomUnit)) {
+            List<RoomTile> adjacentNodes = this.getAdjacent(openList, current, newTile, roomUnit);
+            for (RoomTile currentAdj : adjacentNodes) {
                 if (closedList.contains(currentAdj)) continue;
+
+                if (roomUnit.canOverrideTile(currentAdj)) {
+                    currentAdj.setPrevious(current);
+                    currentAdj.sethCosts(this.findTile(openList, newTile.getX(), newTile.getY()));
+                    currentAdj.setgCosts(current);
+                    openList.add(currentAdj);
+                    continue;
+                }
+
+                if (currentAdj.getState() == RoomTileState.BLOCKED || ((currentAdj.getState() == RoomTileState.SIT || currentAdj.getState() == RoomTileState.LAY) && !currentAdj.equals(goalLocation))) {
+                    closedList.add(currentAdj);
+                    openList.remove(currentAdj);
+                    continue;
+                }
 
                 double height = currentAdj.getStackHeight() - current.getStackHeight();
 
                 if ((!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) || (currentAdj.getState() == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT)) {
                     closedList.add(currentAdj);
+                    openList.remove(currentAdj);
                     continue;
                 }
 
                 RoomUnit exception = null;
+
                 if(roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
                     exception = roomAvatar.getRidingPet().getRoomUnit();
                 }
 
-                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj, exception) && doorTile.distance(currentAdj) > 2 && (!isWalkthroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj, exception) && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
+                    openList.remove(currentAdj);
                     continue;
                 }
 
@@ -283,12 +302,29 @@ public class RoomLayout {
             }
         }
 
-        if (this.room.getRoomInfo().isAllowWalkthrough() && !isWalkthroughRetry) {
+        if (this.room.getRoomInfo().isAllowWalkthrough() && !isWalktroughRetry) {
             return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
         return null;
     }
+
+    private RoomTile findTile(List<RoomTile> tiles, short x, short y) {
+        for (RoomTile tile : tiles) {
+            if (x == tile.getX() && y == tile.getY()) {
+                return tile;
+            }
+        }
+
+        RoomTile tile = this.getTile(x, y);
+
+        if (tile != null) {
+            return tile.copy();
+        }
+        return null;
+    }
+
+
 
     public List<RoomTile> getAdjacentTiles(short x, short y) {
         List<RoomTile> adjacentTiles = new ArrayList<>();
@@ -377,7 +413,7 @@ public class RoomLayout {
         return cheapest;
     }
 
-    private List<RoomTile> getAdjacent(PriorityQueue<RoomTile> openList, RoomTile node, RoomTile nextTile, RoomUnit unit) {
+    private List<RoomTile> getAdjacent(List<RoomTile> openList, RoomTile node, RoomTile nextTile, RoomUnit unit) {
         short x = node.getX();
         short y = node.getY();
         List<RoomTile> adj = new LinkedList<>();
@@ -386,7 +422,7 @@ public class RoomLayout {
             if (this.canWalkOn(temp, unit)) {
                 if (temp.getState() != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                     temp.isDiagonally(false);
-                        adj.add(temp);
+                    adj.add(temp);
                 }
             }
         }
