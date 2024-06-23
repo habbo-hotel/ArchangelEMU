@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class InteractionWardrobe extends InteractionDefault {
 
-    public static String WARDROBE_INTERACTION_TYPE = "rp_wardrobe";
+    public static String INTERACTION_TYPE = "rp_wardrobe";
 
     private Habbo habbo;
 

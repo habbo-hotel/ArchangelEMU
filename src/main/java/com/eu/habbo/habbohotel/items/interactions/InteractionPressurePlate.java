@@ -84,7 +84,7 @@ public class InteractionPressurePlate extends InteractionDefault {
         if (tiles == null) return;
 
         for (RoomTile tile : tiles) {
-            HashSet<RoomUnit> tileHasHabboOrBot = (HashSet<RoomUnit>) room.getRoomUnitManager().getAvatarsAt(tile);
+            HashSet<RoomUnit> tileHasHabboOrBot = new HashSet<>(room.getRoomUnitManager().getAvatarsAt(tile));
 
             if (tileHasHabboOrBot.isEmpty() && this.requiresAllTilesOccupied()) {
                 occupied = false;

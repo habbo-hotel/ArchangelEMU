@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public class InteractionCashRegister extends InteractionDefault {
 
-    public static String CASH_REGISTER_INTERACTION_TYPE = "rp_cash_register";
+    public static String INTERACTION_TYPE = "rp_cash_register";
 
     public InteractionCashRegister(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);

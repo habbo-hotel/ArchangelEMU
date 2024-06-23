@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class InteractionPrisonBench extends InteractionDefault {
 
-    public static String PRISON_BENCH_INTERACTION_TYPE = "rp_prison_bench";
+    public static String INTERACTION_TYPE = "rp_prison_bench";
 
     private Habbo habbo;
 

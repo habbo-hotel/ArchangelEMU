@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class InteractionHospitalBed extends InteractionDefault {
 
-    public static String HOSPITAL_BED_INTERACTION_TYPE = "rp_hospital_bed";
+    public static String INTERACTION_TYPE = "rp_hospital_bed";
 
     private Habbo habbo;
 

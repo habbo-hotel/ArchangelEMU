@@ -94,6 +94,23 @@ public class HabboRoleplayStats implements Runnable {
     @Setter
     @Getter
     private int playerXP;
+    public void addPlayerXP(int xp) {
+        int currentLevel = this.getPlayerLevel().getCurrentLevel();
+        this.playerXP += xp;
+        int updatedLevel = this.getPlayerLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getPlayerLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentLevel != updatedLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getPlayerLevel().getType())
+                    .replace(":level", String.valueOf(updatedLevel))
+            );
+        }
+    }
     public PlayerLevel getPlayerLevel() {
         return new PlayerLevel(this.playerXP, 1, 1);
     }
@@ -101,8 +118,22 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int strengthXP;
     public void addStrengthXP(int xp) {
+        int currentStrengthLevel = this.getStrengthLevel().getCurrentLevel();
         this.strengthXP += xp;
         this.playerXP += xp;
+        int updatedStrengthLevel = this.getStrengthLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getStrengthLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentStrengthLevel != updatedStrengthLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getStrengthLevel().getType())
+                    .replace(":level", String.valueOf(updatedStrengthLevel))
+            );
+        }
     }
     public StrengthLevel getStrengthLevel() {
         return new StrengthLevel(this.strengthXP, 1, 1);
@@ -111,8 +142,22 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int accuracyXP;
     public void addAccuracyXP(int xp) {
+        int currentAccuracyLevel = this.getAccuracyLevel().getCurrentLevel();
         this.accuracyXP += xp;
         this.playerXP += xp;
+        int updatedAccuracyLevel = this.getAccuracyLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getAccuracyLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentAccuracyLevel != updatedAccuracyLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getAccuracyLevel().getType())
+                    .replace(":level", String.valueOf(updatedAccuracyLevel))
+            );
+        }
     }
     public AccuracyLevel getAccuracyLevel() {
         return new AccuracyLevel(this.accuracyXP, 1, 1);
@@ -121,8 +166,22 @@ public class HabboRoleplayStats implements Runnable {
     @Getter
     private int staminaXP;
     public void addStaminaXP(int xp) {
+        int currentStaminaLevel = this.getStaminaLevel().getCurrentLevel();
         this.staminaXP += xp;
         this.playerXP += xp;
+        int updatedStaminaLevel = this.getStaminaLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getStaminaLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentStaminaLevel != updatedStaminaLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getStaminaLevel().getType())
+                    .replace(":level", String.valueOf(updatedStaminaLevel))
+            );
+        }
     }
     public StaminaLevel getStaminaLevel() {
         return new StaminaLevel(this.staminaXP, 1, 1);
