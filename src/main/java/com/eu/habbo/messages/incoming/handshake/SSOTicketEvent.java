@@ -38,7 +38,7 @@ import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMess
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
-import com.eu.habbo.roleplay.room.FacilityHospitalManager;
+import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
@@ -137,7 +137,7 @@ public class SSOTicketEvent extends MessageHandler {
                     roomIdToEnter = RoomManager.HOME_ROOM_ID;
 
                 if (this.client.getHabbo().getHabboRoleplayStats().isDead()) {
-                    roomIdToEnter = FacilityHospitalManager.getInstance().getHospital().getRoomInfo().getId();
+                    roomIdToEnter = FacilityHospitalManager.getInstance().getNearestHospital().getRoomInfo().getId();
                 }
 
                 boolean calendar = false;

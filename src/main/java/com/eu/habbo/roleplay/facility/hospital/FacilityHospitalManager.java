@@ -1,12 +1,12 @@
-package com.eu.habbo.roleplay.room;
+package com.eu.habbo.roleplay.facility.hospital;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.commands.list.LayCommand;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
+import com.eu.habbo.roleplay.room.RoomType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,33 +18,44 @@ public class FacilityHospitalManager {
 
     private static FacilityHospitalManager instance;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FacilityHospitalManager.class);
+
     public static FacilityHospitalManager getInstance() {
         if (instance == null) {
             instance = new FacilityHospitalManager();
         }
         return instance;
     }
-    private static final Logger LOGGER = LoggerFactory.getLogger(FacilityHospitalManager.class);
-    private final List<Habbo> usersToHeal;
+
     private FacilityHospitalManager() {
         long millis = System.currentTimeMillis();
         this.usersToHeal = new CopyOnWriteArrayList<>();
         LOGGER.info("Hospital Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
-    public Room getHospital() {
-        return FacilityManager.getFirstRoomWithTag(RoomType.HOSPITAL);
+
+    private final List<Habbo> usersToHeal;
+
+    public Room getNearestHospital() {
+        List<Room> hospitalRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithTag(RoomType.HOSPITAL);
+
+        if (hospitalRooms.isEmpty()) {
+            FacilityHospitalManager.LOGGER.error("No hospital rooms found");
+            throw new RuntimeException("No hospital rooms found");
+        }
+
+        return hospitalRooms.get(0);
     }
 
     public void sendToHospital(Habbo habbo) {
-        Room hospitalRoom = FacilityHospitalManager.getInstance().getHospital();
+        Room room = this.getNearestHospital();
 
-        if (habbo.getRoomUnit().getRoom().getRoomInfo().getId() != hospitalRoom.getRoomInfo().getId()) {
-            habbo.goToRoom(hospitalRoom.getRoomInfo().getId());
+        if (habbo.getRoomUnit().getRoom().getRoomInfo().getId() != room.getRoomInfo().getId()) {
+            habbo.goToRoom(room.getRoomInfo().getId());
         }
 
-        Collection<RoomItem> hospitalBedItems = hospitalRoom.getRoomItemManager().getItemsOfType(InteractionHospitalBed.class);
+        Collection<RoomItem> hospitalBedItems = room.getRoomItemManager().getItemsOfType(InteractionHospitalBed.class);
         for (RoomItem hospitalBedItem : hospitalBedItems) {
-            List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(hospitalRoom.getLayout());
+            List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(room.getLayout());
             RoomTile firstAvailableHospitalBedTile = hospitalBedRoomTiles.get(0);
             if (firstAvailableHospitalBedTile == null) {
                 return;

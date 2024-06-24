@@ -34,7 +34,6 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.furniture.FurnitureRolledEvent;
 import com.eu.habbo.plugin.events.users.UserRolledEvent;
-import com.eu.habbo.roleplay.room.FacilityManager;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -316,7 +315,6 @@ public class RoomUnitManager extends IRoomManager {
                 }
 
                 habbo.getRoomUnit().cycle();
-                FacilityManager.getInstance().cycle(this.room);
 
                 if (habbo.getRoomUnit().isStatusUpdateNeeded()) {
                     habbo.getRoomUnit().setStatusUpdateNeeded(false);

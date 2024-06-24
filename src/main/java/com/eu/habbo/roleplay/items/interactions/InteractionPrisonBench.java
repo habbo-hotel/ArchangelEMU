@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.roleplay.room.FacilityHospitalManager;
+import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

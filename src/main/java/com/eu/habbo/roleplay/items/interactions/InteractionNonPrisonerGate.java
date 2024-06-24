@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionOneWayGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.roleplay.room.FacilityPrisonManager;
+import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

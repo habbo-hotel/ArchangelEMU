@@ -88,6 +88,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private final RoomTradeManager roomTradeManager;
     @Getter
     private final RoomChatManager roomChatManager;
+
     public final ConcurrentHashMap<RoomTile, THashSet<RoomItem>> tileCache = new ConcurrentHashMap<>();
 
     @Getter

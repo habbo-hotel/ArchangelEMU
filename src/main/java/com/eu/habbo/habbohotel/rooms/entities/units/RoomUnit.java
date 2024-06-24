@@ -113,6 +113,9 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public RoomItem getCurrentItem() {
+        if (this.room == null) {
+            return null;
+        }
         return this.room.getRoomItemManager().getTopItemAt(this.currentPosition);
     }
 

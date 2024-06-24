@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.CorpTag;
-import com.eu.habbo.roleplay.room.FacilityPrisonManager;
+import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
 
 public class ReleaseCommand extends Command {
     public ReleaseCommand() {
