@@ -30,13 +30,18 @@ public class FacilityManager {
     }
 
     public void cycle(Room room) {
-        if (room.getRoomInfo().getId() == FacilityHospitalManager.getInstance().getHospital().getRoomInfo().getId()) {
-            FacilityHospitalManager.getInstance().cycle();
+        if (FacilityHospitalManager.getInstance().getHospital() != null) {
+            if (room.getRoomInfo().getId() == FacilityHospitalManager.getInstance().getHospital().getRoomInfo().getId()) {
+                FacilityHospitalManager.getInstance().cycle();
+            }
         }
 
-        if (room.getRoomInfo().getId() == FacilityPrisonManager.getInstance().getPrison().getRoomInfo().getId()) {
-            FacilityPrisonManager.getInstance().cycle();
+        if (FacilityPrisonManager.getInstance().getPrison() != null) {
+            if (room.getRoomInfo().getId() == FacilityPrisonManager.getInstance().getPrison().getRoomInfo().getId()) {
+                FacilityPrisonManager.getInstance().cycle();
+            }
         }
+
     }
 
     public static Room getFirstRoomWithTag(String tag) {

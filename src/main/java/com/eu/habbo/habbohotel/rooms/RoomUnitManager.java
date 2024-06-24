@@ -324,12 +324,6 @@ public class RoomUnitManager extends IRoomManager {
                 }
             }
 
-            if (!toKick.isEmpty()) {
-                for (Habbo habbo : toKick) {
-                    Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room);
-                }
-            }
-
             updatedUnit.addAll(roomBotManager.cycle());
             updatedUnit.addAll(roomPetManager.cycle());
 

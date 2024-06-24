@@ -5,7 +5,11 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import lombok.AllArgsConstructor;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class CorpInfoComposer extends MessageComposer {
@@ -21,7 +25,7 @@ public class CorpInfoComposer extends MessageComposer {
         this.response.appendString(matchingCorp.getGuild().getName());
         this.response.appendString(matchingCorp.getGuild().getDescription());
         this.response.appendString(matchingCorp.getGuild().getBadge());
-        this.response.appendString(matchingCorp.getTags().toString());
+        this.response.appendString(Arrays.stream(CorpTag.values()).map(CorpTag::getValue).collect(Collectors.joining(",")));
         return this.response;
     }
 }

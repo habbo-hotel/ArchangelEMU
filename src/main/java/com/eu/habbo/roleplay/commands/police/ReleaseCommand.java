@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.corp.CorpType;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.room.FacilityPrisonManager;
 
 public class ReleaseCommand extends Command {
@@ -30,11 +30,6 @@ public class ReleaseCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboRoleplayStats().isDead()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_you_are_dead"));
-            return true;
-        }
-
         Habbo targetedHabbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(targetedUsername);
 
         if (targetedHabbo == null) {
@@ -42,7 +37,7 @@ public class ReleaseCommand extends Command {
             return true;
         }
 
-        if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpType.POLICE)) {
+        if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.POLICE)) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.police_only"));
             return true;
         }

@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.corp.Corp;
-import com.eu.habbo.roleplay.corp.CorpType;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.room.FacilityPrisonManager;
 
 public class ArrestCommand extends Command {
@@ -36,7 +36,7 @@ public class ArrestCommand extends Command {
             return true;
         }
 
-        if (!corp.getTags().contains(CorpType.POLICE)) {
+        if (!corp.getTags().contains(CorpTag.POLICE)) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.police_only"));
             return true;
         }
