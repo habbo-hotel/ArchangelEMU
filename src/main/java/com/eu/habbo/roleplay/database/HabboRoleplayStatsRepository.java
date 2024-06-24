@@ -142,7 +142,11 @@ public class HabboRoleplayStatsRepository {
             statement.setInt(7, habboRoleplayStats.getHungerMax());
             statement.setInt(8, habboRoleplayStats.getCorp().getGuild().getId());
             statement.setInt(9, habboRoleplayStats.getCorpPosition().getId());
-            statement.setInt(10, habboRoleplayStats.getGang().getId());
+            if (habboRoleplayStats.getGang() != null) {
+                statement.setInt(10,habboRoleplayStats.getGang().getId());
+            } else {
+                statement.setNull(10, java.sql.Types.INTEGER);
+            }
             statement.setInt(11, habboRoleplayStats.getLastPosX());
             statement.setInt(12, habboRoleplayStats.getLastPosY());
             statement.setInt(13, habboRoleplayStats.getPlayerXP());
