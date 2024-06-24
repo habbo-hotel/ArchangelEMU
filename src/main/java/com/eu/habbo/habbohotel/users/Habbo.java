@@ -29,6 +29,7 @@ import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
+import com.eu.habbo.roleplay.database.HabboRoleplayStatsRepository;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.TIntCollection;
@@ -73,7 +74,7 @@ public class Habbo extends Avatar implements Runnable {
         this.client = null;
         this.habboInfo = new HabboInfo(set);
         this.habboStats = HabboStats.load(this.habboInfo);
-        this.habboRoleplayStats = HabboRoleplayStats.load(this);
+        this.habboRoleplayStats = HabboRoleplayStatsRepository.getInstance().getByID(this.getHabboInfo().getId());
         this.inventory = new HabboInventory(this);
 
         this.messenger = new Messenger();
@@ -197,7 +198,6 @@ public class Habbo extends Avatar implements Runnable {
                 AchievementManager.saveAchievements(this);
 
                 this.habboStats.dispose();
-                this.habboRoleplayStats.dispose();
             } catch (Exception e) {
                 log.error("Caught exception", e);
                 return;

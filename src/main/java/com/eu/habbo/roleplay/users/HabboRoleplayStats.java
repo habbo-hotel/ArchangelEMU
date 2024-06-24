@@ -10,57 +10,20 @@ import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
-import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.skill.*;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.*;
 
-public class HabboRoleplayStats implements Runnable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboRoleplayStats.class);
-
-    private static HabboRoleplayStats createNewStats(Habbo habbo) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rp_users_stats (user_id, corporation_id, corporation_position_id) VALUES (?, ?, ?)")) {
-            statement.setInt(1, habbo.getHabboInfo().getId());
-            statement.setInt(2, GovernmentManager.getInstance().getWelfareCorp().getGuild().getId());
-            statement.setInt(3,GovernmentManager.getInstance().getWelfareCorp().getPositionByOrderID(1).getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-
-        return load(habbo);
-    }
-
-    public static HabboRoleplayStats load(Habbo habbo) {
-        HabboRoleplayStats stats = null;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM rp_users_stats WHERE user_id = ? LIMIT 1")) {
-                statement.setInt(1, habbo.getHabboInfo().getId());
-                try (ResultSet set = statement.executeQuery()) {
-                    set.next();
-                    if (set.getRow() != 0) {
-                        stats = new HabboRoleplayStats(set, habbo);
-                    } else {
-                        stats = createNewStats(habbo);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-
-        return stats;
-    }
-
+public class HabboRoleplayStats{
+    @Getter
     private Habbo habbo;
+    @Getter
+    private final int userID;
     @Getter
     private int healthNow;
     @Getter
@@ -371,7 +334,6 @@ public class HabboRoleplayStats implements Runnable {
         this.corporationID = corporationID;
         this.corporationPositionID = corporationPositionID;
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
-        this.run();
     }
 
     public CorpPosition getCorpPosition() {
@@ -388,7 +350,6 @@ public class HabboRoleplayStats implements Runnable {
     public void setGang(Integer gangID ) {
         this.gangID = gangID;
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
-        this.run();
     }
 
     public GuildMember getGangPosition() {
@@ -473,19 +434,22 @@ public class HabboRoleplayStats implements Runnable {
             damageModifier = random.nextInt(2 * this.getAccuracyLevel().getCurrentLevel()) + this.getWeaponLevel().getCurrentLevel();
         }
 
-        if (this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon() != null) {
-            Weapon equippedWeapon = this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon().getWeapon();
+        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userID);
+
+        if (habbo.getInventory().getWeaponsComponent().getEquippedWeapon() != null) {
+            Weapon equippedWeapon = habbo.getInventory().getWeaponsComponent().getEquippedWeapon().getWeapon();
             damageModifier += random.nextInt(equippedWeapon.getMaxDamage() - equippedWeapon.getMinDamage() + equippedWeapon.getMaxDamage());
         }
         return damageModifier;
     }
 
-    public boolean isWorking() {
+    public Boolean isWorking() {
         return FacilityCorpManager.getInstance().isUserWorking(this.habbo);
     }
 
-    private HabboRoleplayStats(ResultSet set, Habbo habbo) throws SQLException {
-        this.habbo = habbo;
+    public HabboRoleplayStats(ResultSet set) throws SQLException {
+        this.userID = set.getInt("user_id");
+        this.habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(set.getInt("user_id"));
         this.isDead = set.getInt("health_now") <= 0;
         this.healthNow = set.getInt("health_now");
         this.healthMax = set.getInt("health_max");
@@ -507,45 +471,4 @@ public class HabboRoleplayStats implements Runnable {
         this.miningXP = set.getInt("mining_xp");
         this.weaponXP = set.getInt("weapon_xp");
     }
-
-    public void dispose() {
-        this.run();
-        this.habbo = null;
-    }
-
-    @Override
-    public void run() {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, melee_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ?, weapon_xp = ? WHERE user_id = ? LIMIT 1")) {
-                statement.setInt(1, this.healthNow);
-                statement.setInt(2, this.healthMax);
-                statement.setInt(3, this.energyNow);
-                statement.setInt(4, this.energyMax);
-                statement.setInt(5, this.hungerNow);
-                statement.setInt(6, this.hungerMax);
-                statement.setInt(7, this.corporationID);
-                statement.setInt(8, this.corporationPositionID);
-                if (this.gangID != null) statement.setInt(9, this.gangID);
-                if (this.gangID == null) statement.setNull(9, Types.INTEGER);
-
-                statement.setShort(10, this.lastPosX);
-                statement.setShort(11, this.lastPosY);
-                statement.setInt(12, this.playerXP);
-                statement.setInt(13, this.staminaXP);
-                statement.setInt(14, this.accuracyXP);
-                statement.setInt(15, this.meleeXP);
-                statement.setInt(16, this.farmingXP);
-                statement.setInt(17, this.fishingXP);
-                statement.setInt(18, this.farmingXP);
-                statement.setInt(19, this.weaponXP);
-
-                statement.setInt(20, this.habbo.getHabboInfo().getId());
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-    }
-
-
 }
