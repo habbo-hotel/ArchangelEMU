@@ -665,9 +665,6 @@ public class RoomManager {
         if (FacilityCorpManager.getInstance().isUserWorking(habbo) && !habbo.getHabboRoleplayStats().getCorpPosition().isCanWorkAnywhere()) {
             FacilityCorpManager.getInstance().stopUserShift(habbo, false, false);
         }
-
-        habbo.getHabboInfo().setHomeRoom(room.getRoomInfo().getId());
-        habbo.getClient().sendResponse(new NavigatorSettingsComposer(habbo.getHabboInfo().getHomeRoom(), habbo.getHabboInfo().getHomeRoom()));
     }
 
     public void enterRoom(final Habbo habbo, final Room room) {
@@ -880,6 +877,9 @@ public class RoomManager {
                 NewUserExperienceScriptProceedEvent.handle(habbo);
             }
         }
+
+        habbo.getHabboInfo().setHomeRoom(room.getRoomInfo().getId());
+        habbo.getClient().sendResponse(new NavigatorSettingsComposer(habbo.getHabboInfo().getHomeRoom(), habbo.getHabboInfo().getHomeRoom()));
     }
 
 

@@ -114,7 +114,7 @@ public class RoomUnitManager extends IRoomManager {
     }
 
     public boolean areRoomUnitsAt(RoomTile tile) {
-        return this.currentRoomUnits.values().stream().anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
+        return this.currentRoomUnits.values().stream().anyMatch(roomUnit -> roomUnit.getCurrentPosition() != null && roomUnit.getCurrentPosition().equals(tile));
     }
 
     public boolean areRoomUnitsAt(RoomTile tile, RoomUnit skippedRoomUnit) {
