@@ -102,7 +102,7 @@ public class CallTaxiCommand extends Command {
             executor.schedule(() -> {
                 gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.taxi.arrived"));
                 executor.shutdown();
-                }, 1, TimeUnit.SECONDS);
+                }, 1500, TimeUnit.MILLISECONDS);
         }, taxiDelay, TimeUnit.SECONDS);
         return true;
     }

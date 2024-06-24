@@ -57,7 +57,7 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadItemsManagerEvent;
-import com.eu.habbo.roleplay.items.interactions.*;
+import com.eu.habbo.roleplay.interactions.*;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;

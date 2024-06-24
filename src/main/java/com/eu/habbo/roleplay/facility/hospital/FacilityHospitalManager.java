@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
+import com.eu.habbo.roleplay.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.room.RoomType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

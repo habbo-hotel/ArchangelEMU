@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.items.interactions;
+package com.eu.habbo.roleplay.interactions;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;

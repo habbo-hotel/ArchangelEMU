@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.items.interactions.InteractionPrisonBench;
+import com.eu.habbo.roleplay.interactions.InteractionPrisonBench;
 import com.eu.habbo.roleplay.room.RoomType;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -37,7 +37,7 @@ public class FacilityPrisonManager {
     private final TIntObjectHashMap<PrisonSentence> usersInJail;
 
     public Room getNearestPrison() {
-        List<Room> prisonRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithTag(RoomType.HOSPITAL);
+        List<Room> prisonRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithTag(RoomType.PRISON);
 
         if (prisonRooms.isEmpty()) {
             FacilityPrisonManager.LOGGER.error("No prison rooms found");
@@ -58,6 +58,10 @@ public class FacilityPrisonManager {
         Room room = this.getNearestPrison();
 
         if (habbo.getRoomUnit().getRoom().getRoomInfo().getId() != room.getRoomInfo().getId()) {
+            habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.prison.teleport")
+                    .replace(":roomName", room.getRoomInfo().getName())
+            );
             habbo.goToRoom(room.getRoomInfo().getId());
         }
 
@@ -71,7 +75,7 @@ public class FacilityPrisonManager {
             habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
         }
 
-        habbo.getHabboInfo().setMotto(Emulator.getTexts().getValue("roleplay.prison.activity"));
+        habbo.getHabboInfo().setMotto(Emulator.getTexts().getValue("roleplay.prison.activity").replace(":timeLeft", String.valueOf(timeLeft)));
         habbo.shout(Emulator.getTexts().getValue("roleplay.prison.starts_sentence").replace(":timeLeft", Integer.toString(timeLeft)).replace(":crime", crime));
     }
 
@@ -98,6 +102,7 @@ public class FacilityPrisonManager {
                     .replace(":timeLeft", Integer.toString(sentence.getTimeLeft()))
                     .replace(":timeServed", Integer.toString(sentence.getTimeServed()))
             );
+            sentence.getHabbo().getHabboInfo().setMotto(Emulator.getTexts().getValue("roleplay.prison.activity").replace(":timeLeft", String.valueOf(sentence.getTimeLeft())));
         }
     }
 
