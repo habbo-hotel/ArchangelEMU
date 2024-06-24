@@ -30,8 +30,6 @@ public class GovernmentManager {
     private final Corp weaponsCorp;
 
     private GovernmentManager() {
-        long millis = System.currentTimeMillis();
-
         List<Corp> farmingCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.FARMING_AUTHORITY);
         if (farmingCorps.isEmpty()) {
             GovernmentManager.LOGGER.warn("GovernmentManager expected a state farming corp to exist.  Please create one in rp_corporations");
@@ -79,7 +77,5 @@ public class GovernmentManager {
         } else {
             this.welfareCorp = CorpManager.getInstance().getCorpsByTag(CorpTag.WELFARE).get(0);
         }
-
-        LOGGER.info("Government Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 }

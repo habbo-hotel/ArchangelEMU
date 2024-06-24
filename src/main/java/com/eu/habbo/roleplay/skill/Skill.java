@@ -1,12 +1,12 @@
-package com.eu.habbo.roleplay.level;
+package com.eu.habbo.roleplay.skill;
 
-public abstract class Level<T> {
+public abstract class Skill<T> {
     private final int baseXP;
     private final int levelMultiplier;
     private final int linearIncrease;
 
     // Constructor to set the constants for the XP formula
-    public Level(int baseXP, int levelMultiplier, int linearIncrease) {
+    public Skill(int baseXP, int levelMultiplier, int linearIncrease) {
         this.baseXP = baseXP;
         this.levelMultiplier = levelMultiplier;
         this.linearIncrease = linearIncrease;

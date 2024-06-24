@@ -2,8 +2,13 @@ package com.eu.habbo.roleplay.billing.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.government.LicenseType;
+
+import java.util.List;
 
 public class MiningLicenseBillingItem implements BillingItem{
 
@@ -42,7 +47,7 @@ public class MiningLicenseBillingItem implements BillingItem{
 
     @Override
     public int getChargedByCorpID() {
-        return GovernmentManager.getInstance().getPoliceCorp().getGuild().getId();
+        return GovernmentManager.getInstance().getMiningCorp().getGuild().getId();
     }
 
     @Override

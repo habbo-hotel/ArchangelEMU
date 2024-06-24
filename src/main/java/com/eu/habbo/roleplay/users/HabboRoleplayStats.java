@@ -11,7 +11,7 @@ import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.corp.CorpShiftManager;
 import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
-import com.eu.habbo.roleplay.level.*;
+import com.eu.habbo.roleplay.skill.*;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import lombok.Getter;
@@ -111,8 +111,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public PlayerLevel getPlayerLevel() {
-        return new PlayerLevel(this.playerXP, 1, 1);
+    public PlayerSkill getPlayerLevel() {
+        return new PlayerSkill(this.playerXP, 1, 1);
     }
 
     @Getter
@@ -135,8 +135,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public StrengthLevel getStrengthLevel() {
-        return new StrengthLevel(this.strengthXP, 1, 1);
+    public StrengthSkill getStrengthLevel() {
+        return new StrengthSkill(this.strengthXP, 1, 1);
     }
 
     @Getter
@@ -159,8 +159,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public AccuracyLevel getAccuracyLevel() {
-        return new AccuracyLevel(this.accuracyXP, 1, 1);
+    public AccuracySkill getAccuracyLevel() {
+        return new AccuracySkill(this.accuracyXP, 1, 1);
     }
 
     @Getter
@@ -183,8 +183,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public StaminaLevel getStaminaLevel() {
-        return new StaminaLevel(this.staminaXP, 1, 1);
+    public StaminaSkill getStaminaLevel() {
+        return new StaminaSkill(this.staminaXP, 1, 1);
     }
     @Getter
     private int meleeXP;
@@ -206,8 +206,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public MeleeLevel getMeleeLevel() {
-        return new MeleeLevel(this.meleeXP, 1, 1);
+    public MeleeSkill getMeleeLevel() {
+        return new MeleeSkill(this.meleeXP, 1, 1);
     }
 
     @Getter
@@ -230,8 +230,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public FarmingLevel getFarmingLevel() {
-        return new FarmingLevel(this.farmingXP, 1, 1);
+    public FarmingSkill getFarmingLevel() {
+        return new FarmingSkill(this.farmingXP, 1, 1);
     }
 
     @Getter
@@ -254,8 +254,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public FishingLevel getFishingLevel() {
-        return new FishingLevel(this.fishingXP, 1, 1);
+    public FishingSkill getFishingLevel() {
+        return new FishingSkill(this.fishingXP, 1, 1);
     }
 
     @Getter
@@ -278,8 +278,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public MiningLevel getMiningLevel() {
-        return new MiningLevel(this.miningXP, 1, 1);
+    public MiningSkill getMiningLevel() {
+        return new MiningSkill(this.miningXP, 1, 1);
     }
 
     @Getter
@@ -302,8 +302,8 @@ public class HabboRoleplayStats implements Runnable {
             );
         }
     }
-    public WeaponLevel getWeaponLevel() {
-        return new WeaponLevel(this.weaponXP, 1, 1);
+    public WeaponSkill getWeaponLevel() {
+        return new WeaponSkill(this.weaponXP, 1, 1);
     }
 
     @Setter
