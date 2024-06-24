@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.roleplay.interactions.InteractionPrisonBench;
 import com.eu.habbo.roleplay.room.RoomType;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -67,16 +68,17 @@ public class FacilityPrisonManager {
 
         Collection<RoomItem> prisonBenches = room.getRoomItemManager().getItemsOfType(InteractionPrisonBench.class);
         for (RoomItem hospitalBedItem : prisonBenches) {
-            List<RoomTile> hospitalBedRoomTiles = hospitalBedItem.getOccupyingTiles(room.getLayout());
-            RoomTile firstAvailableHospitalBedTile = hospitalBedRoomTiles.get(0);
-            if (firstAvailableHospitalBedTile == null) {
+            List<RoomTile> prisonBenchTiles = hospitalBedItem.getOccupyingTiles(room.getLayout());
+            RoomTile firstAvailablePrisonBenchTile = prisonBenchTiles.get(0);
+            if (firstAvailablePrisonBenchTile == null) {
                 return;
             }
-            habbo.getRoomUnit().setLocation(firstAvailableHospitalBedTile);
+            habbo.getRoomUnit().setLocation(firstAvailablePrisonBenchTile);
         }
 
         habbo.getHabboInfo().setMotto(Emulator.getTexts().getValue("roleplay.prison.activity").replace(":timeLeft", String.valueOf(timeLeft)));
         habbo.shout(Emulator.getTexts().getValue("roleplay.prison.starts_sentence").replace(":timeLeft", Integer.toString(timeLeft)).replace(":crime", crime));
+        this.usersInJail.put(habbo.getHabboInfo().getId(), new PrisonSentence(habbo, crime, timeLeft, 0));
     }
 
     public void removePrisonTime(Habbo user) {
@@ -97,12 +99,8 @@ public class FacilityPrisonManager {
                 this.removePrisonTime(sentence.getHabbo());
                 return;
             }
-            sentence.getHabbo().shout(Emulator.getTexts().
-                    getValue("roleplay.prison.sentence_time_left")
-                    .replace(":timeLeft", Integer.toString(sentence.getTimeLeft()))
-                    .replace(":timeServed", Integer.toString(sentence.getTimeServed()))
-            );
             sentence.getHabbo().getHabboInfo().setMotto(Emulator.getTexts().getValue("roleplay.prison.activity").replace(":timeLeft", String.valueOf(sentence.getTimeLeft())));
+            sentence.getHabbo().getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(sentence.getHabbo()).compose());
         }
     }
 
