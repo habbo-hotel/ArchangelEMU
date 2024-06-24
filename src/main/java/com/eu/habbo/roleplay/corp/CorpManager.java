@@ -72,15 +72,10 @@ public class CorpManager {
                 .collect(Collectors.toList());
     }
 
-    @Getter
-    @Setter
-    private CorpShiftManager corpShiftManager;
-
 
     private CorpManager() {
         long millis = System.currentTimeMillis();
         this.corporations = CorpRepository.getInstance().getAllCorps();
-        this.corpShiftManager = CorpShiftManager.getInstance();
 
         this.reload();
 

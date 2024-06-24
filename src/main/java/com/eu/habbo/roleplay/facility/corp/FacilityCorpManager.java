@@ -1,41 +1,37 @@
-package com.eu.habbo.roleplay.corp;
+package com.eu.habbo.roleplay.facility.corp;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
+import com.eu.habbo.roleplay.corp.CorpPosition;
+import com.eu.habbo.roleplay.corp.CorporationShift;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-public class CorpShiftManager {
+public class FacilityCorpManager {
 
-    private static CorpShiftManager instance;
+    private static FacilityCorpManager instance;
 
-    public static CorpShiftManager getInstance() {
+    public static FacilityCorpManager getInstance() {
         if (instance == null) {
-            instance = new CorpShiftManager();
+            instance = new FacilityCorpManager();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CorpShiftManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FacilityCorpManager.class);
 
     private final Map<Integer, CorporationShift> activeUserShifts;
-    private final ScheduledExecutorService scheduler;
 
-    private CorpShiftManager() {
+    private FacilityCorpManager() {
         long millis = System.currentTimeMillis();
         this.activeUserShifts = new HashMap<>();
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
-        this.startShiftManager();
         LOGGER.info("Corp Shift Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
@@ -104,15 +100,10 @@ public class CorpShiftManager {
         return this.activeUserShifts.get(habbo.getHabboInfo().getId());
     }
 
-    public void startShiftManager() {
-        Runnable userShift = () -> {
-            for (CorporationShift shift : activeUserShifts.values()) {
-               this.cycleUserShift(shift.getHabbo());
-            }
-        };
-
-        // Schedule the task to run every 5 seconds
-        scheduler.scheduleAtFixedRate(userShift, 0, 60, TimeUnit.SECONDS);
+    public void cycle() {
+        for (CorporationShift shift : activeUserShifts.values()) {
+            this.cycleUserShift(shift.getHabbo());
+        }
     }
 
     private void cycleUserShift(Habbo habbo) {
@@ -138,20 +129,5 @@ public class CorpShiftManager {
                 .getValue("commands.roleplay.corporation_shift_time_left")
                 .replace(":timeLeft", timeLeftMessage)
         );
-    }
-
-    public void stopShiftManager() {
-        scheduler.shutdown();
-        try {
-            if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
-                scheduler.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            scheduler.shutdownNow();
-        }
-    }
-
-    public void dispose() {
-        this.stopShiftManager();
     }
 }

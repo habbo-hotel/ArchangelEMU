@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpPosition;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 
 public class CorpStartWorkCommand extends Command {
@@ -14,7 +15,7 @@ public class CorpStartWorkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (Emulator.getGameEnvironment().getCorpManager().getCorpShiftManager().isUserWorking(gameClient.getHabbo())) {
+        if (FacilityCorpManager.getInstance().isUserWorking(gameClient.getHabbo())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_start_work_user_is_already_working"));
             return true;
         }
@@ -38,7 +39,7 @@ public class CorpStartWorkCommand extends Command {
             return true;
         }
 
-        Emulator.getGameEnvironment().getCorpManager().getCorpShiftManager().startUserShift(gameClient.getHabbo());
+        FacilityCorpManager.getInstance().startUserShift(gameClient.getHabbo());
 
         gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
 

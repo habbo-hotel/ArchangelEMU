@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
-import com.eu.habbo.roleplay.corp.CorpShiftManager;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.skill.*;
@@ -481,7 +481,7 @@ public class HabboRoleplayStats implements Runnable {
     }
 
     public boolean isWorking() {
-        return CorpShiftManager.getInstance().isUserWorking(this.habbo);
+        return FacilityCorpManager.getInstance().isUserWorking(this.habbo);
     }
 
     private HabboRoleplayStats(ResultSet set, Habbo habbo) throws SQLException {

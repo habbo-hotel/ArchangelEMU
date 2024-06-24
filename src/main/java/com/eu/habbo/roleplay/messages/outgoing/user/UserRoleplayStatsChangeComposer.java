@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.corp.CorpShiftManager;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -22,7 +22,7 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isDead());
         this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isStunned());
         this.response.appendBoolean(this.habbo.getHabboRoleplayStats().isCuffed());
-        this.response.appendBoolean(CorpShiftManager.getInstance().isUserWorking(this.habbo));
+        this.response.appendBoolean(FacilityCorpManager.getInstance().isUserWorking(this.habbo));
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getEscortedBy() != null ? this.habbo.getHabboRoleplayStats().getEscortedBy().getHabboInfo().getId() : 0);
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHealthMax());

@@ -1,5 +1,6 @@
 package com.eu.habbo.roleplay.facility;
 
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
 import lombok.Getter;
@@ -29,5 +30,6 @@ public class FacilityManager {
     public void cycle() {
         FacilityHospitalManager.getInstance().cycle();
         FacilityPrisonManager.getInstance().cycle();
+        FacilityCorpManager.getInstance().cycle();
     }
 }

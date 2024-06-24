@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionOneWayGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.roleplay.corp.CorpShiftManager;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +24,7 @@ public class InteractionEmployeeGate extends InteractionOneWayGate {
 
     @Override
     public void onClick(final GameClient client, final Room room, Object[] objects) throws Exception {
-        if (!CorpShiftManager.getInstance().isUserWorking(client.getHabbo())) {
+        if (!FacilityCorpManager.getInstance().isUserWorking(client.getHabbo())) {
             client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.employee_one_way_gate.must_be_working"));
             return;
         }
