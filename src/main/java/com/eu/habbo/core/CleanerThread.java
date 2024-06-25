@@ -63,11 +63,6 @@ public class CleanerThread implements Runnable {
             LAST_NL_RELOAD = time;
         }
 
-        if (time - LAST_INACTIVE_ROOMS_CLEARED > REMOVE_INACTIVE_ROOMS) {
-            Emulator.getGameEnvironment().getRoomManager().clearInactiveRooms();
-            LAST_INACTIVE_ROOMS_CLEARED = time;
-        }
-
         if (time - LAST_INACTIVE_GUILDS_CLEARED > REMOVE_INACTIVE_GUILDS) {
             Emulator.getGameEnvironment().getGuildManager().clearInactiveGuilds();
             ForumThread.clearCache();

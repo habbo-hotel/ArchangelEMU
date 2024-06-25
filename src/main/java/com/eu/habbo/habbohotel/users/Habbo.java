@@ -204,7 +204,6 @@ public class Habbo extends Avatar implements Runnable {
                 log.error("Caught exception", e);
                 return;
             } finally {
-                Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
                 Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
             }
             log.info("{} disconnected.", this.habboInfo.getUsername());

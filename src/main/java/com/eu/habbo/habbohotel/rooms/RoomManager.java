@@ -367,54 +367,6 @@ public class RoomManager {
             log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
-    public void unloadRoomsForHabbo(Habbo habbo) {
-        List<Room> roomsToDispose = new ArrayList<>();
-
-        for (Room room : this.activeRooms.values()) {
-            RoomInfo roomInfo = room.getRoomInfo();
-            RoomUnitManager roomUnitManager = room.getRoomUnitManager();
-            RoomCategory roomCategory = roomInfo.getCategory();
-
-            if (roomInfo.isPublicRoom() || roomInfo.isStaffPicked())
-                continue;
-
-            if (roomInfo.getOwnerInfo().getId() != habbo.getHabboInfo().getId())
-                continue;
-
-            if (roomUnitManager.getRoomHabbosCount() != 0)
-                continue;
-
-            if (!roomCategories.containsKey(roomCategory) ||
-                    (roomCategories.get(roomCategory.getId()) != null && roomCategories.get(roomCategory.getId()).isPublic()))
-                continue;
-
-            roomsToDispose.add(room);
-        }
-
-        for (Room room : roomsToDispose) {
-            if (!Emulator.getPluginManager().fireEvent(new RoomUncachedEvent(room)).isCancelled()) {
-                room.dispose();
-                this.activeRooms.remove(room.getRoomInfo().getId());
-            }
-        }
-    }
-
-    public void clearInactiveRooms() {
-        THashSet<Room> roomsToDispose = new THashSet<>();
-        for (Room room : this.activeRooms.values()) {
-            if (!room.getRoomInfo().isPublicRoom()) {
-                if (!room.getRoomInfo().isStaffPicked() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getRoomInfo().getOwnerInfo().getId()) && room.isPreLoaded()) {
-                    roomsToDispose.add(room);
-                }
-            }
-        }
-
-        for (Room room : roomsToDispose) {
-            room.dispose();
-            if (room.getRoomUnitManager().getRoomHabbosCount() == 0)
-                this.activeRooms.remove(room.getRoomInfo().getId());
-        }
-    }
 
     public boolean layoutExists(String name) {
         return this.mapNames.contains(name);
