@@ -129,37 +129,38 @@ public class HabboRoleplayStatsRepository {
     }
 
     public void update(HabboRoleplayStats habboRoleplayStats) {
-        String sqlUpdate = "UPDATE rp_users_stats (user_id, health_now, health_max, energy_now, energy_max, hunger_now, hunger_max, armor_now, armor_max, corporation_id, corporation_position_id, gang_id, last_pos_x, last_pos_y, player_xp, strength_xp, accuracy_xp, stamina_xp, melee_xp, weapon_xp, farming_xp, mining_xp, fishing_xp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) WHERE user_id = ?";
+        String sqlUpdate = "UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, armor_now = ?, armor_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ?, player_xp = ?, strength_xp = ?, accuracy_xp = ?, stamina_xp = ?, melee_xp = ?, weapon_xp = ?, farming_xp = ?, mining_xp = ?, fishing_xp = ? WHERE user_id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlUpdate)) {
 
-            statement.setInt(1, habboRoleplayStats.getUserID());
-            statement.setInt(2, habboRoleplayStats.getHealthNow());
-            statement.setInt(3, habboRoleplayStats.getHealthMax());
-            statement.setInt(4, habboRoleplayStats.getEnergyNow());
-            statement.setInt(5, habboRoleplayStats.getEnergyMax());
-            statement.setInt(6, habboRoleplayStats.getHungerNow());
-            statement.setInt(7, habboRoleplayStats.getHungerMax());
-            statement.setInt(8, habboRoleplayStats.getCorp().getGuild().getId());
-            statement.setInt(9, habboRoleplayStats.getCorpPosition().getId());
+            statement.setInt(1, habboRoleplayStats.getHealthNow());
+            statement.setInt(2, habboRoleplayStats.getHealthMax());
+            statement.setInt(3, habboRoleplayStats.getEnergyNow());
+            statement.setInt(4, habboRoleplayStats.getEnergyMax());
+            statement.setInt(5, habboRoleplayStats.getArmorNow());
+            statement.setInt(6, habboRoleplayStats.getArmorMax());
+            statement.setInt(7, habboRoleplayStats.getHungerNow());
+            statement.setInt(8, habboRoleplayStats.getHungerMax());
+            statement.setInt(9, habboRoleplayStats.getCorp().getGuild().getId());
+            statement.setInt(10, habboRoleplayStats.getCorpPosition().getId());
             if (habboRoleplayStats.getGang() != null) {
-                statement.setInt(10,habboRoleplayStats.getGang().getId());
+                statement.setInt(11,habboRoleplayStats.getGang().getId());
             } else {
-                statement.setNull(10, java.sql.Types.INTEGER);
+                statement.setNull(11, java.sql.Types.INTEGER);
             }
-            statement.setInt(11, habboRoleplayStats.getLastPosX());
-            statement.setInt(12, habboRoleplayStats.getLastPosY());
-            statement.setInt(13, habboRoleplayStats.getPlayerXP());
-            statement.setInt(14, habboRoleplayStats.getStrengthXP());
-            statement.setInt(15, habboRoleplayStats.getAccuracyXP());
-            statement.setInt(16, habboRoleplayStats.getStaminaXP());
-            statement.setInt(17, habboRoleplayStats.getMeleeXP());
-            statement.setInt(18, habboRoleplayStats.getWeaponXP());
-            statement.setInt(19, habboRoleplayStats.getFarmingXP());
-            statement.setInt(20, habboRoleplayStats.getMiningXP());
-            statement.setInt(21, habboRoleplayStats.getFishingXP());
+            statement.setInt(12, habboRoleplayStats.getLastPosX());
+            statement.setInt(13, habboRoleplayStats.getLastPosY());
+            statement.setInt(14, habboRoleplayStats.getPlayerXP());
+            statement.setInt(15, habboRoleplayStats.getStrengthXP());
+            statement.setInt(16, habboRoleplayStats.getAccuracyXP());
+            statement.setInt(17, habboRoleplayStats.getStaminaXP());
+            statement.setInt(18, habboRoleplayStats.getMeleeXP());
+            statement.setInt(19, habboRoleplayStats.getWeaponXP());
+            statement.setInt(20, habboRoleplayStats.getFarmingXP());
+            statement.setInt(21, habboRoleplayStats.getMiningXP());
+            statement.setInt(22, habboRoleplayStats.getFishingXP());
 
-            statement.setInt(22, habboRoleplayStats.getUserID());
+            statement.setInt(23, habboRoleplayStats.getUserID());
 
             statement.executeUpdate();
         } catch (SQLException e) {

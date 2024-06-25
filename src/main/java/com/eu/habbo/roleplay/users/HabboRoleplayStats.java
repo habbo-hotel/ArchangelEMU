@@ -36,6 +36,10 @@ public class HabboRoleplayStats{
     private int hungerNow;
     @Getter
     private int hungerMax;
+    @Getter
+    private int armorNow;
+    @Getter
+    private int armorMax;
     private int corporationID;
     private int corporationPositionID;
     private Integer gangID;
@@ -457,6 +461,8 @@ public class HabboRoleplayStats{
         this.energyMax = set.getInt("energy_max");
         this.hungerNow = set.getInt("hunger_now");
         this.hungerMax = set.getInt("hunger_max");
+        this.armorNow = set.getInt("armor_now");
+        this.armorMax = set.getInt("armor_max");
         this.corporationID = set.getInt("corporation_id");
         this.corporationPositionID = set.getInt("corporation_position_id");
         this.gangID = set.getInt("gang_id") != 0 ? set.getInt("gang_id") : null;
