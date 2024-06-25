@@ -74,7 +74,7 @@ public class Habbo extends Avatar implements Runnable {
         this.client = null;
         this.habboInfo = new HabboInfo(set);
         this.habboStats = HabboStats.load(this.habboInfo);
-        this.habboRoleplayStats = HabboRoleplayStatsRepository.getInstance().getByID(this.getHabboInfo().getId());
+        this.habboRoleplayStats = HabboRoleplayStatsRepository.getInstance().getByUserID(this.getHabboInfo().getId());
         this.inventory = new HabboInventory(this);
 
         this.messenger = new Messenger();

@@ -1,9 +1,7 @@
 package com.eu.habbo.roleplay.database;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.billing.UserBill;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
@@ -20,12 +18,12 @@ public class HabboRoleplayStatsRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HabboRoleplayStatsRepository.class);
 
-    public HabboRoleplayStats getByID(int id) {
-        String sqlSelect = "SELECT * FROM rp_users_stats WHERE id = ?";
+    public HabboRoleplayStats getByUserID(int userID) {
+        String sqlSelect = "SELECT * FROM rp_users_stats WHERE user_id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
 
-            selectStatement.setInt(1, id);
+            selectStatement.setInt(1, userID);
 
             try (ResultSet resultSet = selectStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -36,26 +34,6 @@ public class HabboRoleplayStatsRepository {
             LOGGER.error("Caught SQL exception", e);
         }
         return null;
-    }
-
-    public TIntObjectHashMap<UserBill> getByUserID(int userID) {
-        TIntObjectHashMap<UserBill> userBills = new TIntObjectHashMap<>();
-        String sqlSelect = "SELECT * FROM rp_users_stats WHERE user_id = ?";
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-             PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
-
-            selectStatement.setInt(1, userID);
-
-            try (ResultSet resultSet = selectStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    UserBill bill = new UserBill(resultSet);
-                    userBills.put(bill.id, bill);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-        return userBills;
     }
 
     public HabboRoleplayStats create(HabboRoleplayStats habboRoleplayStats) {
@@ -116,8 +94,7 @@ public class HabboRoleplayStatsRepository {
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    int generatedId = generatedKeys.getInt(1);
-                    return getByID(generatedId);
+                    return this.getByUserID(userID);
                 } else {
                     throw new SQLException("Creating billing statement failed, no ID obtained.");
                 }
