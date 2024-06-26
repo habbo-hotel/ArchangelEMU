@@ -17,7 +17,6 @@ public class BankAccountInfoComposer extends MessageComposer {
         this.response.appendInt(this.habboBankAccount.getCorpID());
         this.response.appendInt(this.habboBankAccount.getUserID());
         this.response.appendInt(this.habboBankAccount.getCheckingBalance());
-        this.response.appendInt(this.habboBankAccount.getDebitBalance());
         this.response.appendInt(this.habboBankAccount.getCreatedAt());
         this.response.appendInt(this.habboBankAccount.getUpdatedAt());
         return this.response;

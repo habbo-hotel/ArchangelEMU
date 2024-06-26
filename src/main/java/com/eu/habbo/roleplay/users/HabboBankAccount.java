@@ -26,10 +26,6 @@ public class HabboBankAccount {
     private int checkingBalance;
 
     @Getter
-    @Setter
-    private int debitBalance;
-
-    @Getter
     private final int createdAt;
 
     @Getter
@@ -40,7 +36,6 @@ public class HabboBankAccount {
         this.corpID = set.getInt("corp_id");
         this.userID = set.getInt("user_id");
         this.checkingBalance = set.getInt("checking_balance");
-        this.debitBalance = set.getInt("debit_balance");
         this.createdAt = set.getInt("created_at");
         this.updatedAt = set.getInt("updated_at");
     }

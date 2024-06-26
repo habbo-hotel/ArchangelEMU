@@ -53,7 +53,7 @@ public class BankAccountDepositCommand extends Command  {
         }
 
         gameClient.getHabbo().getHabboInfo().setCredits(gameClient.getHabbo().getHabboInfo().getCredits() - depositAmount);
-        bankAccount.setCheckingBalance(bankAccount.getDebitBalance() + depositAmount);
+        bankAccount.setCheckingBalance(bankAccount.getCheckingBalance() + depositAmount);
         HabboBankAccountRepository.getInstance().update(bankAccount);
 
         gameClient.getHabbo().shout(Emulator.getTexts()

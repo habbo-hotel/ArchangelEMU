@@ -51,7 +51,7 @@ public class BankAccountCloseCommand extends Command  {
             return true;
         }
 
-        int bankTotalCredits = bankAccount.getCheckingBalance() + bankAccount.getDebitBalance();
+        int bankTotalCredits = bankAccount.getCheckingBalance();
 
         bankMember.getHabboInfo().setCredits(gameClient.getHabbo().getHabboInfo().getCredits() + bankTotalCredits);
         HabboBankAccountRepository.getInstance().delete(bankAccount.getId());

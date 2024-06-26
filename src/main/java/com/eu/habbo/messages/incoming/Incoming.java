@@ -998,8 +998,6 @@ public enum Incoming {
 
     bankAccountQueryEvent(8033, BankAccountQueryEvent.class),
 
-    bankAccountTransferDebitEvent(8034, BankAccountTransferDebitEvent.class),
-
     bankAccountWithdrawEvent(8035, BankAccountWithdrawEvent.class);
 
     private final int messageId;
