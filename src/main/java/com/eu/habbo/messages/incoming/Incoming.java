@@ -61,6 +61,7 @@ import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
+import com.eu.habbo.roleplay.messages.incoming.bank.*;
 import com.eu.habbo.roleplay.messages.incoming.billing.PayBillEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
@@ -987,8 +988,19 @@ public enum Incoming {
 
     taxiFeeQueryEvent(8028, TaxiFeeQueryEvent.class),
 
-    callTaxiEvent(8029, CallTaxiEvent.class);
+    callTaxiEvent(8029, CallTaxiEvent.class),
 
+    bankAccountCloseEvent(8030, BankAccountCloseEvent.class),
+
+    bankAccountDepositEvent(8031, BankAccountDepositEvent.class),
+
+    bankAccountOpenEvent(8032, BankAccountOpenEvent.class),
+
+    bankAccountQueryEvent(8033, BankAccountQueryEvent.class),
+
+    bankAccountTransferDebitEvent(8034, BankAccountTransferDebitEvent.class),
+
+    bankAccountWithdrawEvent(8035, BankAccountWithdrawEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

@@ -27,7 +27,7 @@ public class BankAccountTransferDebitCommand extends Command  {
         int corpID = Integer.parseInt(params[0]);
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
 
-        int withdrawAmount =Integer.parseInt(params[1]);
+        int transferAmount =Integer.parseInt(params[1]);
 
         HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(gameClient.getHabbo().getHabboInfo().getId(), corpID);
 
@@ -46,18 +46,18 @@ public class BankAccountTransferDebitCommand extends Command  {
             return true;
         }
 
-        if (bankAccount.getCreditBalance() < withdrawAmount) {
+        if (bankAccount.getCreditBalance() < transferAmount) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.balance.not_enough"));
             return true;
         }
 
-        bankAccount.setCreditBalance(bankAccount.getCreditBalance() - withdrawAmount);
-        bankAccount.setDebitBalance(bankAccount.getDebitBalance() + withdrawAmount);
+        bankAccount.setCreditBalance(bankAccount.getCreditBalance() - transferAmount);
+        bankAccount.setDebitBalance(bankAccount.getDebitBalance() + transferAmount);
         HabboBankAccountRepository.getInstance().update(bankAccount);
 
         gameClient.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.bank.balance.transfer")
-                .replace(":credits", String.valueOf(withdrawAmount))
+                .replace(":credits", String.valueOf(transferAmount))
         );
 
         return true;
