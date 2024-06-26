@@ -19,7 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionTeleport extends RoomItem {
+public class
+InteractionTeleport extends RoomItem {
     private int targetId;
     private int targetRoomId;
     private int roomUnitID = -1;
@@ -55,7 +56,7 @@ public class InteractionTeleport extends RoomItem {
         return walkable;
     }
 
-    private void tryTeleport(GameClient client, Room room) {
+    public void tryTeleport(GameClient client, Room room) {
         /*
             if user is on item, startTeleport
 	        else if user is on infront, set state 1 and walk on item
