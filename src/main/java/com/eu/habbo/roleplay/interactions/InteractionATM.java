@@ -27,6 +27,6 @@ public class InteractionATM extends InteractionDefault {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         int corpID = Integer.parseInt(this.getExtraData());
         client.getHabbo().shout(Emulator.getTexts().getValue("roleplay.bank.atm.open"));
-        client.sendResponse(new BankOpenATMComposer(corpID));
+        client.sendResponse(new BankOpenATMComposer(this.getId(), corpID));
     }
 }

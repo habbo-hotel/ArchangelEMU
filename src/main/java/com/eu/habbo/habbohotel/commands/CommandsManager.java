@@ -317,6 +317,7 @@ public class CommandsManager {
         addCommand(new BankAccountDepositCommand());
         addCommand(new BankAccountOpenCommand());
         addCommand(new BankAccountWithdrawCommand());
+        addCommand(new BankConnectATMCommand());
         // Combat
         addCommand(new AttackCommand());
         addCommand(new EquipCommand());

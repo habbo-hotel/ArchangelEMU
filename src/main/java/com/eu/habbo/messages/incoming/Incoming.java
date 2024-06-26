@@ -996,9 +996,13 @@ public enum Incoming {
 
     bankAccountOpenEvent(8032, BankAccountOpenEvent.class),
 
-    bankAccountQueryEvent(8033, BankAccountQueryEvent.class),
+    bankAccountTransferEvent(8033, BankAccountQueryEvent.class),
 
-    bankAccountWithdrawEvent(8035, BankAccountWithdrawEvent.class);
+    bankAccountWithdrawEvent(8034, BankAccountWithdrawEvent.class),
+
+    bankConnectATMEvent(8035, BankConnectATMEvent.class),
+
+    bankListEvent(8036, BankListEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

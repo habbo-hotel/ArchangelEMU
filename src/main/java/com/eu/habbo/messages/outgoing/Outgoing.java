@@ -446,6 +446,7 @@ public class Outgoing {
     public static final int taxiDispatchedComposer = 9012;
     public static final int bankAccountInfoComposer = 9013;
     public static final int bankOpenATMComposer = 9014;
+    public static final int bankListComposer = 9015;
 
 
 }
