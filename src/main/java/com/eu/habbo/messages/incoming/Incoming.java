@@ -1002,7 +1002,9 @@ public enum Incoming {
 
     bankConnectATMEvent(8035, BankConnectATMEvent.class),
 
-    bankListEvent(8036, BankListEvent.class);
+    bankListEvent(8036, BankListEvent.class),
+
+    bankConnectComputerEvent(8037, BankConnectComputerEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

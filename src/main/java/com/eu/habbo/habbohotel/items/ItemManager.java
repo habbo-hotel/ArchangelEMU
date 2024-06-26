@@ -362,8 +362,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionNonPrisonerGate.INTERACTION_TYPE, InteractionNonPrisonerGate.class));
         this.interactionsList.add(new ItemInteraction(InteractionATM.INTERACTION_TYPE, InteractionATM.class));
         this.interactionsList.add(new ItemInteraction(InteractionInstantTeleport.INTERACTION_TYPE, InteractionInstantTeleport.class));
+        this.interactionsList.add(new ItemInteraction(InteractionBankComputer.INTERACTION_TYPE, InteractionBankComputer.class));
     }
-
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
         for (ItemInteraction interaction : this.interactionsList) {
