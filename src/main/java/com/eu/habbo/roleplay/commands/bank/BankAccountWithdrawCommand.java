@@ -36,16 +36,6 @@ public class BankAccountWithdrawCommand extends Command  {
             return true;
         }
 
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_in_room"));
-            return true;
-        }
-
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != corpID) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_in_room"));
-            return true;
-        }
-
         if (bankAccount.getCheckingBalance() < withdrawAmount) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.balance.not_enough"));
             return true;

@@ -7,7 +7,7 @@ public class BankAccountWithdrawEvent extends MessageHandler {
     @Override
     public void handle() {
         String corpID = String.valueOf(this.packet.readInt());
-        String withdrawAmount = this.packet.readString();
+        String withdrawAmount = String.valueOf(this.packet.readInt());
 
         if (corpID == null || withdrawAmount == null) {
             return;

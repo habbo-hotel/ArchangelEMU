@@ -37,11 +37,6 @@ public class BankAccountDepositCommand extends Command  {
             return true;
         }
 
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_in_room"));
-            return true;
-        }
-
         if (gameClient.getHabbo().getHabboInfo().getCredits() < depositAmount) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.deposit.not_enough"));
             return true;
