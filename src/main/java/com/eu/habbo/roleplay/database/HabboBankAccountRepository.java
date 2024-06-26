@@ -1,37 +1,34 @@
 package com.eu.habbo.roleplay.database;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.billing.UserBill;
-import com.eu.habbo.roleplay.billing.items.BillType;
-import com.eu.habbo.roleplay.billing.items.BillingItem;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import com.eu.habbo.roleplay.users.HabboBankAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.sql.*;
 
-public class HabboBillRepository {
-    private static HabboBillRepository instance;
+public class HabboBankAccountRepository {
+    private static HabboBankAccountRepository instance;
 
-    public static HabboBillRepository getInstance() {
+    public static HabboBankAccountRepository getInstance() {
         if (instance == null) {
-            instance = new HabboBillRepository();
+            instance = new HabboBankAccountRepository();
         }
         return instance;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboBillRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboBankAccountRepository.class);
 
-    public UserBill getByID(int id) {
-        String sqlSelect = "SELECT * FROM rp_users_bills WHERE id = ?";
+    public HabboBankAccount getByUserAndCorpID(int userID, int corpID) {
+        String sqlSelect = "SELECT * FROM rp_users_bank_accs WHERE user_id = ? AND corp_id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
 
-            selectStatement.setInt(1, id);
+            selectStatement.setInt(1, userID);
+            selectStatement.setInt(2, corpID);
 
             try (ResultSet resultSet = selectStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new UserBill(resultSet);
+                    return new HabboBankAccount(resultSet);
                 }
             }
         } catch (SQLException e) {
@@ -40,58 +37,51 @@ public class HabboBillRepository {
         return null;
     }
 
-    public TIntObjectHashMap<UserBill> getByUserID(int userID) {
-        TIntObjectHashMap<UserBill> userBills = new TIntObjectHashMap<>();
-        String sqlSelect = "SELECT * FROM rp_users_bills WHERE user_id = ?";
+    public HabboBankAccount getByUserID(int userID) {
+        String sqlSelect = "SELECT * FROM rp_users_bank_accs WHERE user_id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
 
             selectStatement.setInt(1, userID);
 
             try (ResultSet resultSet = selectStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    UserBill bill = new UserBill(resultSet);
-                    userBills.put(bill.id, bill);
+                if (resultSet.next()) {
+                    return new HabboBankAccount(resultSet);
                 }
             }
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
-        return userBills;
+        return null;
     }
 
-    public  UserBill create(BillingItem billingItem) {
-        return HabboBillRepository.getInstance().create(
-                billingItem.getUserID(),
-                billingItem.getChargedByUserID(),
-                billingItem.getChargedByCorpID(),
-                billingItem.getType(),
-                billingItem.getTitle(),
-                billingItem.getDescription(),
-                billingItem.getAmountOwed()
+    public HabboBankAccount create(HabboBankAccount habboBankAccount) {
+        return this.create(
+                habboBankAccount.getUserID(),
+                habboBankAccount.getCorpID(),
+                habboBankAccount.getCreditBalance(),
+                habboBankAccount.getCreatedAt(),
+                habboBankAccount.getUpdatedAt()
         );
     }
 
-    public UserBill create(int userID, int chargedByUserID, int chargedByCorpID, BillType type, String title, String description, int amountOwed) {
-        String sqlInsert = "INSERT INTO rp_users_bills (user_id, charged_by_user_id, charged_by_corp_id, type, title, description, amount_charged) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public HabboBankAccount create(int userID, int corpID, int creditBalance, int createdAt, int updatedAt) {
+        String sqlInsert = "INSERT INTO rp_users_stats (user_id, corp_id, credit_balance, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, userID);
-            statement.setInt(2, chargedByUserID);
-            statement.setInt(3, chargedByCorpID);
-            statement.setString(4, type.getValue());
-            statement.setString(5, title);
-            statement.setString(6, description);
-            statement.setInt(7, amountOwed);
+            statement.setInt(2, corpID);
+            statement.setInt(3, creditBalance);
+            statement.setInt(4, createdAt);
+            statement.setInt(5, updatedAt);
 
             statement.executeUpdate();
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    int generatedId = generatedKeys.getInt(1);
-                    return getByID(generatedId);
+                    return this.getByUserID(userID);
                 } else {
                     throw new SQLException("Creating billing statement failed, no ID obtained.");
                 }
@@ -102,19 +92,20 @@ public class HabboBillRepository {
         }
     }
 
-    public UserBill update(UserBill userBill) {
-        String sqlUpdate = "UPDATE rp_users_bills SET amountPaid = ? WHERE id = ?";
+    public void update(HabboBankAccount habboBankAccount) {
+        String sqlUpdate = "UPDATE rp_users_bank_accs SET credit_balance = ?, updated_at = ? WHERE id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlUpdate)) {
 
-            statement.setInt(1, userBill.amountPaid);
-            statement.setInt(2, userBill.id);
-            statement.executeUpdate();
+            int updatedAt = (int) (System.currentTimeMillis() / 1000);
 
-            return userBill;
+            statement.setInt(1, habboBankAccount.getCreditBalance());
+            statement.setInt(2, updatedAt);
+            statement.setInt(3, habboBankAccount.getId());
+
+            statement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
-            return null;
         }
     }
 

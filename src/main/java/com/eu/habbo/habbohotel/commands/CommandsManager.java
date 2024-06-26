@@ -34,6 +34,7 @@ import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
+import com.eu.habbo.roleplay.commands.bank.*;
 import com.eu.habbo.roleplay.commands.billing.PayBillCommand;
 import com.eu.habbo.roleplay.commands.combat.AttackCommand;
 import com.eu.habbo.roleplay.commands.combat.EquipCommand;
@@ -311,12 +312,16 @@ public class CommandsManager {
         addCommand(new UpdateYoutubePlaylistsCommand());
         addCommand(new UserInfoCommand());
         addCommand(new WordQuizCommand());
-
+        // Bank
+        addCommand(new BankAccountCloseCommand());
+        addCommand(new BankAccountDepositCommand());
+        addCommand(new BankAccountOpenCommand());
+        addCommand(new BankAccountTransferDebitCommand());
+        addCommand(new BankAccountWithdrawCommand());
         // Combat
         addCommand(new AttackCommand());
         addCommand(new EquipCommand());
         addCommand(new SetHealthCommand());
-
         // Corp
         addCommand(new CorpAcceptJobCommand());
         addCommand(new CorpDeclineJobCommand());
@@ -328,7 +333,6 @@ public class CommandsManager {
         addCommand(new CorpStartWorkCommand());
         addCommand(new CorpStopWorkCommand());
         addCommand(new CorpSuperHireCommand());
-
         // Gang
         addCommand(new GangDisbandCommand());
         addCommand(new GangInviteAcceptCommand());
@@ -336,10 +340,8 @@ public class CommandsManager {
         addCommand(new GangInviteDeclineCommand());
         addCommand(new GangKickCommand());
         addCommand(new GangLeaveCommand());
-
         // License
         addCommand(new LicenseOfferCommand());
-
         // Police
         addCommand(new ArrestCommand());
         addCommand(new CuffCommand());
@@ -347,7 +349,6 @@ public class CommandsManager {
         addCommand(new StunCommand());
         addCommand(new ReleaseCommand());
         addCommand(new PayBillCommand());
-
         // Taxi
         addCommand(new CallTaxiCommand());
     }

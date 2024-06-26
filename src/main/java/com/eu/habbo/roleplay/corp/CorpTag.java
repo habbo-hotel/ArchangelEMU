@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum CorpTag {
+    BANK("bank"),
     CIVILIAN("civilian"),
     HOSPITAL("gov_hospital"),
     DRIVING_AUTHORITY("gov_driver"),
