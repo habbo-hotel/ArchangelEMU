@@ -25,10 +25,10 @@ public class BankAccountDepositCommand extends Command  {
             return true;
         }
 
-        int corpID = Integer.parseInt(params[0]);
+        int corpID = Integer.parseInt(params[1]);
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
 
-        int depositAmount =Integer.parseInt(params[1]);
+        int depositAmount = Integer.parseInt(params[2]);
 
         HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(gameClient.getHabbo().getHabboInfo().getId(), corpID);
 
@@ -38,11 +38,6 @@ public class BankAccountDepositCommand extends Command  {
         }
 
         if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_in_room"));
-            return true;
-        }
-
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() != corpID) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_in_room"));
             return true;
         }

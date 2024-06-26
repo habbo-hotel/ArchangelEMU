@@ -37,24 +37,6 @@ public class HabboBankAccountRepository {
         return null;
     }
 
-    public HabboBankAccount getByUserID(int userID) {
-        String sqlSelect = "SELECT * FROM rp_users_bank_accs WHERE user_id = ?";
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-             PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
-
-            selectStatement.setInt(1, userID);
-
-            try (ResultSet resultSet = selectStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new HabboBankAccount(resultSet);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-        return null;
-    }
-
     public HabboBankAccount create(HabboBankAccount habboBankAccount) {
         return this.create(
                 habboBankAccount.getUserID(),
@@ -66,7 +48,7 @@ public class HabboBankAccountRepository {
     }
 
     public HabboBankAccount create(int userID, int corpID, int creditBalance, int createdAt, int updatedAt) {
-        String sqlInsert = "INSERT INTO rp_users_stats (user_id, corp_id, credit_balance, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO rp_users_stats (user_id, corp_id, checking_balance, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
@@ -81,7 +63,7 @@ public class HabboBankAccountRepository {
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return this.getByUserID(userID);
+                    return this.getByUserAndCorpID(userID, corpID);
                 } else {
                     throw new SQLException("Creating billing statement failed, no ID obtained.");
                 }
@@ -93,7 +75,7 @@ public class HabboBankAccountRepository {
     }
 
     public void update(HabboBankAccount habboBankAccount) {
-        String sqlUpdate = "UPDATE rp_users_bank_accs SET credit_balance = ?, updated_at = ? WHERE id = ?";
+        String sqlUpdate = "UPDATE rp_users_bank_accs SET checking_balance = ?, updated_at = ? WHERE id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlUpdate)) {
 

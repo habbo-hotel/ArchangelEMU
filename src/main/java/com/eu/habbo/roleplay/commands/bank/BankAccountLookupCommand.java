@@ -22,14 +22,14 @@ public class BankAccountLookupCommand extends Command  {
             return true;
         }
 
-        if (params.length != 2) {
+        if (params.length != 3) {
             return true;
         }
 
-        int corpID = Integer.parseInt(params[0]);
+        int corpID = Integer.parseInt(params[1]);
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
 
-        String username = params[1];
+        String username = params[2];
         Habbo bankMember = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
 
         if (bankCorp == null || bankMember == null) {

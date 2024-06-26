@@ -24,10 +24,10 @@ public class BankAccountWithdrawCommand extends Command  {
             return true;
         }
 
-        int corpID = Integer.parseInt(params[0]);
+        int corpID = Integer.parseInt(params[1]);
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
 
-        int withdrawAmount =Integer.parseInt(params[1]);
+        int withdrawAmount =Integer.parseInt(params[2]);
 
         HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(gameClient.getHabbo().getHabboInfo().getId(), corpID);
 

@@ -13,7 +13,6 @@ public class BankAccountInfoComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.bankAccountInfoComposer);
-        this.response.appendInt(this.habboBankAccount.getId());
         this.response.appendInt(this.habboBankAccount.getCorpID());
         this.response.appendInt(this.habboBankAccount.getUserID());
         this.response.appendInt(this.habboBankAccount.getCheckingBalance());
