@@ -59,7 +59,7 @@ public class HabboBankAccountRepository {
         return this.create(
                 habboBankAccount.getUserID(),
                 habboBankAccount.getCorpID(),
-                habboBankAccount.getCreditBalance(),
+                habboBankAccount.getCheckingBalance(),
                 habboBankAccount.getCreatedAt(),
                 habboBankAccount.getUpdatedAt()
         );
@@ -99,7 +99,7 @@ public class HabboBankAccountRepository {
 
             int updatedAt = (int) (System.currentTimeMillis() / 1000);
 
-            statement.setInt(1, habboBankAccount.getCreditBalance());
+            statement.setInt(1, habboBankAccount.getCheckingBalance());
             statement.setInt(2, updatedAt);
             statement.setInt(3, habboBankAccount.getId());
 

@@ -360,6 +360,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionEmployeeGate.INTERACTION_TYPE, InteractionEmployeeGate.class));
         this.interactionsList.add(new ItemInteraction(InteractionTollGate.INTERACTION_TYPE, InteractionTollGate.class));
         this.interactionsList.add(new ItemInteraction(InteractionNonPrisonerGate.INTERACTION_TYPE, InteractionNonPrisonerGate.class));
+        this.interactionsList.add(new ItemInteraction(InteractionATM.INTERACTION_TYPE, InteractionATM.class));
     }
 
 

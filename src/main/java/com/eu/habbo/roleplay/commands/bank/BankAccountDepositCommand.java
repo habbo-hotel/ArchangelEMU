@@ -3,7 +3,6 @@ package com.eu.habbo.roleplay.commands.bank;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.database.HabboBankAccountRepository;
@@ -54,7 +53,7 @@ public class BankAccountDepositCommand extends Command  {
         }
 
         gameClient.getHabbo().getHabboInfo().setCredits(gameClient.getHabbo().getHabboInfo().getCredits() - depositAmount);
-        bankAccount.setCreditBalance(bankAccount.getDebitBalance() + depositAmount);
+        bankAccount.setCheckingBalance(bankAccount.getDebitBalance() + depositAmount);
         HabboBankAccountRepository.getInstance().update(bankAccount);
 
         gameClient.getHabbo().shout(Emulator.getTexts()

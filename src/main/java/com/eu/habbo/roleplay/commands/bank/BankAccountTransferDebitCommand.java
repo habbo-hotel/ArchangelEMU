@@ -46,12 +46,12 @@ public class BankAccountTransferDebitCommand extends Command  {
             return true;
         }
 
-        if (bankAccount.getCreditBalance() < transferAmount) {
+        if (bankAccount.getCheckingBalance() < transferAmount) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.balance.not_enough"));
             return true;
         }
 
-        bankAccount.setCreditBalance(bankAccount.getCreditBalance() - transferAmount);
+        bankAccount.setCheckingBalance(bankAccount.getCheckingBalance() - transferAmount);
         bankAccount.setDebitBalance(bankAccount.getDebitBalance() + transferAmount);
         HabboBankAccountRepository.getInstance().update(bankAccount);
 

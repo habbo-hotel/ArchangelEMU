@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
-import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.database.HabboBankAccountRepository;
 import com.eu.habbo.roleplay.users.HabboBankAccount;
 
@@ -25,8 +24,7 @@ public class BankAccountOpenCommand extends Command  {
             return true;
         }
 
-        int corpID = Integer.parseInt(params[0]);
-        Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
+        Corp bankCorp = gameClient.getHabbo().getHabboRoleplayStats().getCorp();
 
         String username = params[1];
         Habbo bankMember = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
@@ -36,7 +34,7 @@ public class BankAccountOpenCommand extends Command  {
             return true;
         }
 
-        HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(bankMember.getHabboInfo().getId(), corpID);
+        HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(bankMember.getHabboInfo().getId(), bankCorp.getGuild().getId());
 
         if (bankAccount != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts()
@@ -51,12 +49,12 @@ public class BankAccountOpenCommand extends Command  {
             return true;
         }
 
-        if (bankMember.getRoomUnit().getRoom().getRoomInfo().getId() != corpID) {
+        if (bankMember.getRoomUnit().getRoom().getRoomInfo().getId() != bankCorp.getGuild().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_in_room"));
             return true;
         }
         int currentTime = (int) (System.currentTimeMillis() / 1000);
-        HabboBankAccountRepository.getInstance().create(bankMember.getHabboInfo().getId(), corpID, 0, currentTime, currentTime);
+        HabboBankAccountRepository.getInstance().create(bankMember.getHabboInfo().getId(), bankCorp.getGuild().getId(), 0, currentTime, currentTime);
 
         gameClient.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.bank.open.assist")

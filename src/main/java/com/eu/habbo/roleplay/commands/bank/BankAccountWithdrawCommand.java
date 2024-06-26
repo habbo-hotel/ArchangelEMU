@@ -3,7 +3,6 @@ package com.eu.habbo.roleplay.commands.bank;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.database.HabboBankAccountRepository;
@@ -47,12 +46,12 @@ public class BankAccountWithdrawCommand extends Command  {
             return true;
         }
 
-        if (bankAccount.getCreditBalance() < withdrawAmount) {
+        if (bankAccount.getCheckingBalance() < withdrawAmount) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.balance.not_enough"));
             return true;
         }
 
-        bankAccount.setCreditBalance(bankAccount.getCreditBalance() - withdrawAmount);
+        bankAccount.setCheckingBalance(bankAccount.getCheckingBalance() - withdrawAmount);
         HabboBankAccountRepository.getInstance().update(bankAccount);
 
         gameClient.getHabbo().shout(Emulator.getTexts()
