@@ -28,17 +28,22 @@ public class BankAccountDepositCommand extends Command  {
         int corpID = Integer.parseInt(params[1]);
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
 
-        int depositAmount = Integer.parseInt(params[2]);
-
-        HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(gameClient.getHabbo().getHabboInfo().getId(), corpID);
-
-        if (bankCorp == null || bankAccount == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_found"));
+        if (bankCorp == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.corp_not_found"));
             return true;
         }
 
+        HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(gameClient.getHabbo().getHabboInfo().getId(), corpID);
+
+        if (bankAccount == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.account_not_found"));
+            return true;
+        }
+
+        int depositAmount = Integer.parseInt(params[2]);
+
         if (gameClient.getHabbo().getHabboInfo().getCredits() < depositAmount) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.deposit.not_enough"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.not_enough_credits"));
             return true;
         }
 
@@ -47,7 +52,7 @@ public class BankAccountDepositCommand extends Command  {
         HabboBankAccountRepository.getInstance().update(bankAccount);
 
         gameClient.getHabbo().shout(Emulator.getTexts()
-                .getValue("roleplay.bank.deposit.success")
+                .getValue("roleplay.bank.deposit_success")
                 .replace(":credits", String.valueOf(depositAmount))
         );
 

@@ -6,6 +6,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
+import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.messages.outgoing.bank.BankOpenATMComposer;
 
 import java.sql.ResultSet;
@@ -26,7 +29,21 @@ public class InteractionATM extends InteractionDefault {
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         int corpID = Integer.parseInt(this.getExtraData());
-        client.getHabbo().shout(Emulator.getTexts().getValue("roleplay.bank.atm.open"));
+        Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
+
+        if (bankCorp == null) {
+            if (!client.getHabbo().getHabboRoleplayStats().isWorking()) {
+                client.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
+                return;
+            }
+        }
+
+        if (!bankCorp.getTags().contains(CorpTag.BANK)) {
+            client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.corp_not_a_bank"));
+            return;
+        }
+
+        client.getHabbo().shout(Emulator.getTexts().getValue("roleplay.bank.atm_insert_card"));
         client.sendResponse(new BankOpenATMComposer(this.getId(), corpID));
     }
 }

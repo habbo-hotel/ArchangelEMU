@@ -6,7 +6,7 @@ import com.eu.habbo.roleplay.commands.bank.BankAccountOpenCommand;
 public class BankAccountOpenEvent extends MessageHandler {
     @Override
     public void handle() {
-        String username = this.packet.readString();;
+        String username = this.packet.readString();
 
         if (username == null) {
             return;

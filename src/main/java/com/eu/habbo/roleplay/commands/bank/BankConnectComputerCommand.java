@@ -23,18 +23,29 @@ public class BankConnectComputerCommand extends Command  {
         }
 
         int itemID = Integer.parseInt(params[1]);
-        int corpID = Integer.parseInt(params[2]);
 
         RoomItem item = gameClient.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemID);
+
+        if (item == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.device.not_found"));
+            return true;
+        }
+
+        int corpID = Integer.parseInt(params[2]);
         Corp corp = Emulator.getGameEnvironment().getCorpManager().getCorpByID(corpID);
 
-        if (item == null || corp == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.connect_computer.not_found"));
+        if (corp == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.corp_not_found.not_found"));
+            return true;
+        }
+
+        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.generic.not_at_work"));
             return true;
         }
 
         if (item.getOwnerInfo().getId() != gameClient.getHabbo().getHabboInfo().getId()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.connect_computer.not_allowed"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.device.not_setup"));
             return true;
         }
 
@@ -42,8 +53,8 @@ public class BankConnectComputerCommand extends Command  {
         gameClient.getHabbo().getRoomUnit().getRoom().updateItemState(item);
 
         gameClient.getHabbo().shout(Emulator.getTexts()
-                .getValue("roleplay.bank.connect_computer.success")
-                .replace(":bankName", corp.getGuild().getName())
+                .getValue("roleplay.device.new_connection")
+                .replace(":corpName", corp.getGuild().getName())
         );
 
         return true;
