@@ -449,6 +449,7 @@ public class Outgoing {
     public static final int bankListComposer = 9015;
     public static final int bankOpenComputerComposer = 9016;
     public static final int roomListUsersComposer = 9017;
+    public static final int infoScreenViewComposer = 9018;
 
 
 }
