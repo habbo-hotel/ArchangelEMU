@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.CorpTag;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
 
 public class ReleaseCommand extends Command {
@@ -42,7 +43,7 @@ public class ReleaseCommand extends Command {
             return true;
         }
 
-        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
+        if (!FacilityCorpManager.getInstance().isUserWorking(gameClient.getHabbo())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
             return true;
         }

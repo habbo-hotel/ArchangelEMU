@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpTag;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 
 public class StunCommand extends Command {
     public StunCommand() {
@@ -33,7 +34,7 @@ public class StunCommand extends Command {
             return true;
         }
 
-        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
+        if (!FacilityCorpManager.getInstance().isUserWorking(gameClient.getHabbo())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
             return true;
         }

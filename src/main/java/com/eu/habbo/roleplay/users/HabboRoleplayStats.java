@@ -447,10 +447,6 @@ public class HabboRoleplayStats{
         return damageModifier;
     }
 
-    public Boolean isWorking() {
-        return FacilityCorpManager.getInstance().isUserWorking(this.habbo);
-    }
-
     public HabboRoleplayStats(ResultSet set) throws SQLException {
         this.userID = set.getInt("user_id");
         this.habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(set.getInt("user_id"));

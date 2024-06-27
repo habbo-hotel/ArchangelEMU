@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpTag;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.messages.outgoing.bank.BankOpenATMComposer;
 
 import java.sql.ResultSet;
@@ -32,10 +33,19 @@ public class InteractionATM extends InteractionDefault {
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
 
         if (bankCorp == null) {
-            if (!client.getHabbo().getHabboRoleplayStats().isWorking()) {
+            if (!FacilityCorpManager.getInstance().isUserWorking(client.getHabbo())) {
                 client.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
                 return;
             }
+
+            if (this.getOwnerInfo().getId() != client.getHabbo().getHabboInfo().getId()) {
+                client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.device.not_setup"));
+                return;
+            }
+
+            client.getHabbo().shout(Emulator.getTexts().getValue("roleplay.device.set_up"));
+            client.sendResponse(new BankOpenATMComposer(this.getId(), corpID));
+            return;
         }
 
         if (!bankCorp.getTags().contains(CorpTag.BANK)) {

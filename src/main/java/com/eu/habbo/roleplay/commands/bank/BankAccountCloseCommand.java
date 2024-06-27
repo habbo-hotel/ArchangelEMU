@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.database.HabboBankAccountRepository;
+import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.users.HabboBankAccount;
 
 public class BankAccountCloseCommand extends Command  {
@@ -21,11 +22,11 @@ public class BankAccountCloseCommand extends Command  {
             return true;
         }
 
-        if (params.length != 3) {
+        if (params.length != 2) {
             return true;
         }
 
-        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
+        if (!FacilityCorpManager.getInstance().isUserWorking(gameClient.getHabbo())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
             return true;
         }
@@ -50,13 +51,14 @@ public class BankAccountCloseCommand extends Command  {
             return true;
         }
 
-        String username = params[2];
+        String username = params[1];
         Habbo targetedUser = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
 
         if (targetedUser == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts()
                     .getValue("generic.user_not_found")
                     .replace(":username", username)
+                    .replace(":corpName", bankCorp.getGuild().getName())
             );
             return true;
         }

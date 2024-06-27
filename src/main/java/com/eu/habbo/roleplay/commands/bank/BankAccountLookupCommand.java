@@ -28,19 +28,26 @@ public class BankAccountLookupCommand extends Command  {
 
         int corpID = Integer.parseInt(params[1]);
         Corp bankCorp = CorpManager.getInstance().getCorpByID(corpID);
+        if (bankCorp == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.corp_not_found"));
+            return true;
+        }
 
         String username = params[2];
         Habbo bankMember = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
 
-        if (bankCorp == null || bankMember == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_found"));
+        if ( bankMember == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts()
+                    .getValue("generic.user_not_found")
+                    .replace(":username", username)
+            );
             return true;
         }
 
         HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(bankMember.getHabboInfo().getId(), corpID);
 
         if (bankAccount == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_found"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.account_not_found"));
             return true;
         }
 

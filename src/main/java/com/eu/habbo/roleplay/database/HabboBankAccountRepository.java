@@ -48,7 +48,7 @@ public class HabboBankAccountRepository {
     }
 
     public HabboBankAccount create(int userID, int corpID, int creditBalance, int createdAt, int updatedAt) {
-        String sqlInsert = "INSERT INTO rp_users_stats (user_id, corp_id, checking_balance, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO rp_users_bank_accs (user_id, corp_id, checking_balance, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
