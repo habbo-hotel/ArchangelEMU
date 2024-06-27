@@ -14,7 +14,7 @@ public class InfoScreenViewComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.infoScreenViewComposer);
         this.response.appendInt(this.item.getId());
-        this.response.appendString("CONTENT");
+        this.response.appendString(this.item.getExtraData());
         this.response.appendBoolean(true); // canEdit
         return this.response;
     }
