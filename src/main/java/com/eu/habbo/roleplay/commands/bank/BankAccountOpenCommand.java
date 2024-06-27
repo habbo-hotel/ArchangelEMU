@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
+import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.database.HabboBankAccountRepository;
 import com.eu.habbo.roleplay.users.HabboBankAccount;
 
@@ -20,17 +21,23 @@ public class BankAccountOpenCommand extends Command  {
             return true;
         }
 
-        if (params.length != 2) {
+        if (params.length != 3) {
             return true;
         }
 
+        int corpID = Integer.parseInt(params[1]);
         Corp bankCorp = gameClient.getHabbo().getHabboRoleplayStats().getCorp();
 
-        String username = params[1];
+        String username = params[2];
         Habbo bankMember = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
 
         if (bankCorp == null || bankMember == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_found"));
+            return true;
+        }
+
+        if (!bankCorp.getTags().contains(CorpTag.BANK)) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.not_allowed"));
             return true;
         }
 

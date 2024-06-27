@@ -29,12 +29,12 @@ public class BankConnectATMCommand extends Command  {
         Corp corp = Emulator.getGameEnvironment().getCorpManager().getCorpByID(corpID);
 
         if (item == null || corp == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.connect_atm.not_found"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.connect_computer.not_found"));
             return true;
         }
 
         if (item.getOwnerInfo().getId() != gameClient.getHabbo().getHabboInfo().getId()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.connect_atm.not_allowed"));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.connect_computer.not_allowed"));
             return true;
         }
 
@@ -42,7 +42,7 @@ public class BankConnectATMCommand extends Command  {
         gameClient.getHabbo().getRoomUnit().getRoom().updateItemState(item);
 
         gameClient.getHabbo().shout(Emulator.getTexts()
-                .getValue("roleplay.bank.connect_atm.success")
+                .getValue("roleplay.bank.connect_computer.success")
                 .replace(":bankName", corp.getGuild().getName())
         );
 

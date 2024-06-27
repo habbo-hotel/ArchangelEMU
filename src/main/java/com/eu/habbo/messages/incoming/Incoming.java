@@ -67,6 +67,7 @@ import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
+import com.eu.habbo.roleplay.messages.incoming.room.RoomListUsersEvent;
 import com.eu.habbo.roleplay.messages.incoming.taxi.CallTaxiEvent;
 import com.eu.habbo.roleplay.messages.incoming.taxi.TaxiFeeQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
@@ -1004,7 +1005,9 @@ public enum Incoming {
 
     bankListEvent(8036, BankListEvent.class),
 
-    bankConnectComputerEvent(8037, BankConnectComputerEvent.class);
+    bankConnectComputerEvent(8037, BankConnectComputerEvent.class),
+
+    roomListUsersEvent(8038, RoomListUsersEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
