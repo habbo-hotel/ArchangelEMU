@@ -5,6 +5,8 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class InfoScreenSaveEvent extends MessageHandler {
     @Override
     public void handle() {
-        // Do something
+        int itemID = this.packet.readInt();
+        String content = this.packet.readString();
+        this.client.getHabbo().shout("I SAVED STUFF");
     }
 }

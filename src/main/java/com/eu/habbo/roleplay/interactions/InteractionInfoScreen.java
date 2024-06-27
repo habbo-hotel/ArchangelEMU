@@ -26,6 +26,6 @@ public class InteractionInfoScreen extends InteractionDefault {
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
-        client.sendResponse(new InfoScreenViewComposer(client.getHabbo()));
+        client.sendResponse(new InfoScreenViewComposer(this));
     }
 }
