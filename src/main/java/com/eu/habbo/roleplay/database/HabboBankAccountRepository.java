@@ -92,7 +92,7 @@ public class HabboBankAccountRepository {
     }
 
     public void delete(int id) {
-        String sqlDelete = "DELETE FROM rp_users_bills WHERE id = ?";
+        String sqlDelete = "DELETE FROM rp_users_bank_accs WHERE id = ?";
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlDelete)) {
             statement.setInt(1, id);
