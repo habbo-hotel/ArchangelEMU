@@ -5,34 +5,26 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.government.LicenseType;
 
-public class FarmingLicenseBillingItem implements BillingItem{
-
-    private  int userID;
-    private int chargedByUserID;
-
-    public FarmingLicenseBillingItem(int userID, int chargedByUserID) {
-        this.userID = userID;
-        this.chargedByUserID = chargedByUserID;
-    }
+public record LumberjackLicenseBillingItem(int userID, int chargedByUserID) implements BillingItem {
 
     @Override
     public BillType getType() {
-        return BillType.FARMING_LICENSE;
+        return BillType.LUMBERJACK_LICENSE;
     }
 
     @Override
     public String getTitle() {
-        return "Farming License";
+        return "Lumberjack License";
     }
 
     @Override
     public String getDescription() {
-        return "Fee for processing";
+        return "Fee for forest restoration and preservation";
     }
 
     @Override
     public int getAmountOwed() {
-        return 150;
+        return 500;
     }
 
     @Override
@@ -46,18 +38,8 @@ public class FarmingLicenseBillingItem implements BillingItem{
     }
 
     @Override
-    public int chargedByUserID() {
-        return this.chargedByUserID;
-    }
-
-    @Override
-    public int userID() {
-        return this.userID;
-    }
-
-    @Override
     public void onBillPaid(Habbo habbo) {
-        habbo.getInventory().getLicensesComponent().createLicense(LicenseType.FARMING);
+        habbo.getInventory().getLicensesComponent().createLicense(LicenseType.LUMBERJACK);
         habbo.shout(Emulator.getTexts().getValue("roleplay.license.received").replace(":license", this.getTitle()));
     }
 }

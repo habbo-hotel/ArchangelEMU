@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.billing.UserBill;
 import com.eu.habbo.roleplay.billing.items.*;
 import com.eu.habbo.roleplay.corp.CorpTag;
+import com.eu.habbo.roleplay.corp.LicenseMapper;
 import com.eu.habbo.roleplay.database.HabboBillRepository;
 import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.messages.outgoing.billing.InvoiceReceivedComposer;
@@ -54,52 +55,33 @@ public class LicenseOfferCommand extends Command {
 
         LicenseType licenseType = LicenseType.fromValue(Integer.parseInt(params[2]));
 
-        UserBill statement = null;
 
         if (targetedHabbo.getInventory().getLicensesComponent().getLicenseByType(licenseType) != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_already_exists"));
             return true;
         }
 
-        if (licenseType == LicenseType.DRIVER) {
-            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.DRIVING_AUTHORITY)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
-                return true;
-            }
-            statement = HabboBillRepository.getInstance().create(new DriverLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+        CorpTag corpTag = LicenseMapper.licenseTypeToCorpTag(licenseType);
+
+        if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(corpTag)) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
+            return true;
         }
 
-        if (licenseType == LicenseType.FARMING) {
-            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.FARMING_AUTHORITY)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
-                return true;
-            }
-            statement = HabboBillRepository.getInstance().create(new FarmingLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
-        }
-
-        if (licenseType == LicenseType.FISHING) {
-            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.FISHING_AUTHORITY)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
-                return true;
-            }
-            statement = HabboBillRepository.getInstance().create(new FishingLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
-        }
-
-        if (licenseType == LicenseType.MINING) {
-            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.MINING_AUTHORITY)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed"));
-                return true;
-            }
-            statement = HabboBillRepository.getInstance().create(new MiningLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
-        }
-
-        if (licenseType == LicenseType.WEAPON) {
-            if (!gameClient.getHabbo().getHabboRoleplayStats().getCorp().getTags().contains(CorpTag.WEAPONS_AUTHORITY)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.license_sell_not_allowed").replace(":license", licenseType.name()));
-                return true;
-            }
-            statement = HabboBillRepository.getInstance().create(new WeaponLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
-        }
+        UserBill statement = switch (licenseType) {
+            case DRIVER ->
+                    HabboBillRepository.getInstance().create(new DriverLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+            case FARMING ->
+                    HabboBillRepository.getInstance().create(new FarmingLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+            case FISHING ->
+                    HabboBillRepository.getInstance().create(new FishingLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+            case MINING ->
+                    HabboBillRepository.getInstance().create(new MiningLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+            case LUMBERJACK ->
+                    HabboBillRepository.getInstance().create(new LumberjackLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+            case WEAPON ->
+                    HabboBillRepository.getInstance().create(new WeaponLicenseBillingItem(targetedHabbo.getHabboInfo().getId(), gameClient.getHabbo().getHabboInfo().getId()));
+        };
 
         if (statement == null) {;
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error"));

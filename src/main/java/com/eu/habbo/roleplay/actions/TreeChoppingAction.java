@@ -1,12 +1,15 @@
 package com.eu.habbo.roleplay.actions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
-import com.eu.habbo.roleplay.interactions.InteractionToolPickaxe;
+import com.eu.habbo.roleplay.interactions.InteractionFish;
+import com.eu.habbo.roleplay.interactions.InteractionLumber;
+import com.eu.habbo.roleplay.interactions.InteractionToolAxe;
 import gnu.trove.set.hash.THashSet;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +32,7 @@ public class TreeChoppingAction implements Runnable {
             return;
         }
 
-        THashSet<RoomItem> ownedPickaxes = this.habbo.getInventory().getItemsComponent().getItemsByInteractionType(InteractionToolPickaxe.class);
+        THashSet<RoomItem> ownedPickaxes = this.habbo.getInventory().getItemsComponent().getItemsByInteractionType(InteractionToolAxe.class);
 
         if (ownedPickaxes.isEmpty()) {
             this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.no_axe"));
@@ -82,9 +85,10 @@ public class TreeChoppingAction implements Runnable {
         this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.success"));
         this.habbo.getRoomUnit().giveEffect(0, -1);
 
-        RoomItem item = Emulator.getGameEnvironment().getItemManager().createItem(this.habbo.getHabboInfo().getId(), this.roomItem.getBaseItem(), 0, 0, "");
-        this.habbo.getInventory().getItemsComponent().addItem(item);
-        this.habbo.getClient().sendResponse(new UnseenItemsComposer(item));
+        Item lumberBaseItem = Emulator.getGameEnvironment().getItemManager().getItemByInteractionType(InteractionLumber.class);
+        RoomItem lumberRoomItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habbo.getHabboInfo().getId(), lumberBaseItem, 0, 0, "");
+        this.habbo.getInventory().getItemsComponent().addItem(lumberRoomItem);
+        this.habbo.getClient().sendResponse(new UnseenItemsComposer(lumberRoomItem));
         this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
         new RespawnItemAction(this.roomItem);

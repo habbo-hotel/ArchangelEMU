@@ -46,12 +46,12 @@ public class WeaponLicenseBillingItem implements BillingItem{
     }
 
     @Override
-    public int getChargedByUserID() {
+    public int chargedByUserID() {
         return this.chargedByUserID;
     }
 
     @Override
-    public int getUserID() {
+    public int userID() {
         return this.userID;
     }
 

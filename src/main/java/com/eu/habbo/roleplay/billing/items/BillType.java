@@ -8,7 +8,8 @@ public enum BillType {
     FARMING_LICENSE("farming-license"),
     FISHING_LICENSE("fishing-license"),
     MINING_LICENSE("mining-license"),
-    WEAPON_LICENSE("weapon-license");
+    WEAPON_LICENSE("weapon-license"),
+    LUMBERJACK_LICENSE("lumberjack-license");
 
     private final String value;
 

@@ -7,15 +7,15 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionAxe extends InteractionDefault {
+public class InteractionToolAxe extends InteractionDefault {
 
-    public static String INTERACTION_TYPE = "rp_axe";
+    public static String INTERACTION_TYPE = "rp_tool_axe";
 
-    public InteractionAxe(ResultSet set, Item baseItem) throws SQLException {
+    public InteractionToolAxe(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionAxe(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+    public InteractionToolAxe(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 }

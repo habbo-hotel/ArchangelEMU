@@ -1,15 +1,12 @@
 package com.eu.habbo.roleplay.billing;
 
 import com.eu.habbo.roleplay.billing.items.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.eu.habbo.roleplay.database.HabboBillRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserBill {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserBill.class);
 
     public int id;
     public int userID;
@@ -34,25 +31,22 @@ public class UserBill {
     }
 
     public BillingItem getBillingItem() {
-        if (this.type == BillType.DRIVER_LICENSE) {
-            return new DriverLicenseBillingItem(this.userID, this.chargedByUserID);
+        switch (this.type) {
+            case DRIVER_LICENSE:
+                return new DriverLicenseBillingItem(this.userID, this.chargedByUserID);
+            case FARMING_LICENSE:
+                return new FarmingLicenseBillingItem(this.userID, this.chargedByUserID);
+            case FISHING_LICENSE:
+                return new FishingLicenseBillingItem(this.userID, this.chargedByUserID);
+            case MINING_LICENSE:
+                return new MiningLicenseBillingItem(this.userID, this.chargedByUserID);
+            case LUMBERJACK_LICENSE:
+                return new LumberjackLicenseBillingItem(this.userID, this.chargedByUserID);
+            case WEAPON_LICENSE:
+                return new WeaponLicenseBillingItem(this.userID, this.chargedByUserID);
+            default:
+                throw new IllegalArgumentException("Invalid bill type: " + this.type);
         }
-        if (this.type == BillType.FARMING_LICENSE) {
-            return new FarmingLicenseBillingItem(this.userID, this.chargedByUserID);
-        }
-        if (this.type == BillType.FISHING_LICENSE) {
-            return new FishingLicenseBillingItem(this.userID, this.chargedByUserID);
-        }
-
-        if (this.type == BillType.MINING_LICENSE) {
-            return new MiningLicenseBillingItem(this.userID, this.chargedByUserID);
-        }
-
-        if (this.type == BillType.WEAPON_LICENSE) {
-            return new WeaponLicenseBillingItem(this.userID, this.chargedByUserID);
-        }
-
-        throw new Error("invalid bill type");
     }
 
     public void save() {

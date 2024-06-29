@@ -62,8 +62,8 @@ public class HabboBillRepository {
 
     public  UserBill create(BillingItem billingItem) {
         return HabboBillRepository.getInstance().create(
-                billingItem.getUserID(),
-                billingItem.getChargedByUserID(),
+                billingItem.userID(),
+                billingItem.chargedByUserID(),
                 billingItem.getChargedByCorpID(),
                 billingItem.getType(),
                 billingItem.getTitle(),

@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.roleplay.actions.MiningAction;
+import com.eu.habbo.roleplay.actions.TreeChoppingAction;
 import com.eu.habbo.roleplay.database.HabboLicenseRepository;
 import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.users.HabboLicense;
@@ -35,7 +35,7 @@ public class InteractionTree extends InteractionDefault {
             return;
         }
 
-        Emulator.getThreading().run(new MiningAction(client.getHabbo(), this, client.getHabbo().getRoomUnit().getLastRoomTile()));
+        Emulator.getThreading().run(new TreeChoppingAction(client.getHabbo(), this, client.getHabbo().getRoomUnit().getLastRoomTile()));
     }
 
 }
