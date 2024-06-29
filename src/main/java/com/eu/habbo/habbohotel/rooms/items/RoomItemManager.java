@@ -208,10 +208,15 @@ public class RoomItemManager {
     }
 
     public FurnitureMovementError placeFloorItemAt(RoomItem item, RoomTile tile, int rotation, Habbo actor) {
-        FurnitureMovementError error = this.canPlaceFurnitureAt(item, actor, tile, rotation);
+        return this.placeFloorItemAt(item, tile, rotation, actor, false);
+    }
 
-        if (!error.equals(FurnitureMovementError.NONE)) {
-            return error;
+    public FurnitureMovementError placeFloorItemAt(RoomItem item, RoomTile tile, int rotation, Habbo actor, Boolean skipActorCheck) {
+        if (!skipActorCheck) {
+            FurnitureMovementError error = this.canPlaceFurnitureAt(item, actor, tile, rotation);
+            if (!error.equals(FurnitureMovementError.NONE)) {
+                return error;
+            }
         }
 
         boolean pluginHelper = false;

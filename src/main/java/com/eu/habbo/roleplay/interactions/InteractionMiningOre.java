@@ -34,9 +34,7 @@ public class InteractionMiningOre extends InteractionDefault {
             client.getHabbo().whisper("you dont have a valid mining license");
             return;
         }
-
-        client.getHabbo().shout("starts mining");
-        Emulator.getThreading().run(new MiningAction((int) System.currentTimeMillis(), client.getHabbo(), this, client.getHabbo().getRoomUnit().getLastRoomTile()));
+        Emulator.getThreading().run(new MiningAction(client.getHabbo(), client.getHabbo().getHabboInfo().getMotto(), this, client.getHabbo().getRoomUnit().getLastRoomTile()));
     }
 
 }

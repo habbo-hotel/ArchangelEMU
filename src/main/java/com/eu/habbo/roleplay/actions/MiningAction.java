@@ -4,16 +4,19 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.database.HabboLicenseRepository;
-import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.interactions.InteractionToolPickaxe;
 import gnu.trove.set.hash.THashSet;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class MiningAction implements Runnable {
-    private final int startedAt;
+
+    public static int ORE_PER_STRIKE = 1;
+    public static int ORE_PER_BLOCK = 10;
+    public static int MINING_EFFECT_ID = 116;
+
     private final Habbo habbo;
+    private final String oldMotto;
     private final RoomItem roomItem;
     private final RoomTile roomTile;
 
@@ -53,9 +56,23 @@ public class MiningAction implements Runnable {
             return;
         }
 
+        this.oreGained += MiningAction.ORE_PER_STRIKE;
 
-        this.oreGained += 10;
+        if (this.oreGained == MiningAction.ORE_PER_STRIKE) {
+            this.habbo.shout("*starts mining*");
+            this.habbo.getRoomUnit().giveEffect(MiningAction.MINING_EFFECT_ID, -1);
+        }
 
+        if (this.oreGained >= MiningAction.ORE_PER_BLOCK) {
+            this.stopMining();
+            new MoveOreAction(this.roomItem.getRoom().getRoomUnitManager().getRoomUnitsAt(this.roomTile));
+            this.habbo.getHabboInfo().setMotto(this.oldMotto);
+            this.habbo.shout("*destroys the ore and gains a block*");
+            this.habbo.getRoomUnit().giveEffect(0, -1);
+            return;
+        }
+
+        this.habbo.getHabboInfo().setMotto("mined" + oreGained + "/" + ORE_PER_BLOCK + "  ores");
         this.habbo.shout("i gained 10 ore and am gonna keep hitting");
         Emulator.getThreading().run(this, 1000);
     }
