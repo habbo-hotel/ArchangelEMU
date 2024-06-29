@@ -3,16 +3,12 @@ package com.eu.habbo.threading.runnables.teleport;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
-import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
-import com.eu.habbo.threading.runnables.HabboItemNewState;
-import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +17,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
@@ -36,25 +30,23 @@ public class TeleportAction implements Runnable {
 
     @Override
     public void run() {
-        if (this.client.getHabbo().getRoomUnit().getRoom() != this.room) return;
+        synchronized (this.room) {
+            if (this.client.getHabbo().getRoomUnit().getRoom() != this.room) return;
 
-        // Move user to the teleport tile
-        RoomTile targetTile = this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY());
-        if (!this.client.getHabbo().getRoomUnit().getCurrentPosition().equals(targetTile)) {
-            moveUserToTeleport(targetTile);
+            // Remove the MOVE status
+            this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
+            this.room.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
         }
-
-        // Remove the MOVE status
-        this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-        this.room.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
 
         // Resolve teleport target asynchronously
         CompletableFuture<Void> teleportSetupFuture = CompletableFuture.supplyAsync(this::resolveTeleportTarget)
-                .thenAccept(teleport -> {
-                    if (teleport.getTargetRoomId() == 0) {
-                        this.initiateEndTeleportation(teleport, this.room);
-                    } else {
-                        proceedToTargetRoom(teleport);
+                .thenAcceptAsync(teleport -> {
+                    synchronized (this.room) {
+                        if (teleport.getTargetRoomId() == 0) {
+                            this.client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.teleport.no_connect"));
+                        } else {
+                            proceedToTargetRoom(teleport);
+                        }
                     }
                 })
                 .exceptionally(throwable -> {
@@ -66,30 +58,10 @@ public class TeleportAction implements Runnable {
         teleportSetupFuture.join();
     }
 
-    private void moveUserToTeleport(RoomTile targetTile) {
-        this.client.getHabbo().getRoomUnit().setLocation(targetTile);
-        this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[(this.currentTeleport.getRotation() + 4) % 8]);
-        this.client.getHabbo().getRoomUnit().addStatus(RoomUnitStatus.MOVE, this.currentTeleport.getCurrentPosition().getX() + "," + this.currentTeleport.getCurrentPosition().getY() + "," + this.currentTeleport.getCurrentZ());
-        this.room.scheduledComposers.add(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
-    }
-
     private InteractionTeleport resolveTeleportTarget() {
-        InteractionTeleport teleport = (InteractionTeleport) this.currentTeleport;
+        synchronized (this.room) {
+            InteractionTeleport teleport = (InteractionTeleport) this.currentTeleport;
 
-        if (teleport.getTargetRoomId() > 0 && teleport.getTargetId() > 0) {
-            int id = teleport.getTargetId();
-            RoomItem targetItem = this.room.getRoomItemManager().getRoomItemById(id);
-            if (targetItem == null || ((InteractionTeleport) targetItem).getTargetRoomId() != teleport.getTargetRoomId()) {
-                teleport.setTargetRoomId(0);
-                teleport.setTargetId(0);
-                if (targetItem != null) {
-                    ((InteractionTeleport) targetItem).setTargetId(0);
-                    ((InteractionTeleport) targetItem).setTargetRoomId(0);
-                }
-            }
-        } else {
-            teleport.setTargetRoomId(0);
-            teleport.setTargetId(0);
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
                  PreparedStatement statement = connection.prepareStatement(
                          "SELECT items_teleports.*, A.room_id as a_room_id, A.id as a_id, B.room_id as b_room_id, B.id as b_id " +
@@ -99,6 +71,7 @@ public class TeleportAction implements Runnable {
                                  "WHERE (teleport_one_id = ? OR teleport_two_id = ?)")) {
                 statement.setInt(1, this.currentTeleport.getId());
                 statement.setInt(2, this.currentTeleport.getId());
+
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
                         if (set.getInt("a_id") != this.currentTeleport.getId()) {
@@ -111,110 +84,70 @@ public class TeleportAction implements Runnable {
                     }
                 }
             } catch (SQLException e) {
-                TeleportAction.LOGGER.error("Caught SQL exception", e);
+                TeleportAction.LOGGER.error("Caught SQL exception while resolving teleport target", e);
             }
-        }
 
-        return teleport;
+            return teleport;
+        }
     }
 
     private void proceedToTargetRoom(InteractionTeleport teleport) {
-        if (this.currentTeleport.getRoomId() != teleport.getTargetRoomId()) {
-            Room targetRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(teleport.getTargetRoomId());
-            if (targetRoom == null) {
-                return;
+        synchronized (this.room) {
+            if (this.currentTeleport.getRoomId() != teleport.getTargetRoomId()) {
+                Room targetRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(teleport.getTargetRoomId());
+                if (targetRoom == null) {
+                    return;
+                }
+
+                if (targetRoom.isPreLoaded()) {
+                    targetRoom.loadData();
+                }
+
+                RoomItem targetTeleport = targetRoom.getRoomItemManager().getRoomItemById(teleport.getTargetId());
+                if (targetTeleport == null) {
+                    this.proceedToTeleportCompletion(null);
+                    return;
+                }
+
+                RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getCurrentPosition().getX(), targetTeleport.getCurrentPosition().getY());
+                if (teleportLocation == null) {
+                    this.proceedToTeleportCompletion(targetTeleport);
+                    return;
+                }
+
+                RoomTile targetTile = this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY());
+                if (!this.client.getHabbo().getRoomUnit().getCurrentPosition().equals(targetTile)) {
+                    this.client.getHabbo().getRoomUnit().setLocation(teleportLocation);
+                    this.client.getHabbo().getRoomUnit().getPath().clear();
+                    this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
+                    this.client.getHabbo().getRoomUnit().setCurrentZ(teleportLocation.getStackHeight());
+                }
+
+                if (targetRoom != this.room) {
+                    this.room.getRoomUnitManager().removeHabbo(this.client.getHabbo(), false);
+                    Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getRoomInfo().getId(), "", Emulator.getConfig().getBoolean("hotel.teleport.locked.allowed"), teleportLocation);
+                }
+
+                this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[targetTeleport.getRotation() % 8]);
+                targetTeleport.setExtraData("1");
+                targetRoom.updateItem(targetTeleport);
+                this.client.getHabbo().getRoomUnit().setRoom(targetRoom);
+
+                Emulator.getThreading().run(() -> proceedToTeleportCompletion(targetTeleport), 0);
             }
-
-            if (targetRoom.isPreLoaded()) {
-                targetRoom.loadData();
-            }
-
-            RoomItem targetTeleport = targetRoom.getRoomItemManager().getRoomItemById(teleport.getTargetId());
-            if (targetTeleport == null) {
-                this.initiateEndTeleportation(targetTeleport, targetRoom);
-                return;
-            }
-
-            RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getCurrentPosition().getX(), targetTeleport.getCurrentPosition().getY());
-            if (teleportLocation == null) {
-                this.initiateEndTeleportation(targetTeleport, targetRoom);
-                return;
-            }
-
-            this.client.getHabbo().getRoomUnit().setLocation(teleportLocation);
-            this.client.getHabbo().getRoomUnit().getPath().clear();
-            this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-            this.client.getHabbo().getRoomUnit().setCurrentZ(teleportLocation.getStackHeight());
-
-            if (targetRoom != this.room) {
-                this.room.getRoomUnitManager().removeHabbo(this.client.getHabbo(), false);
-                Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getRoomInfo().getId(), "", Emulator.getConfig().getBoolean("hotel.teleport.locked.allowed"), teleportLocation);
-            }
-
-            this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[targetTeleport.getRotation() % 8]);
-            targetTeleport.setExtraData("1");
-            targetRoom.updateItem(targetTeleport);
-            this.client.getHabbo().getRoomUnit().setRoom(targetRoom);
-
-            Emulator.getThreading().run(() -> proceedToTeleportCompletion(targetTeleport, targetRoom), 0);
         }
     }
 
-    private void proceedToTeleportCompletion(RoomItem targetTeleport, Room targetRoom) {
-        this.client.getHabbo().getRoomUnit().setCanWalk(true);
-        this.client.getHabbo().getRoomUnit().setLeavingTeleporter(true);
+    private void proceedToTeleportCompletion(RoomItem targetTeleport) {
+        synchronized (this.room) {
+            this.client.getHabbo().getRoomUnit().setCanWalk(true);
+            this.client.getHabbo().getRoomUnit().setLeavingTeleporter(true);
 
-        Emulator.getThreading().run(() -> initiateEndTeleportation(targetTeleport, targetRoom), 0);
-    }
+            this.client.getHabbo().getRoomUnit().setLeavingTeleporter(false);
+            this.client.getHabbo().getRoomUnit().setTeleporting(false);
+            this.client.getHabbo().getRoomUnit().setCanWalk(true);
 
-    private void initiateEndTeleportation(RoomItem targetTeleport, Room targetRoom) {
-        RoomUnit unit = this.client.getHabbo().getRoomUnit();
-
-        unit.setLeavingTeleporter(false);
-        unit.setTeleporting(false);
-        unit.setCanWalk(true);
-
-        targetTeleport.setExtraData("0");
-        targetRoom.updateItem(targetTeleport);
-
-        if (this.client.getHabbo().getRoomUnit().getRoom() != this.room) return;
-        if (this.currentTeleport == null) return;
-
-        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY());
-        RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
-
-        if (tile != null) {
-            List<Runnable> onSuccess = new ArrayList<>();
-            onSuccess.add(() -> {
-                unit.setCanLeaveRoomByDoor(true);
-                Emulator.getThreading().run(() -> unit.setLeavingTeleporter(false), 300);
-            });
-
-            unit.setCanLeaveRoomByDoor(false);
-            unit.walkTo(tile);
-            unit.setStatusUpdateNeeded(true);
-            unit.setLeavingTeleporter(true);
-            Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
+            targetTeleport.setExtraData("0");
         }
-
-        this.currentTeleport.setExtraData("1");
-        this.room.updateItem(this.currentTeleport);
-
-        Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"));
-
-        RoomItem teleportTile = this.room.getRoomItemManager().getTopItemAt(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY());
-
-        if (teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
-            try {
-                teleportTile.onWalkOn(unit, this.room, new Object[]{});
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Ensure the teleport door closes after finishing teleportation
-        this.currentTeleport.setExtraData("0");
-        this.room.updateItem(this.currentTeleport);
     }
-
 }

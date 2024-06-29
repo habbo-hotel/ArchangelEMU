@@ -1,6 +1,5 @@
 package com.eu.habbo.roleplay.interactions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -41,11 +40,6 @@ public class InteractionInstantTeleport extends InteractionTeleport {
         if (this.habbo == null) {
             super.onWalkOn(roomUnit, room, objects);
         }
-        this.habbo.shout(Emulator.getTexts().getValue("roleplay.teleport.departed").replace(":roomName", room.getRoomInfo().getName()));
         super.tryTeleport(this.habbo.getClient(), room);
-
-        Emulator.getThreading().run(() -> {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.teleport.arrived"));
-        },  1500);
     }
 }
