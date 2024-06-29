@@ -10,7 +10,7 @@ import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.government.LicenseType;
-import com.eu.habbo.roleplay.license.LicenseMapper;
+import com.eu.habbo.roleplay.corp.LicenseMapper;
 import com.eu.habbo.roleplay.messages.outgoing.license.LicenseOpenComputerComposer;
 
 import java.sql.ResultSet;

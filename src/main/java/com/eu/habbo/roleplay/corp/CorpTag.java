@@ -13,7 +13,8 @@ public enum CorpTag {
     WEAPONS_AUTHORITY("gov_weapons"),
     FARMING_AUTHORITY("gov_farming"),
     FISHING_AUTHORITY("gov_fishing"),
-    MINING_AUTHORITY("gov_mining");
+    MINING_AUTHORITY("gov_mining"),
+    LUMBERJACK_AUTHORITY("gov_lumberjack");
 
     private final String value;
 

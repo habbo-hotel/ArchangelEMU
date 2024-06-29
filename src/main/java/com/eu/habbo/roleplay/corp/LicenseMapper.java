@@ -1,7 +1,5 @@
-package com.eu.habbo.roleplay.license;
+package com.eu.habbo.roleplay.corp;
 
-import com.eu.habbo.roleplay.corp.Corp;
-import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.government.LicenseType;
 
 public class LicenseMapper {
@@ -21,6 +19,10 @@ public class LicenseMapper {
 
         if (licenseType == LicenseType.MINING) {
             return CorpTag.MINING_AUTHORITY;
+        }
+
+        if (licenseType == LicenseType.LUMBERJACK) {
+            return CorpTag.LUMBERJACK_AUTHORITY;
         }
 
         if (licenseType == LicenseType.WEAPON) {
@@ -45,6 +47,10 @@ public class LicenseMapper {
 
         if (corpTag == CorpTag.MINING_AUTHORITY) {
             return LicenseType.MINING;
+        }
+
+        if (corpTag == CorpTag.LUMBERJACK_AUTHORITY) {
+            return LicenseType.LUMBERJACK;
         }
 
         if (corpTag == CorpTag.WEAPONS_AUTHORITY) {
