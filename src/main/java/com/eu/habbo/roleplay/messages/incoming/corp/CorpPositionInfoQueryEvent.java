@@ -9,7 +9,7 @@ public class CorpPositionInfoQueryEvent  extends MessageHandler {
         Integer corpID = this.packet.readInt();
         Integer corpPositionID = this.packet.readInt();
 
-        if (corpID == null || corpPositionID == null) {
+        if (corpID == 0 || corpPositionID == null) {
             return;
         }
 

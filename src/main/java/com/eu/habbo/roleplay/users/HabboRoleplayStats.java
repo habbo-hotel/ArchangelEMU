@@ -20,8 +20,6 @@ import java.util.*;
 
 public class HabboRoleplayStats{
     @Getter
-    private final Habbo habbo;
-    @Getter
     private final int userID;
     @Getter
     private int healthNow;
@@ -64,13 +62,13 @@ public class HabboRoleplayStats{
         int currentLevel = this.getPlayerLevel().getCurrentLevel();
         this.playerXP += xp;
         int updatedLevel = this.getPlayerLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getPlayerLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentLevel != updatedLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getPlayerLevel().getType())
                     .replace(":level", String.valueOf(updatedLevel))
@@ -88,13 +86,13 @@ public class HabboRoleplayStats{
         this.strengthXP += xp;
         this.playerXP += xp;
         int updatedStrengthLevel = this.getStrengthLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getStrengthLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentStrengthLevel != updatedStrengthLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getStrengthLevel().getType())
                     .replace(":level", String.valueOf(updatedStrengthLevel))
@@ -112,13 +110,13 @@ public class HabboRoleplayStats{
         this.accuracyXP += xp;
         this.playerXP += xp;
         int updatedAccuracyLevel = this.getAccuracyLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getAccuracyLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentAccuracyLevel != updatedAccuracyLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getAccuracyLevel().getType())
                     .replace(":level", String.valueOf(updatedAccuracyLevel))
@@ -136,13 +134,13 @@ public class HabboRoleplayStats{
         this.staminaXP += xp;
         this.playerXP += xp;
         int updatedStaminaLevel = this.getStaminaLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getStaminaLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentStaminaLevel != updatedStaminaLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getStaminaLevel().getType())
                     .replace(":level", String.valueOf(updatedStaminaLevel))
@@ -159,13 +157,13 @@ public class HabboRoleplayStats{
         this.meleeXP += xp;
         this.playerXP += xp;
         int updatedMeleeLevel = this.getMeleeLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getMeleeLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentMeleeLevel != updatedMeleeLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getMeleeLevel().getType())
                     .replace(":level", String.valueOf(updatedMeleeLevel))
@@ -183,13 +181,13 @@ public class HabboRoleplayStats{
         this.farmingXP += xp;
         this.playerXP += xp;
         int updatedFarmingLevel = this.getFarmingLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getFarmingLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentFarmingLevel != updatedFarmingLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getMeleeLevel().getType())
                     .replace(":level", String.valueOf(updatedFarmingLevel))
@@ -207,13 +205,13 @@ public class HabboRoleplayStats{
         this.fishingXP += xp;
         this.playerXP += xp;
         int updatedFishingLevel = this.getFishingLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getFishingLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentFishingLevel != updatedFishingLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getMeleeLevel().getType())
                     .replace(":level", String.valueOf(updatedFishingLevel))
@@ -231,13 +229,13 @@ public class HabboRoleplayStats{
         this.miningXP += xp;
         this.playerXP += xp;
         int updatedMiningLevel = this.getMiningLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getMiningLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentMiningLevel != updatedMiningLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getMeleeLevel().getType())
                     .replace(":level", String.valueOf(updatedMiningLevel))
@@ -255,13 +253,13 @@ public class HabboRoleplayStats{
         this.lumberjackXP += xp;
         this.playerXP += xp;
         int updatedLumberjackLevel = this.getLumberjackLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getLumberjackLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentLumberjackLevel != updatedLumberjackLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getMeleeLevel().getType())
                     .replace(":level", String.valueOf(updatedLumberjackLevel))
@@ -279,13 +277,13 @@ public class HabboRoleplayStats{
         this.weaponXP += xp;
         this.playerXP += xp;
         int updatedWeaponLevel = this.getWeaponLevel().getCurrentLevel();
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.xp.up")
                 .replace(":skill", this.getWeaponLevel().getType())
                 .replace(":xp", String.valueOf(xp))
         );
         if (currentWeaponLevel != updatedWeaponLevel) {
-            this.habbo.shout(Emulator.getTexts()
+            this.getHabbo().shout(Emulator.getTexts()
                     .getValue("roleplay.level.up")
                     .replace(":skill", this.getMeleeLevel().getType())
                     .replace(":level", String.valueOf(updatedWeaponLevel))
@@ -335,13 +333,17 @@ public class HabboRoleplayStats{
         if (this.healthNow > 0 && this.isDead) {
             this.setIsDead(false);
         }
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
+    }
+    
+    public Habbo getHabbo() {
+        return Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userID);
     }
 
     public void addEnergy(int energyGained, String action) {
         this.energyNow = (this.energyNow + energyGained) > this.energyMax ? this.energyMax : this.energyNow + energyGained;
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
-        this.habbo.shout(Emulator.getTexts()
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
+        this.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.energy.gained")
                 .replace(":action", action)
                 .replace(":energy", String.valueOf(energyGained))
@@ -350,7 +352,7 @@ public class HabboRoleplayStats{
 
     public void depleteEnergy(int energyDepleted) {
         this.energyNow = this.energyNow < energyDepleted ? 0 : this.energyNow - energyDepleted;
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public Corp getCorp() {
@@ -360,7 +362,7 @@ public class HabboRoleplayStats{
     public void setCorp(int corporationID, int corporationPositionID) {
         this.corporationID = corporationID;
         this.corporationPositionID = corporationPositionID;
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public CorpPosition getCorpPosition() {
@@ -376,11 +378,11 @@ public class HabboRoleplayStats{
 
     public void setGang(Integer gangID ) {
         this.gangID = gangID;
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public GuildMember getGangPosition() {
-        return Emulator.getGameEnvironment().getGuildManager().getGuildMember(this.gangID, this.habbo.getHabboInfo().getId());
+        return Emulator.getGameEnvironment().getGuildManager().getGuildMember(this.gangID, this.getHabbo().getHabboInfo().getId());
     }
 
     public void setIsDead(boolean isDead) {
@@ -388,45 +390,45 @@ public class HabboRoleplayStats{
 
         if (this.isDead) {
 
-            if (this.habbo.getHabboRoleplayStats().getIsEscorting() != null) {
-                this.habbo.getHabboRoleplayStats().setIsEscorting(null);
+            if (this.getHabbo().getHabboRoleplayStats().getIsEscorting() != null) {
+                this.getHabbo().getHabboRoleplayStats().setIsEscorting(null);
             }
 
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
-            this.habbo.getRoomUnit().setCanWalk(false);
+            this.getHabbo().shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
+            this.getHabbo().getRoomUnit().setCanWalk(false);
 
             int deadTeleportDelay = Emulator.getConfig().getInt("roleplay.dead.delay", 10000);
 
-            new LayCommand().handle(habbo.getClient(), new String[0]);
+            new LayCommand().handle(this.getHabbo().getClient(), new String[0]);
 
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.dead.teleporting_to_hospital_delay").replace(":seconds", String.valueOf(deadTeleportDelay / 1000)));
+            this.getHabbo().shout(Emulator.getTexts().getValue("roleplay.dead.teleporting_to_hospital_delay").replace(":seconds", String.valueOf(deadTeleportDelay / 1000)));
 
             Emulator.getThreading().run(() -> {
-                FacilityHospitalManager.getInstance().sendToHospital(this.habbo);
+                FacilityHospitalManager.getInstance().sendToHospital(this.getHabbo());
             },  deadTeleportDelay);
 
         }
 
 
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public void setIsStunned(boolean isStunned) {
         this.isStunned = isStunned;
-        this.habbo.getRoomUnit().setCanWalk(!isStunned);
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().setCanWalk(!isStunned);
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public void setIsCuffed(boolean isCuffed) {
         this.isCuffed = isCuffed;
-        if (!this.isStunned) this.habbo.getRoomUnit().setCanWalk(!isCuffed);
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        if (!this.isStunned) this.getHabbo().getRoomUnit().setCanWalk(!isCuffed);
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public void setEscortedBy(Habbo escortedBy) {
         this.escortedBy = escortedBy;
-        if (!this.isCuffed) this.habbo.getRoomUnit().setCanWalk(escortedBy != null);
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        if (!this.isCuffed) this.getHabbo().getRoomUnit().setCanWalk(escortedBy != null);
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public void setIsEscorting(Habbo user) {
@@ -435,13 +437,13 @@ public class HabboRoleplayStats{
             oldUser.getHabboRoleplayStats().setEscortedBy(null);
         }
         if (oldUser == null && user == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_stop"));
+            this.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_stop"));
         }
         if (user != null) {
-            this.habbo.shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_start").replace(":username", user.getHabboInfo().getUsername()));
+            this.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay_cmd_escort_start").replace(":username", user.getHabboInfo().getUsername()));
         }
         this.isEscorting = user;
-        this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
+        this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }
 
     public void setLastPos(short x, short y) {
@@ -472,7 +474,6 @@ public class HabboRoleplayStats{
 
     public HabboRoleplayStats(ResultSet set) throws SQLException {
         this.userID = set.getInt("user_id");
-        this.habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userID);
         this.isDead = set.getInt("health_now") <= 0;
         this.healthNow = set.getInt("health_now");
         this.healthMax = set.getInt("health_max");

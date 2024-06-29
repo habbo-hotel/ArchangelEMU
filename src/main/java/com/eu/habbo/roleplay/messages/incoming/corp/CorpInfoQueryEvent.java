@@ -8,7 +8,7 @@ public class CorpInfoQueryEvent extends MessageHandler {
     public void handle() {
         Integer corpID = this.packet.readInt();
 
-        if (corpID == null) {
+        if (corpID == 0) {
             return;
         }
 

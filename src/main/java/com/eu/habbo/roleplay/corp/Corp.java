@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 public class Corp implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CorpPosition.class);
-    @Getter
-    private final Guild guild;
+
+    private final int guildID;
+
     @Getter
     private Set<CorpTag> tags;
     @Getter
@@ -41,6 +41,10 @@ public class Corp implements Runnable {
     @Getter
     private TIntObjectHashMap<Habbo> invitedUsers;
 
+    public Guild getGuild() {
+        return Emulator.getGameEnvironment().getGuildManager().getGuild(this.guildID);
+    }
+
     public void addInvitedUser(Habbo habbo) {
         this.invitedUsers.put(habbo.getHabboInfo().getId(), habbo);
     }
@@ -53,13 +57,12 @@ public class Corp implements Runnable {
         this.invitedUsers.remove(habbo.getHabboInfo().getId());
     }
 
-
     public CorpPosition getPositionByID(int positionID) {
         return this.positions.get(positionID);
     }
 
     public Corp(ResultSet set) throws SQLException {
-        this.guild = Emulator.getGameEnvironment().getGuildManager().getGuild(set.getInt("guild_id"));
+        this.guildID = set.getInt("guild_id");
         this.tags = new HashSet<>(Arrays.stream(set.getString("tags").split(","))
                .map(String::trim)
                .map(tagValue -> {
@@ -70,7 +73,7 @@ public class Corp implements Runnable {
                    }
                })
                .toList());
-        this.positions = CorpPositionRepository.getInstance().getAllCorporationPositions(this.guild.getId());
+        this.positions = CorpPositionRepository.getInstance().getAllCorporationPositions(this.getGuild().getId());
         this.invitedUsers = new TIntObjectHashMap<>();
     }
 
