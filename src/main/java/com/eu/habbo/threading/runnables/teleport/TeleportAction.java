@@ -3,12 +3,16 @@ package com.eu.habbo.threading.runnables.teleport;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
+import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
+import com.eu.habbo.threading.runnables.HabboItemNewState;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 public class TeleportAction implements Runnable {
@@ -58,8 +64,7 @@ public class TeleportAction implements Runnable {
         } else {
             teleport.setTargetRoomId(0);
             teleport.setTargetId(0);
-
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
                  PreparedStatement statement = connection.prepareStatement(
                          "SELECT items_teleports.*, A.room_id as a_room_id, A.id as a_id, B.room_id as b_room_id, B.id as b_id " +
                                  "FROM items_teleports " +
@@ -80,7 +85,7 @@ public class TeleportAction implements Runnable {
                     }
                 }
             } catch (SQLException e) {
-                    TeleportAction.LOGGER.error("Caught SQL exception", e);
+                TeleportAction.LOGGER.error("Caught SQL exception", e);
             }
         }
 
@@ -88,17 +93,19 @@ public class TeleportAction implements Runnable {
         this.room.updateItem(this.currentTeleport);
 
         if (teleport.getTargetRoomId() == 0) {
-            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
+            initiateEndTeleportation();
             return;
         }
 
-        Room targetRoom = this.room;
+        Room targetRoom;
         if (this.currentTeleport.getRoomId() != teleport.getTargetRoomId()) {
             targetRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(teleport.getTargetRoomId());
+        } else {
+            targetRoom = this.room;
         }
 
         if (targetRoom == null) {
-            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
+            initiateEndTeleportation();
             return;
         }
 
@@ -108,13 +115,13 @@ public class TeleportAction implements Runnable {
 
         RoomItem targetTeleport = targetRoom.getRoomItemManager().getRoomItemById(teleport.getTargetId());
         if (targetTeleport == null) {
-            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
+            initiateEndTeleportation();
             return;
         }
 
         RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getCurrentPosition().getX(), targetTeleport.getCurrentPosition().getY());
         if (teleportLocation == null) {
-            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
+            initiateEndTeleportation();
             return;
         }
 
@@ -132,6 +139,65 @@ public class TeleportAction implements Runnable {
         targetTeleport.setExtraData("2");
         targetRoom.updateItem(targetTeleport);
         this.client.getHabbo().getRoomUnit().setRoom(targetRoom);
-        Emulator.getThreading().run(new TeleportActionFour(targetTeleport, targetRoom, this.client), 0);
+
+        Emulator.getThreading().run(() -> proceedToTeleportCompletion(targetTeleport, targetRoom), 0);
+    }
+
+    private void proceedToTeleportCompletion(RoomItem targetTeleport, Room targetRoom) {
+        if (this.client.getHabbo().getRoomUnit().getRoom() != targetRoom) {
+            this.client.getHabbo().getRoomUnit().setCanWalk(true);
+            targetTeleport.setExtraData("0");
+            targetRoom.updateItem(targetTeleport);
+            return;
+        }
+
+        if (this.client.getHabbo().getRoomUnit() != null) {
+            this.client.getHabbo().getRoomUnit().setLeavingTeleporter(true);
+        }
+
+        Emulator.getThreading().run(this::initiateEndTeleportation, 0);
+    }
+
+    private void initiateEndTeleportation() {
+        RoomUnit unit = this.client.getHabbo().getRoomUnit();
+
+        unit.setLeavingTeleporter(false);
+        unit.setTeleporting(false);
+        unit.setCanWalk(true);
+
+        if (this.client.getHabbo().getRoomUnit().getRoom() != this.room) return;
+        if (this.room.getLayout() == null || this.currentTeleport == null) return;
+
+        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY());
+        RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
+
+        if (tile != null) {
+            List<Runnable> onSuccess = new ArrayList<>();
+            onSuccess.add(() -> {
+                unit.setCanLeaveRoomByDoor(true);
+                Emulator.getThreading().run(() -> unit.setLeavingTeleporter(false), 300);
+            });
+
+            unit.setCanLeaveRoomByDoor(false);
+            unit.walkTo(tile);
+            unit.setStatusUpdateNeeded(true);
+            unit.setLeavingTeleporter(true);
+            Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
+        }
+
+        this.currentTeleport.setExtraData("1");
+        this.room.updateItem(this.currentTeleport);
+
+        Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"));
+
+        RoomItem teleportTile = this.room.getRoomItemManager().getTopItemAt(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY());
+
+        if (teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
+            try {
+                teleportTile.onWalkOn(unit, this.room, new Object[]{});
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
