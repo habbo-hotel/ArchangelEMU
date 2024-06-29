@@ -1,26 +1,25 @@
 package com.eu.habbo.roleplay.actions;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
-
-import java.util.Collection;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectAddMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 
 public class RespawnItemAction implements Runnable {
 
-    private final Collection<RoomUnit> roomUnits;
+    private final RoomItem roomItem;
 
-    public RespawnItemAction(Collection<RoomUnit> roomUnits) {
-        this.roomUnits = roomUnits;
-        for (RoomUnit unit : this.roomUnits) {
-            unit.setInvisible(true);
-        }
-        Emulator.getThreading().run(this, 1000 * 5);
+    public RespawnItemAction(RoomItem roomItem) {
+        this.roomItem = roomItem;
+
+        this.roomItem.getRoom().getRoomItemManager().removeRoomItem(this.roomItem);
+        this.roomItem.getRoom().sendComposer(new RemoveFloorItemComposer(this.roomItem, true).compose());
+        Emulator.getThreading().run(this, Emulator.getConfig().getInt("roleplay.mining.respawn_delay", 5000));
     }
     @Override
     public void run() {
-        for (RoomUnit unit : this.roomUnits) {
-            unit.setInvisible(false);
-        }
+        this.roomItem.getRoom().getRoomItemManager().addRoomItem(this.roomItem);
+        this.roomItem.getRoom().sendComposer(new ObjectAddMessageComposer(this.roomItem, this.roomItem.getRoom().getFurniOwnerNames().get(this.roomItem.getOwnerInfo().getId())).compose());
     }
 
 

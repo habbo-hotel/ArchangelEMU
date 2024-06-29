@@ -89,7 +89,7 @@ public class MiningAction implements Runnable {
 
         this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
-        new RespawnItemAction(this.roomItem.getRoom().getRoomUnitManager().getRoomUnitsAt(this.roomTile));
+        new RespawnItemAction(this.roomItem);
     }
 
 }
