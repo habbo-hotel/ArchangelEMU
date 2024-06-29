@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.users.inventory;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.items.ItemInteraction;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInventory;
@@ -24,16 +25,13 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 
+@Getter
 @Slf4j
 public class ItemsComponent {
 
-    @Getter
     private final TIntObjectMap<RoomItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
-    private final HabboInventory inventory;
-
     public ItemsComponent(HabboInventory inventory, Habbo habbo) {
-        this.inventory = inventory;
         this.items.putAll(loadItems(habbo));
     }
 
@@ -137,6 +135,18 @@ public class ItemsComponent {
         items.addAll(this.items.valueCollection());
 
         return items;
+    }
+
+    public THashSet<RoomItem> getItemsByInteractionType(Class<? extends RoomItem> interactionType) {
+        THashSet<RoomItem> matchingItems = new THashSet<>();
+
+        for (RoomItem item : this.items.valueCollection()) {
+            if (item.getBaseItem().getInteractionType().getType() == interactionType) {
+                matchingItems.add(item);
+            }
+        }
+
+        return matchingItems;
     }
 
     public int itemCount() {

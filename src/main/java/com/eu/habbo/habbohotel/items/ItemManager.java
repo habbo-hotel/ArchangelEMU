@@ -365,6 +365,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionBankComputer.INTERACTION_TYPE, InteractionBankComputer.class));
         this.interactionsList.add(new ItemInteraction(InteractionInfoScreen.INTERACTION_TYPE, InteractionInfoScreen.class));
         this.interactionsList.add(new ItemInteraction(InteractionLicenseComputer.INTERACTION_TYPE, InteractionLicenseComputer.class));
+        this.interactionsList.add(new ItemInteraction(InteractionToolPickaxe.INTERACTION_TYPE, InteractionToolPickaxe.class));
+        this.interactionsList.add(new ItemInteraction(InteractionMiningOre.INTERACTION_TYPE, InteractionMiningOre.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
