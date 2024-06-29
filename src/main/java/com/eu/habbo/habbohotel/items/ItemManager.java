@@ -373,6 +373,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionTree.INTERACTION_TYPE, InteractionTree.class));
         this.interactionsList.add(new ItemInteraction(InteractionLumber.INTERACTION_TYPE, InteractionLumber.class));
         this.interactionsList.add(new ItemInteraction(InteractionToolAxe.INTERACTION_TYPE, InteractionToolAxe.class));
+        this.interactionsList.add(new ItemInteraction(InteractionCorpInventory.INTERACTION_TYPE, InteractionCorpInventory.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
