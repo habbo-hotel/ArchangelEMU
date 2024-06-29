@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
+import com.eu.habbo.threading.runnables.teleport.TeleportAction;
 import com.eu.habbo.threading.runnables.teleport.TeleportActionOne;
 
 import java.sql.ResultSet;
@@ -222,7 +223,7 @@ InteractionTeleport extends RoomItem {
 
         this.roomUnitID = -1;
         habbo.getRoomUnit().setTeleporting(true);
-        Emulator.getThreading().run(new TeleportActionOne(this, room, habbo.getClient()), 0);
+        Emulator.getThreading().run(new TeleportAction(this, room, habbo.getClient()), 0);
     }
 
     @Override
