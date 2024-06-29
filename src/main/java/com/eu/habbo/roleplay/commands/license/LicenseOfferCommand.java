@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.billing.UserBill;
 import com.eu.habbo.roleplay.billing.items.*;
 import com.eu.habbo.roleplay.corp.CorpTag;
@@ -20,13 +19,31 @@ public class LicenseOfferCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (params == null) {
+        if (params == null || params.length == 0) {
             return true;
         }
 
-        Habbo targetedHabbo = RoleplayHelper.getInstance().getTarget(gameClient, params);
+        String targetedUsername = params[1];
+
+        if (gameClient.getHabbo().getHabboRoleplayStats().isStunned() || gameClient.getHabbo().getHabboRoleplayStats().isCuffed() || gameClient.getHabbo().getHabboRoleplayStats().getEscortedBy() != null || gameClient.getHabbo().getHabboRoleplayStats().isDead()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.generic.not_allowed"));
+            return true;
+        }
+
+        if (targetedUsername == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found"));
+            return true;
+        }
+
+        Habbo targetedHabbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(targetedUsername);
 
         if (targetedHabbo == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found").replace("%username%", targetedUsername));
+            return true;
+        }
+
+        if (targetedHabbo.getHabboRoleplayStats().isDead()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.target_dead").replace(":username", targetedUsername));
             return true;
         }
 

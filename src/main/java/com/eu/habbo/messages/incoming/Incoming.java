@@ -70,6 +70,7 @@ import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.device.InfoScreenSaveEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseAgencyListEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseConnectComputerEvent;
+import com.eu.habbo.roleplay.messages.incoming.license.LicenseOfferEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseStatusQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.room.RoomListUsersEvent;
 import com.eu.habbo.roleplay.messages.incoming.taxi.CallTaxiEvent;
@@ -1019,7 +1020,9 @@ public enum Incoming {
 
     licenseStatusQueryEvent(8041, LicenseStatusQueryEvent.class),
 
-    licenseAgencyListEvent(8042, LicenseAgencyListEvent.class);
+    licenseAgencyListEvent(8042, LicenseAgencyListEvent.class),
+
+    licenseOfferEvent(8043, LicenseOfferEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
