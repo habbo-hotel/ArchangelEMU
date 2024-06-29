@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.PermissionGroup;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
@@ -27,6 +28,12 @@ public class HabboInfo implements Runnable {
     private final int id;
     private String username;
     private String motto;
+    public void setMotto(String newMotto) {
+        this.motto = newMotto;
+        this.run();
+        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getId());
+        habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+    }
     private String look;
     private HabboGender gender;
     private String mail;

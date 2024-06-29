@@ -67,6 +67,7 @@ public class MiningAction implements Runnable {
             this.stopMining();
             new MoveOreAction(this.roomItem.getRoom().getRoomUnitManager().getRoomUnitsAt(this.roomTile));
             this.habbo.getHabboInfo().setMotto(this.oldMotto);
+            this.habbo.getHabboInfo().run();
             this.habbo.shout("*destroys the ore and gains a block*");
             this.habbo.getRoomUnit().giveEffect(0, -1);
             return;

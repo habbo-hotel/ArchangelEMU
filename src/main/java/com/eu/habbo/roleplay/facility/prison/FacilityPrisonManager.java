@@ -100,6 +100,7 @@ public class FacilityPrisonManager {
                 return;
             }
             sentence.getHabbo().getHabboInfo().setMotto(Emulator.getTexts().getValue("roleplay.prison.activity").replace(":timeLeft", String.valueOf(sentence.getTimeLeft())));
+            sentence.getHabbo().getHabboInfo().run();
             sentence.getHabbo().getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(sentence.getHabbo()).compose());
         }
     }
