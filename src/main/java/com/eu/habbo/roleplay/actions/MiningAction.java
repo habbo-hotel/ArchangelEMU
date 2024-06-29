@@ -84,9 +84,7 @@ public class MiningAction implements Runnable {
 
         RoomItem item = Emulator.getGameEnvironment().getItemManager().createItem(this.habbo.getHabboInfo().getId(), this.roomItem.getBaseItem(), 0, 0, "");
         this.habbo.getInventory().getItemsComponent().addItem(item);
-
         this.habbo.getClient().sendResponse(new UnseenItemsComposer(item));
-
         this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
         new RespawnItemAction(this.roomItem);

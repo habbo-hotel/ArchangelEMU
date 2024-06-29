@@ -367,6 +367,9 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionLicenseComputer.INTERACTION_TYPE, InteractionLicenseComputer.class));
         this.interactionsList.add(new ItemInteraction(InteractionToolPickaxe.INTERACTION_TYPE, InteractionToolPickaxe.class));
         this.interactionsList.add(new ItemInteraction(InteractionMiningOre.INTERACTION_TYPE, InteractionMiningOre.class));
+        this.interactionsList.add(new ItemInteraction(InteractionFishingSource.INTERACTION_TYPE, InteractionFishingSource.class));
+        this.interactionsList.add(new ItemInteraction(InteractionFishingPole.INTERACTION_TYPE, InteractionFishingPole.class));
+        this.interactionsList.add(new ItemInteraction(InteractionFish.INTERACTION_TYPE, InteractionFish.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
@@ -783,6 +786,22 @@ public class ItemManager {
             try {
                 item.advance();
                 if (item.value().getName().equalsIgnoreCase(itemName)) {
+                    return item.value();
+                }
+            } catch (NoSuchElementException e) {
+                break;
+            }
+        }
+
+        return null;
+    }
+    public Item getItemByInteractionType(Class<? extends RoomItem> interactionType) {
+        TIntObjectIterator<Item> item = this.items.iterator();
+
+        for (int i = this.items.size(); i-- > 0; ) {
+            try {
+                item.advance();
+                if (item.value().getInteractionType().getType() == interactionType) {
                     return item.value();
                 }
             } catch (NoSuchElementException e) {
