@@ -64,13 +64,16 @@ public class TreeChoppingAction implements Runnable {
             this.habbo.getRoomUnit().giveEffect(TreeChoppingAction.CHOPPING_EFFECT_ID, -1);
         }
 
-        int damageMade = TreeChoppingAction.DAMAGE_PER_STRIKE * this.habbo.getHabboRoleplayStats().getStrengthLevel().getCurrentLevel();
+        int damageMade = TreeChoppingAction.DAMAGE_PER_STRIKE + this.habbo.getHabboRoleplayStats().getLumberjackLevel().getCurrentLevel() + this.habbo.getHabboRoleplayStats().getStrengthLevel().getCurrentLevel();
         this.totalDamage += damageMade;
 
         if (this.totalDamage >= TreeChoppingAction.HEALTH_PER_BLOCK) {
             this.onTreeCutDown();
             return;
         }
+
+        this.habbo.getHabboRoleplayStats().addStrengthXP(damageMade);
+        this.habbo.getHabboRoleplayStats().addLumberjackXP(damageMade);
 
         this.habbo.shout(Emulator.getTexts()
                 .getValue("roleplay.tree_chopping.progress")

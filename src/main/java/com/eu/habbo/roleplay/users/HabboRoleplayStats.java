@@ -249,6 +249,30 @@ public class HabboRoleplayStats{
     }
 
     @Getter
+    private int lumberjackXP;
+    public void addLumberjackXP(int xp) {
+        int currentLumberjackLevel = this.getLumberjackLevel().getCurrentLevel();
+        this.lumberjackXP += xp;
+        this.playerXP += xp;
+        int updatedLumberjackLevel = this.getLumberjackLevel().getCurrentLevel();
+        this.habbo.shout(Emulator.getTexts()
+                .getValue("roleplay.xp.up")
+                .replace(":skill", this.getLumberjackLevel().getType())
+                .replace(":xp", String.valueOf(xp))
+        );
+        if (currentLumberjackLevel != updatedLumberjackLevel) {
+            this.habbo.shout(Emulator.getTexts()
+                    .getValue("roleplay.level.up")
+                    .replace(":skill", this.getMeleeLevel().getType())
+                    .replace(":level", String.valueOf(updatedLumberjackLevel))
+            );
+        }
+    }
+    public LumberjackSkill getLumberjackLevel() {
+        return new LumberjackSkill(this.lumberjackXP, 1, 1);
+    }
+
+    @Getter
     private int weaponXP;
     public void addWeaponXP(int xp) {
         int currentWeaponLevel = this.getWeaponLevel().getCurrentLevel();
