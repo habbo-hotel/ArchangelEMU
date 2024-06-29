@@ -41,7 +41,9 @@ import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
 import com.eu.habbo.roleplay.commands.corp.*;
 import com.eu.habbo.roleplay.commands.gang.*;
+import com.eu.habbo.roleplay.commands.license.LicenseConnectComputerCommand;
 import com.eu.habbo.roleplay.commands.license.LicenseOfferCommand;
+import com.eu.habbo.roleplay.commands.license.LicenseStatusCommand;
 import com.eu.habbo.roleplay.commands.police.*;
 import com.eu.habbo.roleplay.commands.taxi.CallTaxiCommand;
 import lombok.Getter;
@@ -342,7 +344,9 @@ public class CommandsManager {
         addCommand(new GangKickCommand());
         addCommand(new GangLeaveCommand());
         // License
+        addCommand(new LicenseConnectComputerCommand());
         addCommand(new LicenseOfferCommand());
+        addCommand(new LicenseStatusCommand());
         // Police
         addCommand(new ArrestCommand());
         addCommand(new CuffCommand());

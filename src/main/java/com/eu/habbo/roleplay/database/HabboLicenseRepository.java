@@ -37,6 +37,24 @@ public class HabboLicenseRepository {
         }
         return null;
     }
+    public HabboLicense getByUserAndLicense(int userID, LicenseType licenseType) {
+        String sqlSelect = "SELECT * FROM rp_users_licenses WHERE user_id = ? AND license_type = ?";
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
+
+            selectStatement.setInt(1, userID);
+            selectStatement.setInt(2, licenseType.getValue());
+
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return HabboLicense.fromSet(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+        return null;
+    }
 
     public HabboLicense create(LicenseType licenseType, int userID) {
         long THIRTY_DAYS =  30L * 24 * 60 * 60;

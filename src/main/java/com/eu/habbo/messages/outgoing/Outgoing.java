@@ -450,6 +450,7 @@ public class Outgoing {
     public static final int bankOpenComputerComposer = 9016;
     public static final int roomListUsersComposer = 9017;
     public static final int infoScreenViewComposer = 9018;
-
-
+    public static final int licenseOpenComputerComposer = 9019;
+    public static final int licenseStatusComposer = 9020;
+    public static final int licenseAgencyListComposer = 9021;
 }

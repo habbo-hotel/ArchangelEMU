@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
-import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 import com.eu.habbo.roleplay.skill.*;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
@@ -21,7 +20,7 @@ import java.util.*;
 
 public class HabboRoleplayStats{
     @Getter
-    private Habbo habbo;
+    private final Habbo habbo;
     @Getter
     private final int userID;
     @Getter
@@ -449,7 +448,7 @@ public class HabboRoleplayStats{
 
     public HabboRoleplayStats(ResultSet set) throws SQLException {
         this.userID = set.getInt("user_id");
-        this.habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(set.getInt("user_id"));
+        this.habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userID);
         this.isDead = set.getInt("health_now") <= 0;
         this.healthNow = set.getInt("health_now");
         this.healthMax = set.getInt("health_max");

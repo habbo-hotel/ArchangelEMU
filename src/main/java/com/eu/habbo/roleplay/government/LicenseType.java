@@ -2,10 +2,10 @@ package com.eu.habbo.roleplay.government;
 
 public enum LicenseType {
     DRIVER(1),
-    WEAPON(2),
-    FARMING(3),
-    FISHING(4),
-    MINING(5);
+    FARMING(2),
+    FISHING(3),
+    MINING(4),
+    WEAPON(5);
 
     private final int value;
 
