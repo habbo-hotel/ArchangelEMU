@@ -31,10 +31,10 @@ public class InteractionMiningOre extends InteractionDefault {
         HabboLicense miningLicense = HabboLicenseRepository.getInstance().getByUserAndLicense(client.getHabbo().getHabboInfo().getId(), LicenseType.MINING);
 
         if (miningLicense == null) {
-            client.getHabbo().whisper("you dont have a valid mining license");
+            client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.mining.no_license"));
             return;
         }
-        Emulator.getThreading().run(new MiningAction(client.getHabbo(), client.getHabbo().getHabboInfo().getMotto(), this, client.getHabbo().getRoomUnit().getLastRoomTile()));
+        Emulator.getThreading().run(new MiningAction(client.getHabbo(), this, client.getHabbo().getRoomUnit().getLastRoomTile()));
     }
 
 }
