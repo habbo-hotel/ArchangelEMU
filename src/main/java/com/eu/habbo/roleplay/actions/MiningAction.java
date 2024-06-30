@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class MiningAction implements Runnable {
 
     public static int DAMAGE_PER_STRIKE = 1;
-    public static int HEALTH_PER_BLOCK = 10;
+    public static int HEALTH_PER_BLOCK = 30;
     public static int MINING_EFFECT_ID = 116;
 
     private final Habbo habbo;

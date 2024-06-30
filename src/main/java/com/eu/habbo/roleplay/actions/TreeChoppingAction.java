@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
-import com.eu.habbo.roleplay.interactions.InteractionFish;
 import com.eu.habbo.roleplay.interactions.InteractionLumber;
 import com.eu.habbo.roleplay.interactions.InteractionToolAxe;
 import gnu.trove.set.hash.THashSet;
@@ -17,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class TreeChoppingAction implements Runnable {
 
     public static int DAMAGE_PER_STRIKE = 1;
-    public static int HEALTH_PER_BLOCK = 10;
+    public static int HEALTH_PER_BLOCK = 30;
     public static int CHOPPING_EFFECT_ID = 120;
 
     private final Habbo habbo;
