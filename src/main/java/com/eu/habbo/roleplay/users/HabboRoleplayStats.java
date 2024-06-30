@@ -1,14 +1,14 @@
 package com.eu.habbo.roleplay.users;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.commands.list.LayCommand;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.actions.HospitalRecoveryAction;
+import com.eu.habbo.roleplay.actions.TeleportHospitalAction;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
-import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
 import com.eu.habbo.roleplay.skill.*;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.weapons.Weapon;
@@ -390,28 +390,11 @@ public class HabboRoleplayStats{
 
     public void setIsDead(boolean isDead) {
         this.isDead = isDead;
+        new HospitalRecoveryAction(this.getHabbo());
 
         if (this.isDead) {
-
-            if (this.getHabbo().getHabboRoleplayStats().getIsEscorting() != null) {
-                this.getHabbo().getHabboRoleplayStats().setIsEscorting(null);
-            }
-
-            this.getHabbo().shout(Emulator.getTexts().getValue("roleplay.user_is_dead"));
-            this.getHabbo().getRoomUnit().setCanWalk(false);
-
-            int deadTeleportDelay = Emulator.getConfig().getInt("roleplay.dead.delay", 10000);
-
-            new LayCommand().handle(this.getHabbo().getClient(), new String[0]);
-
-            this.getHabbo().shout(Emulator.getTexts().getValue("roleplay.dead.teleporting_to_hospital_delay").replace(":seconds", String.valueOf(deadTeleportDelay / 1000)));
-
-            Emulator.getThreading().run(() -> {
-                FacilityHospitalManager.getInstance().sendToHospital(this.getHabbo());
-            },  deadTeleportDelay);
-
+            Emulator.getThreading().run(new TeleportHospitalAction(this.getHabbo()));
         }
-
 
         this.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.getHabbo()).compose());
     }

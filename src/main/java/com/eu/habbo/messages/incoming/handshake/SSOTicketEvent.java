@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.modtool.ModToolSanctionItem;
 import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -38,7 +39,7 @@ import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMess
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
-import com.eu.habbo.roleplay.facility.hospital.FacilityHospitalManager;
+import com.eu.habbo.roleplay.room.RoomType;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -137,7 +139,10 @@ public class SSOTicketEvent extends MessageHandler {
                     roomIdToEnter = RoomManager.HOME_ROOM_ID;
 
                 if (this.client.getHabbo().getHabboRoleplayStats().isDead()) {
-                    roomIdToEnter = FacilityHospitalManager.getInstance().getNearestHospital().getRoomInfo().getId();
+                    List<Room> hospitalRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsByTag(RoomType.HOSPITAL);
+                    if (!hospitalRooms.isEmpty()) {
+                        roomIdToEnter = hospitalRooms.get(0).getRoomInfo().getId();
+                    }
                 }
 
                 boolean calendar = false;
@@ -311,10 +316,6 @@ public class SSOTicketEvent extends MessageHandler {
                     }
 
                     HabboRoleplayStats rpStats = this.client.getHabbo().getHabboRoleplayStats();
-                    if (rpStats.isDead()) {
-                        FacilityHospitalManager.getInstance().sendToHospital(client.getHabbo());
-                        return;
-                    }
                     RoomTile lastUserPos = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getClosestWalkableTile(rpStats.getLastPosX(),rpStats.getLastPosY());
                     this.client.getHabbo().getRoomUnit().setLocation(lastUserPos);
                 }, 250);

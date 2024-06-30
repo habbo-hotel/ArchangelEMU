@@ -228,6 +228,12 @@ public class RoomManager {
         return roomCategories.values().stream().anyMatch(c -> c.getId() == categoryId && c.getMinRank() <= habbo.getHabboInfo().getPermissionGroup().getId());
     }
 
+    public List<Room> getRoomsByTag(String tag) {
+        return activeRooms.values().stream()
+                .filter(room -> room.getRoomInfo().getTags().contains(tag))
+                .collect(Collectors.toList());
+    }
+
     public List<Room> getRoomsByScore() {
         List<Room> rooms = new ArrayList<>(this.activeRooms.values());
         rooms.sort(RoomConfiguration.SORT_SCORE);
