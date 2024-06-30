@@ -5,6 +5,8 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
+import com.eu.habbo.roleplay.actions.ServeJailTimeAction;
+import com.eu.habbo.roleplay.actions.WorkShiftAction;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
@@ -72,7 +74,7 @@ public class ArrestCommand extends Command {
         targetedHabbo.getHabboRoleplayStats().setIsCuffed(false);
         targetedHabbo.getHabboRoleplayStats().setIsStunned(false);
 
-        FacilityPrisonManager.getInstance().addPrisonTime(targetedHabbo, crime, prisonTime);
+        Emulator.getThreading().run(new ServeJailTimeAction(targetedHabbo, crime, prisonTime));
 
         return true;
     }

@@ -21,14 +21,17 @@ public class WorkShiftAction implements Runnable {
     private ScheduledFuture<?> cycleUserShift;
     private ScheduledFuture<?> checkWorkingState;
 
+    private String oldMotto;
+    private String oldFigure;
+
     public WorkShiftAction(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
     public void run() {
-        String oldMotto = habbo.getHabboInfo().getMotto();
-        String oldFigure = habbo.getHabboInfo().getLook();
+        this.oldMotto = habbo.getHabboInfo().getMotto();
+        this.oldFigure = habbo.getHabboInfo().getLook();
         Corp corp = habbo.getHabboRoleplayStats().getCorp();
         CorpPosition corpPosition = habbo.getHabboRoleplayStats().getCorpPosition();
         long endsAt = Instant.now().getEpochSecond() + Duration.ofMinutes(10).getSeconds();
@@ -83,8 +86,8 @@ public class WorkShiftAction implements Runnable {
                 .replace(":credits", String.valueOf(corpPosition.getSalary())));
         habbo.getHabboRoleplayStats().setWorking(false);
         habbo.getHabboInfo().setCredits(habbo.getHabboInfo().getCredits() + corpPosition.getSalary());
-        habbo.getHabboInfo().setMotto(habbo.getHabboInfo().getMotto());
-        habbo.getHabboInfo().changeClothes(habbo.getHabboInfo().getLook());
+        habbo.getHabboInfo().setMotto(this.oldMotto);
+        habbo.getHabboInfo().changeClothes(this.oldFigure);
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo.getClient().getHabbo()).compose());
     }
