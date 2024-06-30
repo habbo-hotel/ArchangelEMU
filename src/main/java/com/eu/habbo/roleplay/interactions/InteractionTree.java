@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.roleplay.actions.TreeChoppingAction;
 import com.eu.habbo.roleplay.database.HabboLicenseRepository;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import com.eu.habbo.roleplay.users.HabboLicense;
 
 import java.sql.ResultSet;

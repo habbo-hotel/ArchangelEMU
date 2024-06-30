@@ -1,6 +1,6 @@
 package com.eu.habbo.roleplay.users;
 
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import lombok.Getter;
 
 import java.sql.ResultSet;

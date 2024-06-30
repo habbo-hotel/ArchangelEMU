@@ -3,7 +3,7 @@ package com.eu.habbo.roleplay.inventory;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.database.HabboLicenseRepository;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import com.eu.habbo.roleplay.users.HabboLicense;
 import gnu.trove.map.hash.THashMap;
 import lombok.Getter;

@@ -3,7 +3,7 @@ package com.eu.habbo.roleplay.messages.outgoing.license;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

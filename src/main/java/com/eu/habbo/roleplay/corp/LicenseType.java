@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.government;
+package com.eu.habbo.roleplay.corp;
 
 import lombok.Getter;
 

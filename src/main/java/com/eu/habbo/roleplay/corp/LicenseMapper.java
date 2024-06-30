@@ -1,7 +1,5 @@
 package com.eu.habbo.roleplay.corp;
 
-import com.eu.habbo.roleplay.government.LicenseType;
-
 public class LicenseMapper {
 
     public static CorpTag licenseTypeToCorpTag(LicenseType licenseType) {

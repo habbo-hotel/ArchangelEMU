@@ -5,7 +5,10 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
-import com.eu.habbo.roleplay.government.GovernmentManager;
+import com.eu.habbo.roleplay.corp.CorpManager;
+import com.eu.habbo.roleplay.corp.CorpTag;
+
+import java.util.List;
 
 public class CorpFireUserCommand extends Command {
     public CorpFireUserCommand() {
@@ -47,7 +50,13 @@ public class CorpFireUserCommand extends Command {
             return true;
         }
 
-        Corp welfareCorp = GovernmentManager.getInstance().getWelfareCorp();
+        List<Corp> welfareCorps = CorpManager.getInstance().getCorpsByTag(CorpTag.WELFARE);
+
+        if (welfareCorps.isEmpty()) {
+            throw new RuntimeException("no welfare corp found");
+        }
+
+        Corp welfareCorp = welfareCorps.get(0);
 
         gameClient.getHabbo().getHabboRoleplayStats().setCorp(welfareCorp.getGuild().getId(), welfareCorp.getPositionByOrderID(1).getId());
 

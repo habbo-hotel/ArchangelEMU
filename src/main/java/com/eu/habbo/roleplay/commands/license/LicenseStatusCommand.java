@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.database.HabboLicenseRepository;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import com.eu.habbo.roleplay.corp.LicenseMapper;
 import com.eu.habbo.roleplay.messages.outgoing.license.LicenseStatusComposer;
 import com.eu.habbo.roleplay.users.HabboLicense;

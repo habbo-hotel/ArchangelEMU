@@ -2,18 +2,9 @@ package com.eu.habbo.roleplay.billing.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.government.GovernmentManager;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 
-public class DriverLicenseBillingItem implements BillingItem{
-
-    private  int userID;
-    private int chargedByUserID;
-
-    public DriverLicenseBillingItem(int userID, int chargedByUserID) {
-        this.userID = userID;
-        this.chargedByUserID = chargedByUserID;
-    }
+public record DriverLicenseBillingItem(int userID, int chargedByUserID) implements BillingItem {
 
     @Override
     public BillType getType() {
@@ -42,17 +33,7 @@ public class DriverLicenseBillingItem implements BillingItem{
 
     @Override
     public int getChargedByCorpID() {
-        return GovernmentManager.getInstance().getPoliceCorp().getGuild().getId();
-    }
-
-    @Override
-    public int chargedByUserID() {
-        return this.chargedByUserID;
-    }
-
-    @Override
-    public int userID() {
-        return this.userID;
+        return Emulator.getGameEnvironment().getHabboManager().getHabbo(this.chargedByUserID).getHabboRoleplayStats().getCorp().getGuild().getId();
     }
 
     @Override

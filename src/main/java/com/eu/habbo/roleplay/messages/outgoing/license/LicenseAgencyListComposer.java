@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpTag;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import com.eu.habbo.roleplay.corp.LicenseMapper;
 import lombok.AllArgsConstructor;
 

@@ -2,8 +2,7 @@ package com.eu.habbo.roleplay.billing.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.roleplay.government.GovernmentManager;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 
 public record LumberjackLicenseBillingItem(int userID, int chargedByUserID) implements BillingItem {
 
@@ -34,7 +33,7 @@ public record LumberjackLicenseBillingItem(int userID, int chargedByUserID) impl
 
     @Override
     public int getChargedByCorpID() {
-        return GovernmentManager.getInstance().getPoliceCorp().getGuild().getId();
+        return Emulator.getGameEnvironment().getHabboManager().getHabbo(this.chargedByUserID).getHabboRoleplayStats().getCorp().getGuild().getId();
     }
 
     @Override

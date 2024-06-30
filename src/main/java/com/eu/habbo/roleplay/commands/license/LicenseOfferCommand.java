@@ -9,7 +9,7 @@ import com.eu.habbo.roleplay.billing.items.*;
 import com.eu.habbo.roleplay.corp.CorpTag;
 import com.eu.habbo.roleplay.corp.LicenseMapper;
 import com.eu.habbo.roleplay.database.HabboBillRepository;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import com.eu.habbo.roleplay.messages.outgoing.billing.InvoiceReceivedComposer;
 
 public class LicenseOfferCommand extends Command {

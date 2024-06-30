@@ -1,7 +1,7 @@
 package com.eu.habbo.roleplay.database;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 import com.eu.habbo.roleplay.users.HabboLicense;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

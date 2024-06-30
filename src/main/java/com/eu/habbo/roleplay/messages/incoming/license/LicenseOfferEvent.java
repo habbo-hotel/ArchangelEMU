@@ -1,9 +1,8 @@
 package com.eu.habbo.roleplay.messages.incoming.license;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.roleplay.commands.license.LicenseConnectComputerCommand;
 import com.eu.habbo.roleplay.commands.license.LicenseOfferCommand;
-import com.eu.habbo.roleplay.government.LicenseType;
+import com.eu.habbo.roleplay.corp.LicenseType;
 
 public class LicenseOfferEvent extends MessageHandler {
     @Override
