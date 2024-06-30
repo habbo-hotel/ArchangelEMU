@@ -46,6 +46,9 @@ public class HabboRoleplayStats{
     private boolean isStunned;
     @Getter
     private boolean isCuffed;
+    @Setter
+    @Getter
+    private boolean isWorking;
     @Getter
     private Habbo escortedBy;
     @Getter

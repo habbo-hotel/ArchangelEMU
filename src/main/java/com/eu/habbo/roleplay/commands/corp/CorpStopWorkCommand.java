@@ -3,8 +3,6 @@ package com.eu.habbo.roleplay.commands.corp;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.roleplay.corp.CorporationShift;
-import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 
 public class CorpStopWorkCommand extends Command {
@@ -14,16 +12,13 @@ public class CorpStopWorkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        CorporationShift userShift = FacilityCorpManager.getInstance().getUserShift(gameClient.getHabbo());
-
-
-        if (userShift == null) {
+        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_stop_work_no_shift"));
             return true;
         }
 
-        FacilityCorpManager.getInstance().stopUserShift(gameClient.getHabbo());
-        gameClient.getHabbo().getHabboInfo().setLook(userShift.getOldLook());
+
+        gameClient.getHabbo().getHabboRoleplayStats().setWorking(false);
         gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
         return true;
     }

@@ -15,8 +15,6 @@ public class CorpPosition implements Runnable {
     @Setter
     private int orderID;
     @Setter
-    private int roomID;
-    @Setter
     private String name;
     @Setter
     private String description;

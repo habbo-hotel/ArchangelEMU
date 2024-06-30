@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
-import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 import com.eu.habbo.roleplay.government.LicenseType;
 import com.eu.habbo.roleplay.corp.LicenseMapper;
 import com.eu.habbo.roleplay.messages.outgoing.license.LicenseOpenComputerComposer;
@@ -34,7 +33,7 @@ public class InteractionLicenseComputer extends InteractionDefault {
         Corp licenseAgency = CorpManager.getInstance().getCorpByID(corpID);
         LicenseType licenseType = licenseAgency != null ? LicenseMapper.corpToLicenseType(licenseAgency) : null;
         if (licenseAgency == null) {
-            if (!FacilityCorpManager.getInstance().isUserWorking(client.getHabbo())) {
+            if (!client.getHabbo().getHabboRoleplayStats().isWorking()) {
                 client.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
                 return;
             }

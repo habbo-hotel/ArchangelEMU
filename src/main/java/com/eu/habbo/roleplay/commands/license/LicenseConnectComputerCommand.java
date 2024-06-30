@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.roleplay.corp.Corp;
-import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 
 public class LicenseConnectComputerCommand extends Command  {
 
@@ -40,7 +39,7 @@ public class LicenseConnectComputerCommand extends Command  {
             return true;
         }
 
-        if (!FacilityCorpManager.getInstance().isUserWorking(gameClient.getHabbo())) {
+        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.generic.not_at_work"));
             return true;
         }

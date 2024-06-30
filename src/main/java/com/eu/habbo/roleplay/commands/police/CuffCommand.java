@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpTag;
-import com.eu.habbo.roleplay.facility.corp.FacilityCorpManager;
 
 public class CuffCommand extends Command {
     public CuffCommand() {
@@ -34,7 +33,7 @@ public class CuffCommand extends Command {
             return true;
         }
 
-        if (!FacilityCorpManager.getInstance().isUserWorking(gameClient.getHabbo())) {
+        if (!gameClient.getHabbo().getHabboRoleplayStats().isWorking()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.roleplay.must_be_working"));
             return true;
         }
