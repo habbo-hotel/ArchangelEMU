@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.actions.CallTaxiAction;
 import com.eu.habbo.roleplay.actions.HospitalRecoveryAction;
 import com.eu.habbo.roleplay.actions.TeleportHospitalAction;
 import com.eu.habbo.roleplay.corp.Corp;
@@ -393,7 +394,8 @@ public class HabboRoleplayStats{
 
     public void setIsDead(boolean isDead) {
         this.isDead = isDead;
-        new HospitalRecoveryAction(this.getHabbo());
+
+        Emulator.getThreading().run(new HospitalRecoveryAction(this.getHabbo()));
 
         if (this.isDead) {
             Emulator.getThreading().run(new TeleportHospitalAction(this.getHabbo()));
