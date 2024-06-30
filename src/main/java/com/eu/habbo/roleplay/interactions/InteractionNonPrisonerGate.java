@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionOneWayGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +23,7 @@ public class InteractionNonPrisonerGate extends InteractionOneWayGate {
 
     @Override
     public void onClick(final GameClient client, final Room room, Object[] objects) throws Exception {
-        if (FacilityPrisonManager.getInstance().getPrisonTime(client.getHabbo()) != null) {
+        if (client.getHabbo().getHabboRoleplayStats().isJailed()) {
             client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.rp_non_prisoner_gate.not_allowed"));
             return;
         }

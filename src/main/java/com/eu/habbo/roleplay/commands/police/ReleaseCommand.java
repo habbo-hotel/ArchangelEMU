@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.corp.CorpTag;
-import com.eu.habbo.roleplay.facility.prison.FacilityPrisonManager;
 
 public class ReleaseCommand extends Command {
     public ReleaseCommand() {
@@ -47,7 +46,7 @@ public class ReleaseCommand extends Command {
             return true;
         }
 
-        FacilityPrisonManager.getInstance().removePrisonTime(targetedHabbo);
+        targetedHabbo.getHabboRoleplayStats().setJailed(false);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay_cmd_release_success").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
 
