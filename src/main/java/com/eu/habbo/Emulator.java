@@ -33,11 +33,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public final class Emulator {
 
-    public static final int MAJOR = 4;
-    public static final int MINOR = 0;
-    public static final int REVISION = 0;
-    public static final String PREVIEW = "Developer Preview";
-    public static final String VERSION = "Arcturus Archangel" + " " + MAJOR + "." + MINOR + "." + REVISION + " " + PREVIEW;
+    public static final int MAJOR = 0;
+    public static final int MINOR = 2;
+    public static final String VERSION = "ArchangelRP" + " " + MAJOR + "." + MINOR;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
@@ -45,21 +43,6 @@ public final class Emulator {
     public static boolean debugging = false;
     private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
     private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
-
-    private static final String logo =
-            """
-                                                ##                                            ###   \s
-                                               ##                                             ##   \s
-                     ####    #####     ####    #####     ####    #####     #####    ####      ##   \s
-                        ##   ##  ##   ##       ##  ##       ##   ##  ##   ##  ##   ##  ##     ##   \s
-                     #####   ##       ##       ##  ##    #####   ##  ##   ##  ##   ######     ##   \s
-                    ##  ##   ##       ##       ##  ##   ##  ##   ##  ##    #####   ##         ##   \s
-                     #####   ##        ####    ##  ##    #####   ##  ##       ##    #####    ####  \s
-                                                                          #####                    \s
-                                                                   By LeChris github.com/habbo-hotel\s
-            """;
-
-
 
     private static int timeStarted = 0;
     private static Runtime runtime;
@@ -104,7 +87,8 @@ public final class Emulator {
             Emulator.stopped = false;
             ConsoleCommand.load();
 
-            System.out.println(logo);
+            System.out.println(VERSION);
+            System.out.println("By LeChris https://github.com/habbo-hotel");
 
             log.info("Version: {}", VERSION);
             log.info("Build: {}", build);

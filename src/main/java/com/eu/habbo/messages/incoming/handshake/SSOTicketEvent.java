@@ -145,10 +145,8 @@ public class SSOTicketEvent extends MessageHandler {
                     }
                 }
 
-                boolean calendar = false;
                 if (!this.client.getHabbo().getHabboStats().getAchievementProgress().containsKey(Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"))) {
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"));
-                    calendar = true;
                 } else {
                     int previousOnline = (int) this.client.getHabbo().getHabboStats().getCache().get("previousOnline");
                     long daysBetween = ChronoUnit.DAYS.between(new Date((long) previousOnline * 1000L).toInstant(), new Date().toInstant());
@@ -165,10 +163,7 @@ public class SSOTicketEvent extends MessageHandler {
                             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"));
                         }
                         this.client.getHabbo().getHabboStats().setLoginStreak(client.getHabbo().getHabboStats().getLoginStreak()+1);
-                        calendar = true;
-                    } else if (daysBetween >= 1) {
-                        calendar = true;
-                    } else {
+                    } else if (daysBetween <= 1) {
                         if (((lastLogin.getTime() / 1000) - Emulator.getIntUnixTimestamp()) > 86400) {
                             this.client.getHabbo().getHabboStats().setLoginStreak(0);
                         }
@@ -254,9 +249,6 @@ public class SSOTicketEvent extends MessageHandler {
                 }
 
                 this.client.sendResponses(messages);
-
-                //Hardcoded
-                //this.client.sendResponse(new ForumsTestComposer());
                 this.client.sendResponse(new BadgePointLimitsComposer());
 
                 ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
@@ -265,7 +257,7 @@ public class SSOTicketEvent extends MessageHandler {
                     THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
                     ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
 
-                    if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
+                    if (modToolSanctionItems != null && !modToolSanctionItems.isEmpty()) {
                         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
                         if (item.getSanctionLevel() > 0 && item.getProbationTimestamp() != 0 && item.getProbationTimestamp() > Emulator.getIntUnixTimestamp()) {
@@ -318,7 +310,7 @@ public class SSOTicketEvent extends MessageHandler {
                     HabboRoleplayStats rpStats = this.client.getHabbo().getHabboRoleplayStats();
                     RoomTile lastUserPos = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getClosestWalkableTile(rpStats.getLastPosX(),rpStats.getLastPosY());
                     this.client.getHabbo().getRoomUnit().setLocation(lastUserPos);
-                }, 250);
+                }, 25);
 
                 if (SubscriptionHabboClub.HC_PAYDAY_ENABLED) {
                     SubscriptionHabboClub.processUnclaimed(habbo);

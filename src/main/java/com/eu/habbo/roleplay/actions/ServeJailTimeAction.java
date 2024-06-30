@@ -22,9 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ServeJailTimeAction implements Runnable {
 
-    public static String MALE_FIGURE = "";
-    public static String FEMALE_FIGURE = "";
-
     private final Habbo habbo;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
     private ScheduledFuture<?> cycle;
@@ -83,7 +80,11 @@ public class ServeJailTimeAction implements Runnable {
                 .replace(":crime", this.crime)
         );
 
-        habbo.getHabboInfo().changeClothes(habbo.getHabboInfo().getGender() == HabboGender.M ? ServeJailTimeAction.MALE_FIGURE : ServeJailTimeAction.FEMALE_FIGURE);
+        habbo.getHabboInfo().changeClothes(habbo.getHabboInfo().getGender() == HabboGender.M
+                ? Emulator.getConfig().getValue("roleplay.prison.male_uniform")
+                : Emulator.getConfig().getValue("roleplay.prison.female_uniform")
+        );
+
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo.getClient().getHabbo()).compose());
     }

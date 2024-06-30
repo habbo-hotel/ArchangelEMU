@@ -53,7 +53,10 @@ public class AboutCommand extends Command {
 
         StringBuilder message = new StringBuilder();
 
-        message.append("<b>Roleplay Edition</b>\nBy LeChris\n\n");
+        message.append("<b>"+ Emulator.VERSION + "</b>\n");
+        message.append("<b>By LeChris</b> https://github.com/habbo-hotel\n\n");
+        message.append("The one who does what is sinful is of the devil, because the devil has been sinning from the beginning. The reason the Son of God appeared was to destroy the devil’s work.\n");
+        message.append("\n");
 
         message.append("<b>Arcturus Contributors</b>\n");
 

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TimeOfDayManager {
     private static final long TICK_INTERVAL = 1000;
+    private static final long REPORT_INTERVAL = 1000 * 60;
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeOfDayManager.class);
 
     private static TimeOfDayManager instance;
@@ -23,14 +24,14 @@ public class TimeOfDayManager {
     }
 
     private long currentTime;
-    private ScheduledExecutorService executor;
+    private final ScheduledExecutorService executor;
 
     private TimeOfDayManager() {
         long millis = System.currentTimeMillis();
         this.currentTime = System.currentTimeMillis();
         this.executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(this::tick, 0, Emulator.getConfig().getInt("roleplay.server_time.tick_interval", 1000), TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(this::announceTime, 0, Emulator.getConfig().getInt("roleplay.server_time.report_interval", 60000), TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this::tick, 0, TimeOfDayManager.TICK_INTERVAL, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this::announceTime, 0, TimeOfDayManager.REPORT_INTERVAL, TimeUnit.MILLISECONDS);
         LOGGER.info("Time of Day Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
@@ -42,7 +43,7 @@ public class TimeOfDayManager {
         Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values().stream().forEach(habbo -> habbo.getClient().sendResponse(new TimeOfDayComposer()));
     }
     private synchronized void tick() {
-        currentTime += TICK_INTERVAL * Emulator.getConfig().getInt("roleplay.server_time.tick_rate", 1);
+        currentTime += TICK_INTERVAL;
     }
 
     public synchronized long getCurrentTime() {
