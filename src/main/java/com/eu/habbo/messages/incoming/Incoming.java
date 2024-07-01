@@ -1024,7 +1024,9 @@ public enum Incoming {
 
     licenseOfferEvent(8043, LicenseOfferEvent.class),
 
-    corpPositionListEvent(8044, CorpPositionListEvent.class);
+    corpPositionListEvent(8044, CorpPositionListEvent.class),
+
+    corpEmployeeListEvent(8045, CorpEmployeeListEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

@@ -5,6 +5,8 @@ import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HabboRoleplayStatsRepository {
     private static HabboRoleplayStatsRepository instance;
@@ -34,6 +36,26 @@ public class HabboRoleplayStatsRepository {
             LOGGER.error("Caught SQL exception", e);
         }
         return null;
+    }
+
+    public List<HabboRoleplayStats> getByCorpID(int corpID) {
+        String sqlSelect = "SELECT * FROM rp_users_stats WHERE corporation_id = ?";
+        List<HabboRoleplayStats> statsList = new ArrayList<>();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
+
+            selectStatement.setInt(1, corpID);
+
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    statsList.add(new HabboRoleplayStats(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+        return statsList;
     }
 
     public HabboRoleplayStats create(HabboRoleplayStats habboRoleplayStats) {
