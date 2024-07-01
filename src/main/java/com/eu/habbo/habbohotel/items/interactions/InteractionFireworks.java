@@ -117,7 +117,7 @@ public class InteractionFireworks extends InteractionDefault {
 
     @Override
     public boolean canToggle(Habbo habbo, Room room) {
-        return room.getRoomRightsManager().hasRights(habbo) || RoomLayout.tilesAdjecent(
+        return room.getRoomRightsManager().hasRights(habbo) || RoomLayout.tilesAdjacent(
                 room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()),
                 habbo.getRoomUnit().getCurrentPosition()
         );

@@ -78,7 +78,7 @@ public class InteractionLoveLock extends RoomItem {
         if (client == null)
             return;
 
-        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
+        if (RoomLayout.tilesAdjacent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
             if (this.userOneId == 0) {
                 this.userOneId = client.getHabbo().getHabboInfo().getId();
                 client.sendResponse(new FriendFurniStartConfirmationMessageComposer(this));
@@ -97,7 +97,7 @@ public class InteractionLoveLock extends RoomItem {
 
     public boolean lock(Habbo userOne, Habbo userTwo, Room room) {
         RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
-        if (RoomLayout.tilesAdjecent(userOne.getRoomUnit().getCurrentPosition(), tile) && RoomLayout.tilesAdjecent(userTwo.getRoomUnit().getCurrentPosition(), tile)) {
+        if (RoomLayout.tilesAdjacent(userOne.getRoomUnit().getCurrentPosition(), tile) && RoomLayout.tilesAdjacent(userTwo.getRoomUnit().getCurrentPosition(), tile)) {
             String data = "1";
             data += "\t";
             data += userOne.getHabboInfo().getUsername();

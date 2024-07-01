@@ -65,7 +65,7 @@ public abstract class InteractionPushable extends InteractionDefault {
         super.onClick(client, room, objects);
 
         if (client == null) return;
-        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
+        if (RoomLayout.tilesAdjacent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
             int velocity = this.getTackleVelocity(client.getHabbo().getRoomUnit(), room);
             RoomRotation direction = this.getWalkOnDirection(client.getHabbo().getRoomUnit(), room);
             this.onTackle(room, client.getHabbo().getRoomUnit(), velocity, direction);

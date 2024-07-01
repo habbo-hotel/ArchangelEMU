@@ -93,7 +93,7 @@ public class FreezeGame extends Game {
         if (!item.getExtraData().equalsIgnoreCase("0") && !item.getExtraData().isEmpty())
             return;
 
-        if (RoomLayout.tilesAdjecent(habbo.getRoomUnit().getCurrentPosition(), this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()))) {
+        if (RoomLayout.tilesAdjacent(habbo.getRoomUnit().getCurrentPosition(), this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()))) {
             if (((FreezeGamePlayer) habbo.getHabboInfo().getGamePlayer()).canThrowSnowball()) {
                 Emulator.getThreading().run(new FreezeThrowSnowball(habbo, item, this.room));
             }

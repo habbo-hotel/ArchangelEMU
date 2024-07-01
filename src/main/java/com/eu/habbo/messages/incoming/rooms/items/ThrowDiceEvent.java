@@ -22,7 +22,7 @@ public class ThrowDiceEvent extends MessageHandler {
 
         if (item != null) {
             if (item instanceof InteractionDice || item instanceof InteractionSpinningBottle) {
-                if (RoomLayout.tilesAdjecent(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
+                if (RoomLayout.tilesAdjacent(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
                     item.onClick(this.client, room, new Object[]{});
                 }
             }

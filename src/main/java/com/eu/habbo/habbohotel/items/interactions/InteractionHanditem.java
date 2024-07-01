@@ -27,7 +27,7 @@ public class InteractionHanditem extends InteractionDefault {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) ||
+        if (RoomLayout.tilesAdjacent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) ||
                 (client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.getCurrentPosition().getX() && client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.getCurrentPosition().getY())) {
             this.handle(room, client.getHabbo().getRoomUnit());
         }

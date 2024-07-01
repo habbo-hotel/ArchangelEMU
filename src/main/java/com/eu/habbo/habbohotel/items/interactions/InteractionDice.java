@@ -47,7 +47,7 @@ public class InteractionDice extends RoomItem {
         super.onClick(client, room, objects);
 
         if (client != null) {
-            if (RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), client.getHabbo().getRoomUnit().getCurrentPosition())) {
+            if (RoomLayout.tilesAdjacent(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), client.getHabbo().getRoomUnit().getCurrentPosition())) {
                 if (!this.getExtraData().equalsIgnoreCase("-1")) {
                     FurnitureDiceRolledEvent event = Emulator.getPluginManager().fireEvent(new FurnitureDiceRolledEvent(this, client.getHabbo(), -1));
 

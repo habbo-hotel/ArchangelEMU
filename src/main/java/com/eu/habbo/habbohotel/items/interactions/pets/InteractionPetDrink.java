@@ -37,7 +37,7 @@ public class InteractionPetDrink extends InteractionDefault {
 
     @Override
     public boolean canToggle(Habbo habbo, Room room) {
-        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), habbo.getRoomUnit().getCurrentPosition());
+        return RoomLayout.tilesAdjacent(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), habbo.getRoomUnit().getCurrentPosition());
     }
 
     @Override

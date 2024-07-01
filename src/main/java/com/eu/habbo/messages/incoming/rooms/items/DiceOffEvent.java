@@ -22,7 +22,7 @@ public class DiceOffEvent extends MessageHandler {
 
         if (item != null) {
             if (item instanceof InteractionDice) {
-                if (RoomLayout.tilesAdjecent(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
+                if (RoomLayout.tilesAdjacent(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
                     if (!item.getExtraData().equals("-1")) {
                         item.setExtraData("0");
                         item.setSqlUpdateNeeded(true);
