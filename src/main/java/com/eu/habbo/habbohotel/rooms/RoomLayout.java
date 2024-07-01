@@ -14,6 +14,7 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.*;
 
 @Slf4j
 public class RoomLayout {
@@ -220,46 +221,63 @@ public class RoomLayout {
         return this.findPath(oldTile, newTile, goalLocation, roomUnit, false);
     }
 
+
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> task;
+
     /// AMG
-    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalkthroughRetry) {
-        if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.getState() == RoomTileState.INVALID) {
-            return new LinkedList<>();
+    public Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalkthroughRetry) {
+        if (task != null && !task.isDone()) {
+            task.cancel(true); // Cancel previous task if it exists and hasn't finished
         }
 
-        Map<RoomCoordinate, RoomTile> tileMap = new HashMap<>();
-        PriorityQueue<RoomTile> openList = new PriorityQueue<>(Comparator.comparingDouble(RoomTile::getFCost));
-        Set<RoomTile> closedList = new HashSet<>();
-        openList.add(oldTile.copy());
-        tileMap.put(new RoomCoordinate(oldTile.getX(), oldTile.getY()), oldTile.copy());
-
-        RoomTile doorTile = this.room.getLayout().getDoorTile();
-
-        while (!openList.isEmpty()) {
-            RoomTile current = openList.poll();
-            if (current.equals(newTile)) {
-                return this.calcPath(findTile(tileMap, oldTile.getX(), oldTile.getY()), current);
+        task = executor.schedule(() -> {
+            if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.getState() == RoomTileState.INVALID) {
+                return new LinkedList<>();
             }
 
-            closedList.add(current);
+            Map<RoomCoordinate, RoomTile> tileMap = new HashMap<>();
+            PriorityQueue<RoomTile> openList = new PriorityQueue<>(Comparator.comparingDouble(RoomTile::getFCost));
+            Set<RoomTile> closedList = new HashSet<>();
+            openList.add(oldTile.copy());
+            tileMap.put(new RoomCoordinate(oldTile.getX(), oldTile.getY()), oldTile.copy());
 
-            for (RoomTile adjacent : this.getAdjacent(tileMap, current, newTile, roomUnit)) {
-                if (closedList.contains(adjacent) || !isTileWalkable(adjacent, roomUnit, goalLocation, doorTile, isWalkthroughRetry)) {
-                    continue;
+            RoomTile doorTile = this.room.getLayout().getDoorTile();
+
+            while (!openList.isEmpty()) {
+                RoomTile current = openList.poll();
+                if (current.equals(newTile)) {
+                    return this.calcPath(findTile(tileMap, oldTile.getX(), oldTile.getY()), current);
                 }
 
-                double tentativeGCost = current.getGCosts() + current.distanceTo(adjacent);
-                if (tentativeGCost < adjacent.getGCosts() || !openList.contains(adjacent)) {
-                    adjacent.setPrevious(current);
-                    adjacent.setgCosts(current);
-                    adjacent.sethCosts(newTile);
+                closedList.add(current);
 
-                    if (!openList.contains(adjacent)) {
-                        openList.add(adjacent);
+                for (RoomTile adjacent : this.getAdjacent(tileMap, current, newTile, roomUnit)) {
+                    if (closedList.contains(adjacent) || !isTileWalkable(adjacent, roomUnit, goalLocation, doorTile, isWalkthroughRetry)) {
+                        continue;
+                    }
+
+                    double tentativeGCost = current.getGCosts() + current.distanceTo(adjacent);
+                    if (tentativeGCost < adjacent.getGCosts() || !openList.contains(adjacent)) {
+                        adjacent.setPrevious(current);
+                        adjacent.setgCosts(current);
+                        adjacent.sethCosts(newTile);
+
+                        if (!openList.contains(adjacent)) {
+                            openList.add(adjacent);
+                        }
                     }
                 }
             }
+            return new LinkedList<>();
+        }, 0, TimeUnit.MILLISECONDS);
+
+        try {
+            return (Deque<RoomTile>) task.get();
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
+            // Handle cancellation or interruption as needed
+            return new LinkedList<>();
         }
-        return new LinkedList<>();
     }
 
     private boolean isTileWalkable(RoomTile tile, RoomUnit unit, RoomTile goal, RoomTile doorTile, boolean isWalkthroughRetry) {
