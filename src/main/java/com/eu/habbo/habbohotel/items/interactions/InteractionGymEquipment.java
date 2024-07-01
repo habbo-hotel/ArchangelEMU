@@ -62,38 +62,12 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
-
         if (room == null) return;
+        if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
-        this.reset(room);
-
-        if (roomUnit instanceof RoomAvatar roomAvatar) {
-            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
-            RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomAvatar.getCurrentPosition().getX(), roomAvatar.getCurrentPosition().getY());
-            int nextEffectM = 0;
-            int nextEffectF = 0;
-            int nextEffectDuration = -1;
-
-            if (topItem != null) {
-                nextEffectM = topItem.getBaseItem().getEffectM();
-                nextEffectF = topItem.getBaseItem().getEffectF();
-            } else if (roomAvatar.getPreviousEffectId() > 0) {
-                nextEffectF = roomAvatar.getPreviousEffectId();
-                nextEffectM = roomAvatar.getPreviousEffectId();
-                nextEffectDuration = roomAvatar.getPreviousEffectEndTimestamp();
-            }
-
-            if (this.forceRotation()) {
-                roomAvatar.setCanRotate(true);
-            }
-
-            if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-                roomAvatar.giveEffect(nextEffectM, nextEffectDuration, true);
-                return;
-            }
-
-            if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-                roomAvatar.giveEffect(nextEffectF, nextEffectDuration, true);
+            if (habbo != null) {
+                habbo.getRoomUnit().giveEffect(0, -1);
             }
         }
     }
