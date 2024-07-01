@@ -1022,7 +1022,9 @@ public enum Incoming {
 
     licenseAgencyListEvent(8042, LicenseAgencyListEvent.class),
 
-    licenseOfferEvent(8043, LicenseOfferEvent.class);
+    licenseOfferEvent(8043, LicenseOfferEvent.class),
+
+    corpPositionListEvent(8044, CorpPositionListEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

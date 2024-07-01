@@ -455,4 +455,5 @@ public class Outgoing {
     public static final int licenseAgencyListComposer = 9021;
     public static final int corpOpenInventoryComposer = 9022;
     public static final int corpOpenComputerComposer = 9023;
+    public static final int corpPositionListComposer = 9024;
 }
