@@ -30,8 +30,44 @@ public class RoomTile implements Comparable<RoomTile> {
     private RoomTile previous = null;
     private boolean diagonally;
     @Getter
-    private short gCosts;
-    private short hCosts;
+    private double gCosts;
+    private double hCosts;
+
+
+    public double getGCosts() {
+        return gCosts;
+    }
+
+    public void setgCosts(RoomTile fromTile) {
+        this.gCosts = fromTile.getGCosts() + calculateMovementCost(fromTile);
+    }
+
+    public double getHCosts() {
+        return hCosts;
+    }
+
+    public void sethCosts(RoomTile targetTile) {
+        this.hCosts = calculateHeuristicCost(targetTile);
+    }
+
+    public double getFCost() {
+        return this.gCosts + this.hCosts;
+    }
+
+    public double distanceTo(RoomTile other) {
+        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
+    }
+
+    private double calculateMovementCost(RoomTile fromTile) {
+        // Implement the logic to calculate the actual movement cost from 'fromTile' to this tile
+        // This might include the Euclidean distance, Manhattan distance, or any domain-specific cost
+        return 1.0; // Placeholder value, replace with actual calculation
+    }
+
+    private double calculateHeuristicCost(RoomTile targetTile) {
+        // Implement the heuristic cost calculation (e.g., Euclidean distance, Manhattan distance)
+        return Math.abs(this.getX() - targetTile.getX()) + Math.abs(this.getY() - targetTile.getY());
+    }
 
 
     public RoomTile(short x, short y, short z, RoomTileState state, boolean allowStack) {
@@ -68,7 +104,7 @@ public class RoomTile implements Comparable<RoomTile> {
     public int compareTo(RoomTile other) {
         // Implement comparison logic here
         // For example, compare based on F cost
-        return Double.compare(this.getfCosts(), other.getfCosts());
+        return Double.compare(this.getFCost(), other.getFCost());
     }
 
     public void setStackHeight(double stackHeight) {
@@ -134,36 +170,8 @@ public class RoomTile implements Comparable<RoomTile> {
         this.diagonally = isDiagonally;
     }
 
-    public int getfCosts() {
-        return this.gCosts + this.hCosts;
-    }
-
-    public void setgCosts(RoomTile previousRoomTile) {
-        this.setgCosts(previousRoomTile, this.diagonally ? RoomLayout.DIAGONALMOVEMENTCOST : RoomLayout.BASICMOVEMENTCOST);
-    }
-
-    private void setgCosts(short gCosts) {
-        this.gCosts = gCosts;
-    }
-
-    void setgCosts(RoomTile previousRoomTile, int basicCost) {
-        this.setgCosts((short) (previousRoomTile.getGCosts() + basicCost));
-    }
-
-    public int calculategCosts(RoomTile previousRoomTile) {
-        if (this.diagonally) {
-            return previousRoomTile.getGCosts() + 14;
-        }
-
-        return previousRoomTile.getGCosts() + 10;
-    }
-
-    public void sethCosts(RoomTile parent) {
-        this.hCosts = (short) ((Math.abs(this.x - parent.x) + Math.abs(this.y - parent.y)) * (parent.diagonally ? RoomLayout.DIAGONALMOVEMENTCOST : RoomLayout.BASICMOVEMENTCOST));
-    }
-
     public String toString() {
-        return "RoomTile (" + this.x + ", " + this.y + ", " + this.z + "): h: " + this.hCosts + " g: " + this.gCosts + " f: " + this.getfCosts();
+        return "RoomTile (" + this.x + ", " + this.y + ", " + this.z + "): h: " + this.hCosts + " g: " + this.gCosts + " f: " + this.getFCost();
     }
 
     public boolean isWalkable() {
