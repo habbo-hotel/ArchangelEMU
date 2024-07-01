@@ -133,7 +133,7 @@ public class TeleportAction implements Runnable {
                 targetRoom.updateItem(targetTeleport);
                 this.client.getHabbo().getRoomUnit().setRoom(targetRoom);
 
-                Emulator.getThreading().run(() -> proceedToTeleportCompletion(targetTeleport), 0);
+                Emulator.getThreading().run(() -> proceedToTeleportCompletion(targetTeleport), 25);
             }
         }
     }

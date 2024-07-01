@@ -13,6 +13,8 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import com.eu.habbo.threading.runnables.teleport.TeleportAction;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +23,11 @@ import java.util.List;
 
 public class
 InteractionTeleport extends RoomItem {
+    @Setter
+    @Getter
     private int targetId;
+    @Setter
+    @Getter
     private int targetRoomId;
     private int roomUnitID = -1;
     private boolean walkable;
@@ -57,12 +63,6 @@ InteractionTeleport extends RoomItem {
     }
 
     public void tryTeleport(GameClient client, Room room) {
-        /*
-            if user is on item, startTeleport
-	        else if user is on infront, set state 1 and walk on item
-	        else move to infront and interact
-         */
-
         Habbo habbo = client.getHabbo();
 
         if (habbo == null) {
@@ -174,27 +174,6 @@ InteractionTeleport extends RoomItem {
         this.targetRoomId = 0;
         this.roomUnitID = -1;
         this.setExtraData("0");
-    }
-
-    public int getTargetId() {
-        return this.targetId;
-    }
-
-    public void setTargetId(int targetId) {
-        this.targetId = targetId;
-    }
-
-    public int getTargetRoomId() {
-        return this.targetRoomId;
-    }
-
-    public void setTargetRoomId(int targetRoomId) {
-        this.targetRoomId = targetRoomId;
-    }
-
-    @Override
-    public boolean allowWiredResetState() {
-        return false;
     }
 
     public boolean canUseTeleport(GameClient client, Room room) {
