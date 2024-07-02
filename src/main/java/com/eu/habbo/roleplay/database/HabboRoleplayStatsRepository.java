@@ -58,6 +58,27 @@ public class HabboRoleplayStatsRepository {
         return statsList;
     }
 
+    public List<HabboRoleplayStats> getByCorpAndPositionID(int corpID, int positionID) {
+        String sqlSelect = "SELECT * FROM rp_users_stats WHERE corporation_id = ? AND corporation_position_id = ?";
+        List<HabboRoleplayStats> statsList = new ArrayList<>();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
+
+            selectStatement.setInt(1, corpID);
+            selectStatement.setInt(2, positionID);
+
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    statsList.add(new HabboRoleplayStats(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+        return statsList;
+    }
+
     public HabboRoleplayStats create(HabboRoleplayStats habboRoleplayStats) {
         return this.create(
                 habboRoleplayStats.getUserID(),

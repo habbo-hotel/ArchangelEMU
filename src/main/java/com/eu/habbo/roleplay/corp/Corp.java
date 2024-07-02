@@ -5,6 +5,8 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.database.CorpPositionRepository;
 import com.eu.habbo.roleplay.database.CorpRepository;
+import com.eu.habbo.roleplay.database.HabboRoleplayStatsRepository;
+import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
@@ -26,6 +28,14 @@ public class Corp implements Runnable {
     private Set<CorpTag> tags;
     @Getter
     private TIntObjectHashMap<CorpPosition> positions;
+
+    public void addPosition(CorpPosition corpPosition) {
+        this.positions.put(corpPosition.getId(), corpPosition);
+    }
+
+    public void removePositionByID(int positionID) {
+        this.positions.remove(positionID);
+    }
 
     public CorpPosition getPositionByOrderID(int orderID) {
         int[] keys = positions.keys();
