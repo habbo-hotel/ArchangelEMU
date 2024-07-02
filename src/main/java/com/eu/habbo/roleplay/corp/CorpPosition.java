@@ -17,9 +17,7 @@ public class CorpPosition implements Runnable {
     @Setter
     private String name;
     @Setter
-    private String description;
-    @Setter
-    private String activity;
+    private String motto;
     @Setter
     private int salary;
     @Setter
@@ -51,8 +49,7 @@ public class CorpPosition implements Runnable {
         this.corporationID = set.getInt("guild_id");
         this.orderID = set.getInt("order_id");
         this.name = set.getString("name");
-        this.description = set.getString("description");
-        this.activity = set.getString("activity");
+        this.motto = set.getString("motto");
         this.salary = set.getInt("salary");
         this.maleFigure = set.getString("male_figure");
         this.femaleFigure = set.getString("female_figure");

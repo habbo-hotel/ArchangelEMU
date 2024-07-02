@@ -41,7 +41,7 @@ public class WorkShiftAction implements Runnable {
 
         habbo.shout(Emulator.getTexts().getValue("roleplay.shift.start").replace(":position", corpPosition.getName()));
         habbo.getHabboRoleplayStats().setWorking(true);
-        habbo.getHabboInfo().setMotto(corpPosition.getActivity());
+        habbo.getHabboInfo().setMotto(corpPosition.getMotto());
         habbo.getHabboInfo().changeClothes(habbo.getHabboInfo().getGender() == HabboGender.M ? corpPosition.getMaleFigure() : corpPosition.getFemaleFigure());
         habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
         habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo.getClient().getHabbo()).compose());

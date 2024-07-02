@@ -5,6 +5,8 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
+import com.eu.habbo.roleplay.database.CorpPositionRepository;
+import com.eu.habbo.roleplay.messages.outgoing.corp.CorpPositionListComposer;
 
 public class CorpEditPositionEvent extends MessageHandler {
 
@@ -31,15 +33,24 @@ public class CorpEditPositionEvent extends MessageHandler {
         }
 
         corpPosition.setName(this.packet.readString());
-        corpPosition.setActivity(this.packet.readString());
+        corpPosition.setMotto(this.packet.readString());
         corpPosition.setSalary(this.packet.readInt());
         corpPosition.setMaleFigure(this.packet.readString());
         corpPosition.setFemaleFigure(this.packet.readString());
+        corpPosition.setCanHire((this.packet.readBoolean()));
+        corpPosition.setCanFire((this.packet.readBoolean()));
+        corpPosition.setCanPromote((this.packet.readBoolean()));
+        corpPosition.setCanDemote((this.packet.readBoolean()));
+        corpPosition.setCanWorkAnywhere((this.packet.readBoolean()));
+
+        CorpPositionRepository.getInstance().upsertCorpPosition(corpPosition);
+        corp.addPosition(corpPosition);
 
         this.client.getHabbo().whisper(Emulator.getTexts()
                 .getValue("roleplay.corp_position.edit_success")
                 .replace(":position", corpPosition.getName())
         );
 
+        this.client.sendResponse(new CorpPositionListComposer(corp));
     }
 }

@@ -6,6 +6,7 @@ import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.database.CorpPositionRepository;
+import com.eu.habbo.roleplay.messages.outgoing.corp.CorpPositionListComposer;
 
 public class CorpCreatePositionEvent extends MessageHandler {
 
@@ -14,7 +15,7 @@ public class CorpCreatePositionEvent extends MessageHandler {
         int corpID = this.packet.readInt();
         int orderID = this.packet.readInt();
         String name = this.packet.readString();
-        String description = this.packet.readString();
+        String motto = this.packet.readString();
         int salary = this.packet.readInt();
         String maleFigure = this.packet.readString();
         String femaleFigure = this.packet.readString();
@@ -36,28 +37,30 @@ public class CorpCreatePositionEvent extends MessageHandler {
         }
 
         CorpPositionRepository.getInstance().upsertCorpPosition(
-                    corpID,
-                    orderID,
-                    name,
-                    description,
-                    salary,
-                    maleFigure,
-                    femaleFigure,
-                    canHire,
-                    canFire,
-                    canPromote,
-                    canDemote,
-                    canWorkAnywhere
+                corpID,
+                orderID,
+                name,
+                motto,
+                salary,
+                maleFigure,
+                femaleFigure,
+                canHire,
+                canFire,
+                canPromote,
+                canDemote,
+                canWorkAnywhere
         );
 
-        CorpPosition corpPosition = CorpPositionRepository.getInstance().getCorpPosition(corp.getGuildID(), orderID);
+        CorpPosition newCorpPosition = CorpPositionRepository.getInstance().getCorpPosition(corpID, orderID);
 
-        corp.addPosition(corpPosition);
+        corp.addPosition(newCorpPosition);
 
         this.client.getHabbo().whisper(Emulator.getTexts()
                 .getValue("roleplay.corp_position.create_success")
                 .replace(":position", name)
         );
+
+        this.client.sendResponse(new CorpPositionListComposer(corp));
 
     }
 }

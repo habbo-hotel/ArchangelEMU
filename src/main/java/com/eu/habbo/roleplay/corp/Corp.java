@@ -5,8 +5,6 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.database.CorpPositionRepository;
 import com.eu.habbo.roleplay.database.CorpRepository;
-import com.eu.habbo.roleplay.database.HabboRoleplayStatsRepository;
-import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;

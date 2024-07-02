@@ -6,7 +6,9 @@ import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.corp.CorpTag;
+import com.eu.habbo.roleplay.database.CorpPositionRepository;
 import com.eu.habbo.roleplay.database.HabboRoleplayStatsRepository;
+import com.eu.habbo.roleplay.messages.outgoing.corp.CorpPositionListComposer;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 
 import java.util.List;
@@ -59,11 +61,15 @@ public class CorpDeletePositionEvent extends MessageHandler {
             habboStats.setCorp(welfareCorp.getGuild().getId(), welfarePosition.getId());
         }
 
+        CorpPositionRepository.getInstance().deleteCorpPositionByCorpAndOrder(corpPosition.getCorporationID(), corpPosition.getOrderID());
+
         corp.removePositionByID(corpPositionID);
 
         this.client.getHabbo().shout(Emulator.getTexts()
                 .getValue("roleplay.corp_position.delete_success")
                 .replace(":position", corpPosition.getName())
         );
+
+        this.client.sendResponse(new CorpPositionListComposer(corp));
     }
 }
