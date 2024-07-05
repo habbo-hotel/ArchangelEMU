@@ -51,7 +51,7 @@ public class ModToolManager {
         if (userId <= 0)
             return;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.*, users_settings.*, permissions.rank_name, permissions.acc_hide_mail AS hide_mail, permissions.id AS rank_id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id INNER JOIN permissions ON permissions.id = users.rank WHERE users.id = ? LIMIT 1")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.*, users_settings.*, permission_groups.name AS rank_name, permission_groups.id AS rank_id, (SELECT COUNT(*) > 0 FROM permission_group_rights WHERE permission_group_rights.group_id = users.rank AND permission_group_rights.right_name = 'hide_mail') AS hide_mail FROM users INNER JOIN users_settings ON users.id = users_settings.user_id INNER JOIN permission_groups ON permission_groups.id = users.rank WHERE users.id = ? LIMIT 1")) {
             statement.setInt(1, userId);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
