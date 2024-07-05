@@ -72,6 +72,10 @@ public class CorpManager {
                 .collect(Collectors.toList());
     }
 
+    public List<Corp> getCorps() {
+        return new ArrayList<>(corporations.valueCollection());
+    }
+
 
     private CorpManager() {
         long millis = System.currentTimeMillis();

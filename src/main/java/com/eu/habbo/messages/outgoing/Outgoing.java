@@ -457,4 +457,5 @@ public class Outgoing {
     public static final int corpOpenComputerComposer = 9023;
     public static final int corpPositionListComposer = 9024;
     public static final int corpEmployeeListComposer = 9025;
+    public static final int corpListComposer = 9026;
 }

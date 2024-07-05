@@ -1032,7 +1032,11 @@ public enum Incoming {
 
     corpDeletePositionEvent(8047, CorpDeletePositionEvent.class),
 
-    corpCreatePositionEvent(8048, CorpCreatePositionEvent.class);
+    corpCreatePositionEvent(8048, CorpCreatePositionEvent.class),
+
+    corpSuperhireEvent(8049, CorpSuperHireEvent.class),
+
+    corpListEvent(8050, CorpListEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
