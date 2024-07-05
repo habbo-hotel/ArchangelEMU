@@ -61,7 +61,7 @@ public class Bot extends Avatar implements Runnable {
     protected final RoomBot roomUnit;
     public static final String NO_CHAT_SET = "${bot.skill.chatter.configuration.text.placeholder}";
     public static String[] PLACEMENT_MESSAGES = "Yo!;Hello I'm a real party animal!;Hello!".split(";");
-    private final ArrayList<String> chatLines;
+    private ArrayList<String> chatLines;
 
     public Bot(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

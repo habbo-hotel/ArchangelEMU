@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
+import com.eu.habbo.roleplay.bots.AggressiveBot;
+import com.eu.habbo.roleplay.bots.GangBot;
 import gnu.trove.map.hash.THashMap;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +32,8 @@ public class BotManager {
         addBotDefinition("generic", Bot.class);
         addBotDefinition("bartender", ButlerBot.class);
         addBotDefinition("visitor_log", VisitorBot.class);
+        addBotDefinition("gang", GangBot.class);
+        addBotDefinition("aggressive", AggressiveBot.class);
 
         this.reload();
 
