@@ -355,7 +355,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionPrisonBench.INTERACTION_TYPE, InteractionPrisonBench.class));
         this.interactionsList.add(new ItemInteraction(InteractionCashRegister.INTERACTION_TYPE, InteractionCashRegister.class));
         this.interactionsList.add(new ItemInteraction(InteractionWardrobe.INTERACTION_TYPE, InteractionWardrobe.class));
-        this.interactionsList.add(new ItemInteraction(InteractionTreadmill.INTERACTION_TYPE, InteractionTreadmill.class));
+        this.interactionsList.add(new ItemInteraction(InteractionTrash.INTERACTION_TYPE, InteractionTrash.class));
         this.interactionsList.add(new ItemInteraction(InteractionWeightBench.INTERACTION_TYPE, InteractionWeightBench.class));
         this.interactionsList.add(new ItemInteraction(InteractionEmployeeGate.INTERACTION_TYPE, InteractionEmployeeGate.class));
         this.interactionsList.add(new ItemInteraction(InteractionTollGate.INTERACTION_TYPE, InteractionTollGate.class));
@@ -377,6 +377,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionCorpComputer.INTERACTION_TYPE, InteractionCorpComputer.class));
         this.interactionsList.add(new ItemInteraction(InteractionApple.INTERACTION_TYPE, InteractionApple.class));
         this.interactionsList.add(new ItemInteraction(InteractionAppleTree.INTERACTION_TYPE, InteractionAppleTree.class));
+        this.interactionsList.add(new ItemInteraction(InteractionTrash.INTERACTION_TYPE, InteractionTrash.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
