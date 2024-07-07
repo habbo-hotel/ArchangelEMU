@@ -3,7 +3,9 @@ package com.eu.habbo.database;
 import com.eu.habbo.core.ConfigurationManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Getter;
 
+@Getter
 class DatabasePool {
     private HikariDataSource database;
 
@@ -42,7 +44,4 @@ class DatabasePool {
         return true;
     }
 
-    public HikariDataSource getDatabase() {
-        return this.database;
-    }
 }

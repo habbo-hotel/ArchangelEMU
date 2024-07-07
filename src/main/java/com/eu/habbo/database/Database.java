@@ -5,6 +5,7 @@ import com.eu.habbo.core.ConfigurationManager;
 import com.zaxxer.hikari.HikariDataSource;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class Database {
+    @Getter
     private HikariDataSource dataSource;
     private DatabasePool databasePool;
 
@@ -50,10 +52,6 @@ public class Database {
         }
 
         this.dataSource.close();
-    }
-
-    public HikariDataSource getDataSource() {
-        return this.dataSource;
     }
 
     public static PreparedStatement preparedStatementWithParams(Connection connection, String query, THashMap<String, Object> queryParams) throws SQLException {
