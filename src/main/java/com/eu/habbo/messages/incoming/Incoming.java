@@ -78,7 +78,8 @@ import com.eu.habbo.roleplay.messages.incoming.taxi.TaxiFeeQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
 import com.eu.habbo.roleplay.messages.incoming.police.*;
-import com.eu.habbo.roleplay.messages.incoming.users.UserRoleplayStatsQueryComposer;
+import com.eu.habbo.roleplay.messages.incoming.users.RoleplayPermissionsEvent;
+import com.eu.habbo.roleplay.messages.incoming.users.UserRoleplayStatsEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -968,7 +969,7 @@ public enum Incoming {
 
     gangLeaveEvent(8014, GangLeaveEvent.class),
 
-    userRoleplayStatsQueryEvent(8015, UserRoleplayStatsQueryComposer.class),
+    userRoleplayStatsQueryEvent(8015, UserRoleplayStatsEvent.class),
 
     corpInfoQueryEvent(8016, CorpInfoQueryEvent.class),
 
@@ -1036,7 +1037,9 @@ public enum Incoming {
 
     corpSuperhireEvent(8049, CorpSuperHireEvent.class),
 
-    corpListEvent(8050, CorpListEvent.class);
+    corpListEvent(8050, CorpListEvent.class),
+
+    roleplayPermissionsEvent(8051, RoleplayPermissionsEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

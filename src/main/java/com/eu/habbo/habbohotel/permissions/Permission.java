@@ -55,4 +55,5 @@ public class Permission {
     public static final String ACC_CAN_STALK = "acc_can_stalk";
     public static final String ACC_MIMIC_UNREDEEMED = "acc_mimic_unredeemed";
     public static final String ACC_CALENDAR_FORCE = "acc_calendar_force";
+    public static final String ACC_NAVIGATOR_SHOW_ALL = "acc_navigator_show_all";
 }
