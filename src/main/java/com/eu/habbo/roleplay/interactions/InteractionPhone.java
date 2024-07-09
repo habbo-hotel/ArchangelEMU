@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionPhone extends InteractionUsable {
+
+    public static int PHONE_EFFECT_ID = 65;
+
     public static String INTERACTION_TYPE = "rp_phone";
 
     public InteractionPhone(ResultSet set, Item baseItem) throws SQLException {

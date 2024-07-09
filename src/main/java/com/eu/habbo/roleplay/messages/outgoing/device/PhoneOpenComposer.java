@@ -7,10 +7,12 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class PhoneOpenComposer extends MessageComposer {
+    private final int itemID;
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.phoneOpenComposer);
+        this.response.appendInt(this.itemID);
         return this.response;
     }
 }
