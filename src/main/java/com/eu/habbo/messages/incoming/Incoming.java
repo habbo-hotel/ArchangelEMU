@@ -79,6 +79,7 @@ import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
 import com.eu.habbo.roleplay.messages.incoming.police.*;
 import com.eu.habbo.roleplay.messages.incoming.users.RoleplayPermissionsEvent;
+import com.eu.habbo.roleplay.messages.incoming.users.UserOnlineCountEvent;
 import com.eu.habbo.roleplay.messages.incoming.users.UserRoleplayStatsEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -1039,7 +1040,9 @@ public enum Incoming {
 
     corpListEvent(8050, CorpListEvent.class),
 
-    roleplayPermissionsEvent(8051, RoleplayPermissionsEvent.class);
+    roleplayPermissionsEvent(8051, RoleplayPermissionsEvent.class),
+
+    userOnlineCountEvent(8052, UserOnlineCountEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

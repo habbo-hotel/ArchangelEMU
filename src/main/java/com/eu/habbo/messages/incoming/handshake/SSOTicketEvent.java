@@ -39,6 +39,7 @@ import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMess
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserOnlineCountComposer;
 import com.eu.habbo.roleplay.room.RoomType;
 import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.map.hash.THashMap;
@@ -221,7 +222,6 @@ public class SSOTicketEvent extends MessageHandler {
                 messages.add(new GameListMessageComposer().compose());
                 messages.add(new Game2AccountGameStatusMessageComposer(3, 100).compose());
                 messages.add(new Game2AccountGameStatusMessageComposer(0, 100).compose());
-
                 messages.add(new ScrSendUserInfoComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_LOGIN).compose());
 
                 if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
@@ -250,6 +250,7 @@ public class SSOTicketEvent extends MessageHandler {
 
                 this.client.sendResponses(messages);
                 this.client.sendResponse(new BadgePointLimitsComposer());
+                this.client.sendResponse(new UserOnlineCountComposer());
 
                 ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
 
