@@ -67,6 +67,7 @@ import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
+import com.eu.habbo.roleplay.messages.incoming.device.DeviceOpenEvent;
 import com.eu.habbo.roleplay.messages.incoming.device.InfoScreenSaveEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseAgencyListEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseConnectComputerEvent;
@@ -1042,7 +1043,9 @@ public enum Incoming {
 
     roleplayPermissionsEvent(8051, RoleplayPermissionsEvent.class),
 
-    userOnlineCountEvent(8052, UserOnlineCountEvent.class);
+    userOnlineCountEvent(8052, UserOnlineCountEvent.class),
+
+    deviceOpenEvent(8053, DeviceOpenEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

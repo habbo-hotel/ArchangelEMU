@@ -2,10 +2,12 @@ package com.eu.habbo.messages.outgoing.inventory;
 
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
+import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import com.eu.habbo.roleplay.interactions.InteractionUsable;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import lombok.AllArgsConstructor;
@@ -83,6 +85,8 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
             }
             this.response.appendInt(roomItem instanceof InteractionGift ? ((((InteractionGift) roomItem).getColorId() * 1000) + ((InteractionGift) roomItem).getRibbonId()) : 1);
         }
+
+        this.response.appendBoolean(InteractionUsable.class.isAssignableFrom(roomItem.getBaseItem().getInteractionType().getType()));
 
         return true;
     }

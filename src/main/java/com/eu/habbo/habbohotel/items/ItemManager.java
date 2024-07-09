@@ -378,6 +378,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionApple.INTERACTION_TYPE, InteractionApple.class));
         this.interactionsList.add(new ItemInteraction(InteractionAppleTree.INTERACTION_TYPE, InteractionAppleTree.class));
         this.interactionsList.add(new ItemInteraction(InteractionTrash.INTERACTION_TYPE, InteractionTrash.class));
+        this.interactionsList.add(new ItemInteraction(InteractionUsable.INTERACTION_TYPE, InteractionUsable.class));
+        this.interactionsList.add(new ItemInteraction(InteractionPhone.INTERACTION_TYPE, InteractionPhone.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
