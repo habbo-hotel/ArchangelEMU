@@ -47,7 +47,6 @@ public class BankAccountLookupCommand extends Command  {
         HabboBankAccount bankAccount = HabboBankAccountRepository.getInstance().getByUserAndCorpID(bankMember.getHabboInfo().getId(), corpID);
 
         if (bankAccount == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.bank.account_not_found"));
             return true;
         }
 
