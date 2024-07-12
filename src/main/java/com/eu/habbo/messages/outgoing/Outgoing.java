@@ -461,4 +461,5 @@ public class Outgoing {
     public static final int roleplayPermissionsComposer = 9027;
     public static final int userOnlineCountComposer = 9028;
     public static final int phoneOpenComposer = 9029;
+    public static final int policeListReportsComposer = 9030;
 }

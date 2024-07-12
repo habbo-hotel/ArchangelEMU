@@ -1048,7 +1048,13 @@ public enum Incoming {
 
     deviceOpenEvent(8053, DeviceOpenEvent.class),
 
-    phoneCloseEvent(8054, DeviceCloseEvent.class);
+    phoneCloseEvent(8054, DeviceCloseEvent.class),
+
+    callPoliceEvent(8055, CallPoliceEvent.class),
+
+    policeListReportsEvent(8056, PoliceListReportsEvent.class),
+
+    policeResolveReportEvent(8057, PoliceResolveReportEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

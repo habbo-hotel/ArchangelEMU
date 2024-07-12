@@ -380,6 +380,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionTrash.INTERACTION_TYPE, InteractionTrash.class));
         this.interactionsList.add(new ItemInteraction(InteractionUsable.INTERACTION_TYPE, InteractionUsable.class));
         this.interactionsList.add(new ItemInteraction(InteractionPhone.INTERACTION_TYPE, InteractionPhone.class));
+        this.interactionsList.add(new ItemInteraction(InteractionPoliceLaptop.INTERACTION_TYPE, InteractionPoliceLaptop.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {

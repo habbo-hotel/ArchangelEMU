@@ -354,6 +354,7 @@ public class CommandsManager {
         addCommand(new StunCommand());
         addCommand(new ReleaseCommand());
         addCommand(new PayBillCommand());
+        addCommand(new CallPoliceCommand());
         // Taxi
         addCommand(new CallTaxiCommand());
     }
