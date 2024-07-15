@@ -6,18 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 @AllArgsConstructor
 public class PoliceReport {
-    @Getter
     public final Habbo reportingUser;
-    @Getter
     public final Room reportedRoom;
-    @Getter
     public final String message;
-    @Getter
     @Setter
     public Habbo respondingOfficer;
-    @Getter
     @Setter
     public boolean resolved;
 }

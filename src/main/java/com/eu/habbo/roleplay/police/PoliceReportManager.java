@@ -51,6 +51,14 @@ public class PoliceReportManager {
         return matchingReports;
     }
 
+    public int getIndexByPoliceReport(PoliceReport policeReport) {
+        return policeReports.indexOf(policeReport);
+    }
+
+    public int getMaxPoliceReportIndex() {
+        return policeReports.size();
+    }
+
     public void removePoliceReport(PoliceReport policeReport) {
         this.policeReports.remove(policeReport);
     }
