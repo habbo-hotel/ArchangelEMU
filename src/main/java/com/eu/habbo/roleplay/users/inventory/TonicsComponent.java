@@ -1,4 +1,4 @@
-package com.eu.habbo.roleplay.inventory;
+package com.eu.habbo.roleplay.users.inventory;
 
 
 import com.eu.habbo.Emulator;

@@ -70,6 +70,9 @@ import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.device.DeviceCloseEvent;
 import com.eu.habbo.roleplay.messages.incoming.device.DeviceOpenEvent;
 import com.eu.habbo.roleplay.messages.incoming.device.InfoScreenSaveEvent;
+import com.eu.habbo.roleplay.messages.incoming.items.HotBarAddItemEvent;
+import com.eu.habbo.roleplay.messages.incoming.items.HotBarListItemsEvent;
+import com.eu.habbo.roleplay.messages.incoming.items.HotBarPickupItemEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseAgencyListEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseConnectComputerEvent;
 import com.eu.habbo.roleplay.messages.incoming.license.LicenseOfferEvent;
@@ -1054,7 +1057,13 @@ public enum Incoming {
 
     policeListReportsEvent(8056, PoliceListReportsEvent.class),
 
-    policeResolveReportEvent(8057, PoliceResolveReportEvent.class);
+    policeResolveReportEvent(8057, PoliceResolveReportEvent.class),
+
+    hotBarListItemsEvent(8058, HotBarListItemsEvent.class),
+
+    hotBarAddItemEvent(8059, HotBarAddItemEvent.class),
+
+    hotBarPickupItemEvent(8060, HotBarPickupItemEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

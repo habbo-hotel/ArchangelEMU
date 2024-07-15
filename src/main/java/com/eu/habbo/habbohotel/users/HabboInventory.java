@@ -4,9 +4,10 @@ import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceState;
 import com.eu.habbo.habbohotel.users.inventory.*;
-import com.eu.habbo.roleplay.inventory.LicensesComponent;
-import com.eu.habbo.roleplay.inventory.TonicsComponent;
-import com.eu.habbo.roleplay.inventory.WeaponsComponent;
+import com.eu.habbo.roleplay.users.inventory.HotBarComponent;
+import com.eu.habbo.roleplay.users.inventory.LicensesComponent;
+import com.eu.habbo.roleplay.users.inventory.TonicsComponent;
+import com.eu.habbo.roleplay.users.inventory.WeaponsComponent;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,10 @@ public class HabboInventory {
     @Setter
     @Getter
     private LicensesComponent licensesComponent;
+
+    @Getter
+    @Setter
+    private HotBarComponent hotBarComponent;
 
     public HabboInventory(Habbo habbo) {
         this.habbo = habbo;
@@ -91,6 +96,12 @@ public class HabboInventory {
 
         try {
             this.licensesComponent = new LicensesComponent(this.habbo);
+        } catch (Exception e) {
+            log.error("Caught exception", e);
+        }
+
+        try {
+            this.hotBarComponent = new HotBarComponent(this.habbo);
         } catch (Exception e) {
             log.error("Caught exception", e);
         }
