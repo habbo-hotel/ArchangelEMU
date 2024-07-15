@@ -15,15 +15,12 @@ public class ResolveReportCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (params == null || params.length == 0) {
+        if (params.length != 3) {
             return true;
         }
 
-        String message = params[1];
-
-        if (message == null) {
-            return true;
-        }
+        int policeReportIndex = Integer.parseInt(params[1]);
+        boolean flagged = Boolean.parseBoolean(params[2]);
 
         Corp corp = gameClient.getHabbo().getHabboRoleplayStats().getCorp();
 
@@ -42,11 +39,28 @@ public class ResolveReportCommand extends Command {
             return true;
         }
 
-        PoliceReport policeReport = new PoliceReport(gameClient.getHabbo(), gameClient.getHabbo().getRoomUnit().getRoom(), message, null, false);
-        PoliceReportManager.getInstance().addPoliceReport(policeReport);
+        PoliceReport policeReport = PoliceReportManager.getInstance().getPoliceReportByIndex(policeReportIndex);
+
+        if (policeReport == null) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.police.cfh_invalid"));
+            return true;
+        }
+
+
+        policeReport.setResolved(true);
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.police.cfh_resolved"));
 
+        if (flagged) {
+            policeReport.setFlagged(flagged);
+            policeReport.getReportingUser().whisper(Emulator.getTexts().getValue("roleplay.police.cfh_flagged"));
+            return true;
+        }
+
+        policeReport.getReportingUser().whisper(Emulator.getTexts()
+                .getValue("roleplay.police.cfh_replied")
+                .replace(":username", policeReport.getReportingUser().getHabboInfo().getUsername())
+        );
         return true;
     }
 }

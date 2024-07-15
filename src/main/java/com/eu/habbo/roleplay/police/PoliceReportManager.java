@@ -25,6 +25,10 @@ public class PoliceReportManager {
         this.policeReports.add(policeReport);
     }
 
+    public PoliceReport getPoliceReportByIndex(int policeReport) {
+        return this.policeReports.get(policeReport);
+    }
+
     public List<PoliceReport> getPoliceReportsByReportingUser(Habbo habbo) {
         List<PoliceReport> matchingReports = new ArrayList<PoliceReport>();
         for (PoliceReport policeReport : this.policeReports) {

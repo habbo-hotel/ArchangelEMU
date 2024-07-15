@@ -6,12 +6,13 @@ import com.eu.habbo.roleplay.commands.police.ResolveReportCommand;
 public class PoliceResolveReportEvent extends MessageHandler {
     @Override
     public void handle() {
-        String message = this.packet.readString();
+        String reportId = String.valueOf(this.packet.readInt());
+        String flagged = this.packet.readBoolean() ? "true" : "false";
 
-        if (message == null) {
+        if (reportId == null) {
             return;
         }
 
-        new ResolveReportCommand().handle(this.client,new String[] {null, message});
+        new ResolveReportCommand().handle(this.client,new String[] {null, reportId, flagged});
     }
 }

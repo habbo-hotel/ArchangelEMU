@@ -16,4 +16,6 @@ public class PoliceReport {
     public Habbo respondingOfficer;
     @Setter
     public boolean resolved;
+    @Setter
+    public boolean flagged;
 }

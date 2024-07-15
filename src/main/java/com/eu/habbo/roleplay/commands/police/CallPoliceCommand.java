@@ -39,7 +39,7 @@ public class CallPoliceCommand extends Command {
             return true;
         }
 
-        PoliceReport policeReport = new PoliceReport(gameClient.getHabbo(), gameClient.getHabbo().getRoomUnit().getRoom(), message, null, false);
+        PoliceReport policeReport = new PoliceReport(gameClient.getHabbo(), gameClient.getHabbo().getRoomUnit().getRoom(), message, null, false, false);
         PoliceReportManager.getInstance().addPoliceReport(policeReport);
 
         List<Habbo> policeOnline = HabboRoleplayHelper.getUsersByCorpTag(CorpTag.POLICE);
