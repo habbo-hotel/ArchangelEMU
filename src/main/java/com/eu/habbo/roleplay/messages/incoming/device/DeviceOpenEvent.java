@@ -14,7 +14,10 @@ public class DeviceOpenEvent extends MessageHandler {
     @Override
     public void handle() {
         int itemID = this.packet.readInt();
-        RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemID);
+
+        RoomItem itemFromInventory = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemID);
+        RoomItem itemFromHotBar = this.client.getHabbo().getInventory().getHotBarComponent().getItems().get(itemID);
+        RoomItem item = (itemFromInventory != null) ? itemFromInventory : itemFromHotBar;
 
         if (item == null) {
             this.client.getHabbo().shout("invalid item");

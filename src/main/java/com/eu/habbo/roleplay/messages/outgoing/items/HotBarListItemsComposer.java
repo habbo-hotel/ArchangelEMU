@@ -20,6 +20,8 @@ public class HotBarListItemsComposer extends MessageComposer {
         for (RoomItem item : hotBarItems.values()) {
             this.response.appendString(item.getId()
                     + ";" + item.getBaseItem().getName()
+                    + ";" + item.getBaseItem().getId()
+                    + ";" + item.getBaseItem().getSpriteId()
             );
         }
         return this.response;

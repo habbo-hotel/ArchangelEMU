@@ -2,6 +2,8 @@ package com.eu.habbo.roleplay.messages.incoming.items;
 
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.roleplay.messages.outgoing.items.HotBarListItemsComposer;
 
 public class HotBarPickupItemEvent extends MessageHandler {
@@ -18,6 +20,8 @@ public class HotBarPickupItemEvent extends MessageHandler {
 
         this.client.getHabbo().getInventory().getItemsComponent().addItem(itemFromHotBar);
         this.client.getHabbo().getInventory().getHotBarComponent().removeItem(itemID);
+
+        this.client.sendResponse(new FurniListAddOrUpdateComposer(itemFromHotBar));
 
         this.client.sendResponse(new HotBarListItemsComposer(this.client.getHabbo()));
     }
