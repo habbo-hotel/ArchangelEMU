@@ -464,4 +464,6 @@ public class Outgoing {
     public static final int policeListReportsComposer = 9030;
     public static final int policeCallReceivedComposer = 9031;
     public static final int hotBarListItemsComposer = 9032;
+    public static final int userArrestedComposer = 9033;
+    public static final int userDiedComposer = 9034;
 }

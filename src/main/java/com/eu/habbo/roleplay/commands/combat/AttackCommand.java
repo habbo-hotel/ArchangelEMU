@@ -6,9 +6,11 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.messages.outgoing.combat.CombatDelayComposer;
+import com.eu.habbo.roleplay.messages.outgoing.combat.UserDiedComposer;
 import com.eu.habbo.roleplay.room.RoomType;
 import com.eu.habbo.roleplay.users.HabboWeapon;
 
+import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -102,6 +104,14 @@ public class AttackCommand extends Command {
                 .replace(":energyNow", Integer.toString(targetedHabbo.getHabboRoleplayStats().getEnergyNow()))
                 .replace(":energyMax", Integer.toString(targetedHabbo.getHabboRoleplayStats().getEnergyMax()))
         );
+
+        if (targetedHabbo.getHabboRoleplayStats().isDead()) {
+            Collection<Habbo> onlineHabbos = Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values();
+
+            for (Habbo onlineHabbo : onlineHabbos) {
+                onlineHabbo.getClient().sendResponse(new UserDiedComposer(targetedHabbo, gameClient.getHabbo()));
+            }
+        }
 
         return true;
     }

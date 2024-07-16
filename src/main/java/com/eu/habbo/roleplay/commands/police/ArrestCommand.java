@@ -8,6 +8,9 @@ import com.eu.habbo.roleplay.RoleplayHelper;
 import com.eu.habbo.roleplay.actions.ServeJailTimeAction;
 import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpTag;
+import com.eu.habbo.roleplay.messages.outgoing.police.UserArrestedComposer;
+
+import java.util.Collection;
 
 public class ArrestCommand extends Command {
     public ArrestCommand() {
@@ -71,6 +74,12 @@ public class ArrestCommand extends Command {
         gameClient.getHabbo().getHabboRoleplayStats().setIsEscorting(null);
         targetedHabbo.getHabboRoleplayStats().setIsCuffed(false);
         targetedHabbo.getHabboRoleplayStats().setIsStunned(false);
+
+        Collection<Habbo> onlineHabbos = Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values();
+
+        for (Habbo onlineHabbo : onlineHabbos) {
+            onlineHabbo.getClient().sendResponse(new UserArrestedComposer(targetedHabbo, gameClient.getHabbo()));
+        }
 
         Emulator.getThreading().run(new ServeJailTimeAction(targetedHabbo, crime, prisonTime));
 
