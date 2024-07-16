@@ -200,8 +200,8 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
                     statement.setInt(1, this.ownerInfo.getId());
                     statement.setInt(2, (this.getRoom() == null) ? 0 : this.getRoom().getRoomInfo().getId());
                     statement.setString(3, this.wallPosition);
-                    statement.setInt(4, this.getCurrentPosition().getX());
-                    statement.setInt(5, this.getCurrentPosition().getY());
+                    statement.setInt(4, this.getCurrentPosition()  == null ? 0 : this.getCurrentPosition().getX());
+                    statement.setInt(5, this.getCurrentPosition()  == null ? 0 : this.getCurrentPosition().getY());
                     statement.setDouble(6, Math.max(-9999, Math.min(9999, Math.round(this.getCurrentZ() * Math.pow(10, 6)) / Math.pow(10, 6))));
                     statement.setInt(7, this.rotation);
                     statement.setString(8, this instanceof InteractionGuildGate ? "" : this.extraData);
