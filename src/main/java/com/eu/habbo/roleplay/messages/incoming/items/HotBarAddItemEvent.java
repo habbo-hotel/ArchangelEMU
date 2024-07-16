@@ -22,6 +22,7 @@ public class HotBarAddItemEvent extends MessageHandler {
         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(itemID);
 
         itemFromInventory.setRoomId(-1);
+        itemFromInventory.setRoom(null);
         itemFromInventory.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(itemFromInventory);
 

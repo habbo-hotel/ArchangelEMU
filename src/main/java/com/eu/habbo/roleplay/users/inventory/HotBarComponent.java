@@ -3,6 +3,7 @@ package com.eu.habbo.roleplay.users.inventory;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInventory;
 import gnu.trove.map.hash.THashMap;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -23,19 +24,24 @@ public class HotBarComponent {
 
     public HotBarComponent(Habbo habbo) {
         this.habbo = habbo;
+        this.items.putAll(loadItems());
+    }
+
+    public THashMap<Integer, RoomItem> loadItems() {
+        THashMap<Integer, RoomItem> itemsList = new THashMap<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM items WHERE room_id = ? AND user_id = ?")) {
             statement.setInt(1, -1);
-            statement.setInt(2, habbo.getHabboInfo().getId());
+            statement.setInt(2, this.habbo.getHabboInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     try {
                         RoomItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
 
                         if (item != null) {
-                            this.items.put(set.getInt("id"), item);
+                            itemsList.put(set.getInt("id"), item);
                         } else {
-                            HotBarComponent.LOGGER.error("Failed to load HabboItem: {}", set.getInt("id"));
+                            HotBarComponent.LOGGER.error("Failed to load HabboItem: " + set.getInt("id"));
                         }
                     } catch (SQLException e) {
                         HotBarComponent.LOGGER.error("Caught SQL exception", e);
@@ -45,6 +51,8 @@ public class HotBarComponent {
         } catch (SQLException e) {
             HotBarComponent.LOGGER.error("Caught SQL exception", e);
         }
+
+        return itemsList;
     }
 
     public void addItem(RoomItem item) {

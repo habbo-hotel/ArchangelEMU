@@ -52,10 +52,8 @@ import java.util.List;
 public abstract class RoomItem extends RoomEntity implements Runnable, IEventTriggers {
     private final int id;
     private HabboInfo ownerInfo;
-    /**
-     * TODO FINISH GET RID OF THIS
-     */
-    @Deprecated
+
+    @Setter
     private int roomId;
 
     private final Item baseItem;
@@ -198,7 +196,7 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
             } else if (this.sqlUpdateNeeded) {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ?, room_id = ?, wall_pos = ?, x = ?, y = ?, z = ?, rot = ?, extra_data = ?, limited_data = ? WHERE id = ?")) {
                     statement.setInt(1, this.ownerInfo.getId());
-                    statement.setInt(2, (this.getRoom() == null) ? 0 : this.getRoom().getRoomInfo().getId());
+                    statement.setInt(2, (this.getRoom() != null) ? this.getRoom().getRoomInfo().getId() : this.getRoomId() );
                     statement.setString(3, this.wallPosition);
                     statement.setInt(4, this.getCurrentPosition()  == null ? 0 : this.getCurrentPosition().getX());
                     statement.setInt(5, this.getCurrentPosition()  == null ? 0 : this.getCurrentPosition().getY());
