@@ -119,6 +119,7 @@ public class HabboInventory {
         this.petsComponent.dispose();
         this.wardrobeComponent.dispose();
         this.weaponsComponent.dispose();
+        this.hotBarComponent.dispose();
 
         this.badgesComponent = null;
         this.botsComponent = null;
@@ -127,6 +128,7 @@ public class HabboInventory {
         this.petsComponent = null;
         this.wardrobeComponent = null;
         this.weaponsComponent = null;
+        this.hotBarComponent = null;
     }
 
     public void addMarketplaceOffer(MarketPlaceOffer marketPlaceOffer) {
