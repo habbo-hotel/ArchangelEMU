@@ -466,4 +466,5 @@ public class Outgoing {
     public static final int hotBarListItemsComposer = 9032;
     public static final int userArrestedComposer = 9033;
     public static final int userDiedComposer = 9034;
+    public static final int wantedListComposer = 9035;
 }

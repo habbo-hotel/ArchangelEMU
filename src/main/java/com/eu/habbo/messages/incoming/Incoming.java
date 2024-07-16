@@ -1063,7 +1063,13 @@ public enum Incoming {
 
     hotBarAddItemEvent(8059, HotBarAddItemEvent.class),
 
-    hotBarPickupItemEvent(8060, HotBarPickupItemEvent.class);
+    hotBarPickupItemEvent(8060, HotBarPickupItemEvent.class),
+
+    wantedListEvent(8061, WantedListEvent.class),
+
+    wantedListAddUserEvent(8062, WantedListAddUserEvent.class),
+
+    wantedListRemoveUserEvent(8063, WantedListRemoveUserEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
