@@ -60,7 +60,7 @@ public class WantedListRemoveUserCommand extends Command {
             policeOfficer.getClient().sendResponse(new WantedListComposer());
         }
 
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.police.cfh_success"));
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("roleplay.police.wanted_list_changed"));
 
         return true;
     }

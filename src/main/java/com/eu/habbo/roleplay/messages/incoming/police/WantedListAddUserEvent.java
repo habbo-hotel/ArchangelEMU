@@ -6,10 +6,12 @@ import com.eu.habbo.roleplay.commands.police.WantedListAddUserCommand;
 public class WantedListAddUserEvent extends MessageHandler {
     @Override
     public void handle() {
-        String username = this.packet.readString();
-        if (username == null) {
+        String username =this.packet.readString();
+        String crime = this.packet.readString();
+
+        if (username == null || crime == null) {
             return;
         }
-        new WantedListAddUserCommand().handle(this.client,new String[] {null, username});
+        new WantedListAddUserCommand().handle(this.client,new String[] {null, username, crime});
     }
 }
