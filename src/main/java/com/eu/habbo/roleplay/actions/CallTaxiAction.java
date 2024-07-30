@@ -1,6 +1,7 @@
 package com.eu.habbo.roleplay.actions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
@@ -36,31 +37,38 @@ public class CallTaxiAction implements Runnable {
 
         int taxiFee = Integer.parseInt(Emulator.getConfig().getValue("roleplay.taxi.fee", "20"));
 
-        if (this.habbo.getHabboInfo().getCredits() < taxiFee) {
-            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.taxi.cant_afford"));
-            return;
+        if (!this.habbo.hasPermissionRight(Permission.ACC_NAVIGATOR_SHOW_ALL)) {
+            if (this.habbo.getHabboInfo().getCredits() < taxiFee) {
+                this.habbo.whisper(Emulator.getTexts().getValue("roleplay.taxi.cant_afford"));
+                return;
+            }
+
+            if (!this.targetRoom.getRoomInfo().getTags().contains(RoomType.TAXI)) {
+                this.habbo.whisper(Emulator.getTexts()
+                        .getValue("roleplay.taxi.not_available")
+                        .replace(":roomname", this.targetRoom.getRoomInfo().getName())
+                );
+                return;
+            }
         }
 
-        if (!this.targetRoom.getRoomInfo().getTags().contains(RoomType.TAXI)) {
-            this.habbo.whisper(Emulator.getTexts()
-                    .getValue("roleplay.taxi.not_available")
-                    .replace(":roomname", this.targetRoom.getRoomInfo().getName())
-            );
-            return;
-        }
-
-        int taxiDelay = Integer.parseInt(Emulator.getConfig().getValue("roleplay.taxi.delay_secs", "20"));
+        int taxiDelay = this.habbo.hasPermissionRight(Permission.ACC_NAVIGATOR_SHOW_ALL)
+                ? Integer.parseInt(Emulator.getConfig().getValue("roleplay.taxi.delay_secs", "20"))
+                : 0;
         long arrivesAt = (System.currentTimeMillis() / 1000) + taxiDelay;
 
-        this.habbo.getHabboInfo().setCredits(this.habbo.getHabboInfo().getCredits() - taxiFee);
-        this.habbo.shout(
-                Emulator.getTexts()
-                        .getValue("roleplay.taxi.dispatched")
-                        .replace(":roomName", this.targetRoom.getRoomInfo().getName())
-                        .replace(":roomID", String.valueOf(this.targetRoom.getRoomInfo().getId()))
-        );
-        this.habbo.getClient().sendResponse(new CreditBalanceComposer(this.habbo));
-        this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
+        if (!this.habbo.hasPermissionRight(Permission.ACC_NAVIGATOR_SHOW_ALL)) {
+            this.habbo.getHabboInfo().setCredits(this.habbo.getHabboInfo().getCredits() - taxiFee);
+            this.habbo.shout(
+                    Emulator.getTexts()
+                            .getValue("roleplay.taxi.dispatched")
+                            .replace(":roomName", this.targetRoom.getRoomInfo().getName())
+                            .replace(":roomID", String.valueOf(this.targetRoom.getRoomInfo().getId()))
+            );
+            this.habbo.getClient().sendResponse(new CreditBalanceComposer(this.habbo));
+            this.habbo.getClient().sendResponse(new UserRoleplayStatsChangeComposer(this.habbo));
+        }
+
         this.habbo.getClient().sendResponse(new TaxiDispatchedComposer(this.targetRoom.getRoomInfo().getId(), arrivesAt));
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
