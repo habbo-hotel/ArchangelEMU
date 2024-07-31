@@ -21,7 +21,7 @@ public class RoomTurfManager {
     public void startCapturing(Habbo capturingHabbo) {
         this.blocked = false;
         this.capturingHabbo = capturingHabbo;
-        this.secondsLeft = RoomTurfManager.TWO_MINUTES_IN_SECONDS;
+        this.secondsLeft = 5;
     }
 
     public void stopCapturing() {

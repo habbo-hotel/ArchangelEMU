@@ -1,9 +1,12 @@
 package com.eu.habbo.roleplay.actions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.items.interactions.InteractionGuildFurni;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.roleplay.interactions.InteractionTurfBanner;
 import com.eu.habbo.roleplay.messages.outgoing.gang.TurfCaptureTimeLeftComposer;
 import lombok.AllArgsConstructor;
 
@@ -30,7 +33,6 @@ public class CaptureTurfAction implements Runnable {
         // Ensure user is in the same room
         if (this.capturingHabbo.getRoomUnit().getRoom() != this.room) {
             this.room.getRoomTurfManager().stopCapturing();
-            return;
         }
 
         // Ensure user is within 5 blocks of the turf banner
@@ -42,7 +44,6 @@ public class CaptureTurfAction implements Runnable {
         if (this.room.getRoomTurfManager().isBlocked()) {
             this.capturingHabbo.shout(Emulator.getTexts().getValue("roleplay.turf_capture.cancel"));
             this.capturingHabbo.getRoomUnit().giveEffect(0, -1);
-            return;
         }
 
         // Ensure no other users outside your gang are in the room
@@ -53,7 +54,7 @@ public class CaptureTurfAction implements Runnable {
         for (Habbo user : usersInRoom) {
             if (user.getHabboRoleplayStats().getGang() != this.capturingHabbo.getHabboRoleplayStats().getGang()) {
                 this.room.getRoomTurfManager().setBlocked(true);
-                return;
+                break;
             }
         }
 
@@ -62,12 +63,25 @@ public class CaptureTurfAction implements Runnable {
         }
 
         if (this.room.getRoomTurfManager().getSecondsLeft() <= 0) {
+            this.room.getRoomInfo().setGuild(this.capturingHabbo.getHabboRoleplayStats().getGang());
+            this.room.setNeedsUpdate(true);
+
+            Collection<RoomItem> roomItems = this.room.getRoomItemManager().getCurrentItems().values();
+
+            for (RoomItem item : roomItems) {
+                if (item.getBaseItem().getInteractionType().getClass().isAssignableFrom(InteractionGuildFurni.class)) {
+                    ((InteractionGuildFurni) item).setGuildId(1);
+                }
+            }
+
             this.capturingHabbo.shout(Emulator.getTexts().getValue("roleplay.turf_capture.success"));
             this.room.getRoomTurfManager().stopCapturing();
         }
 
         this.room.sendComposer(new TurfCaptureTimeLeftComposer(this.room).compose());
 
-        Emulator.getThreading().run(this, 1000);
+        if (this.room.getRoomTurfManager().getSecondsLeft() > 0) {
+            Emulator.getThreading().run(this, 1000);
+        }
     }
 }
