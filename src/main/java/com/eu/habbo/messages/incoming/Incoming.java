@@ -1071,7 +1071,9 @@ public enum Incoming {
 
     wantedListRemoveUserEvent(8063, WantedListRemoveUserEvent.class),
 
-    turfStartCaptureEvent(8064, TurfStartCaptureEvent.class);
+    turfStartCaptureEvent(8064, TurfStartCaptureEvent.class),
+
+    turfCaptureQueryEvent(8065, TurfCaptureQueryEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;

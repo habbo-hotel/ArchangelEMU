@@ -14,6 +14,8 @@ public class TurfCaptureTimeLeftComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.turfCaptureTimeLeftComposer);
         this.response.appendInt(this.room.getRoomTurfManager().getCapturingHabbo().getHabboInfo().getId());
+        this.response.appendString(this.room.getRoomTurfManager().getCapturingHabbo().getHabboInfo().getUsername());
+        this.response.appendString(this.room.getRoomTurfManager().getCapturingHabbo().getHabboInfo().getLook());
         this.response.appendInt(this.room.getRoomTurfManager().getSecondsLeft());
         this.response.appendBoolean(this.room.getRoomTurfManager().isBlocked());
         return this.response;

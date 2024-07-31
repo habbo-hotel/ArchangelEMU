@@ -468,6 +468,5 @@ public class Outgoing {
     public static final int userDiedComposer = 9034;
     public static final int wantedListComposer = 9035;
     public static final int turfContextMenuInfoComposer = 9036;
-    public static final int turfRoomInfoComposer = 9037;
-    public static final int turfCaptureTimeLeftComposer = 9038;
+    public static final int turfCaptureTimeLeftComposer = 9037;
 }
