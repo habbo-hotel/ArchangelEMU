@@ -995,7 +995,7 @@ public class CatalogManager {
                                     Emulator.getGameEnvironment().getItemManager().insertHopper(hopper);
 
                                     itemsList.add(hopper);
-                                } else if (baseItem.getInteractionType().getType() == InteractionGuildFurni.class || baseItem.getInteractionType().getType() == InteractionGuildGate.class) {
+                                } else if (baseItem.getInteractionType().getClass().isAssignableFrom(InteractionGuildFurni.class)) {
                                     int guildId;
                                     try {
                                         guildId = Integer.parseInt(extradata);

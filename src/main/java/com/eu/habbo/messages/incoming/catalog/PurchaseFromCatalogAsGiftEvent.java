@@ -282,7 +282,7 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                                         Emulator.getGameEnvironment().getItemManager().insertHopper(hopper);
 
                                         itemsList.add(hopper);
-                                    } else if (baseItem.getInteractionType().getType() == InteractionGuildFurni.class || baseItem.getInteractionType().getType() == InteractionGuildGate.class) {
+                                    } else if (baseItem.getInteractionType().getType().isAssignableFrom(InteractionGuildFurni.class)) {
                                         InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
                                         habboItem.setExtraData("");
                                         habboItem.setSqlUpdateNeeded(true);

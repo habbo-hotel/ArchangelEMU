@@ -40,6 +40,7 @@ import com.eu.habbo.plugin.events.furniture.FurnitureStackHeightEvent;
 import com.eu.habbo.plugin.events.rooms.RoomLoadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadingEvent;
+import com.eu.habbo.roleplay.room.RoomTurfManager;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TIntObjectMap;
@@ -88,6 +89,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private final RoomTradeManager roomTradeManager;
     @Getter
     private final RoomChatManager roomChatManager;
+
+    @Getter
+    private final RoomTurfManager roomTurfManager;
 
     public final ConcurrentHashMap<RoomTile, THashSet<RoomItem>> tileCache = new ConcurrentHashMap<>();
 
@@ -146,6 +150,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.roomPromotionManager = new RoomPromotionManager(this);
         this.roomTradeManager = new RoomTradeManager(this);
         this.roomChatManager = new RoomChatManager(this);
+
+        this.roomTurfManager = new RoomTurfManager();
 
         this.layoutName = set.getString("model");
 
@@ -985,8 +991,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             for (int i = this.roomItemManager.getCurrentItems().size(); i-- > 0; ) {
                 RoomItem roomItem = iterator.next();
-                if (roomItem instanceof InteractionGuildFurni interactionGuildFurni && interactionGuildFurni.getGuildId() == guild.getId()) {
-                    this.updateItem(roomItem);
+                if (roomItem.getClass().isAssignableFrom(InteractionGuildFurni.class)) {
+                    InteractionGuildFurni interactionGuildFurni = (InteractionGuildFurni) roomItem;
+                    if (interactionGuildFurni.getGuildId() == guild.getId()) {
+                        this.updateItem(roomItem);
+                    }
                 }
             }
         }

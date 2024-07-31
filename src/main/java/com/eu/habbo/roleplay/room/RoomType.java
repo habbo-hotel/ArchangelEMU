@@ -6,4 +6,5 @@ public class RoomType {
     public static String PRISON = "prison";
     public static String HOSPITAL = "hospital";
     public static String TAXI = "taxi";
+    public static String TURF = "turf";
 }

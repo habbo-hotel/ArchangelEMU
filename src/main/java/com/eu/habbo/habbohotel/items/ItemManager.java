@@ -381,6 +381,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction(InteractionUsable.INTERACTION_TYPE, InteractionUsable.class));
         this.interactionsList.add(new ItemInteraction(InteractionPhone.INTERACTION_TYPE, InteractionPhone.class));
         this.interactionsList.add(new ItemInteraction(InteractionPoliceLaptop.INTERACTION_TYPE, InteractionPoliceLaptop.class));
+        this.interactionsList.add(new ItemInteraction(InteractionTurfBanner.INTERACTION_TYPE, InteractionTurfBanner.class));
     }
 
     public void addItemInteraction(ItemInteraction itemInteraction) {
