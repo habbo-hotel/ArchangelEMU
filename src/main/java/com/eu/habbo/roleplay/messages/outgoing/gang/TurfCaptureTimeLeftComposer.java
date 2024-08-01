@@ -21,7 +21,7 @@ public class TurfCaptureTimeLeftComposer extends MessageComposer {
         HashMap<Integer, Integer> gangsInRoom = getGangsInRoom();
 
         this.response.appendInt(this.room.getRoomTurfManager().getSecondsLeft());
-        this.response.appendBoolean(!this.room.getRoomTurfManager().isBlocked());
+        this.response.appendBoolean(this.room.getRoomTurfManager().isCapturing());
         this.response.appendInt(gangsInRoom.size());
         gangsInRoom.forEach((gangId, userCount) -> {
             this.response.appendString(gangId + ";" + userCount);
