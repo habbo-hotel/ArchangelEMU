@@ -7,6 +7,9 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import lombok.AllArgsConstructor;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 @AllArgsConstructor
 public class TurfCaptureTimeLeftComposer extends MessageComposer {
     private final Room room;
@@ -14,12 +17,35 @@ public class TurfCaptureTimeLeftComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.turfCaptureTimeLeftComposer);
-        Habbo capturingHabbo = this.room != null ? this.room.getRoomTurfManager().getCapturingHabbo() : null;
-        this.response.appendInt(capturingHabbo != null ? capturingHabbo.getHabboInfo().getId() : -1);
-        this.response.appendString(capturingHabbo != null ? capturingHabbo.getHabboInfo().getUsername() : "");
-        this.response.appendString(capturingHabbo != null ? capturingHabbo.getHabboInfo().getLook() : "");
-        this.response.appendInt(this.room != null ? this.room.getRoomTurfManager().getSecondsLeft() : 0);
-        this.response.appendBoolean(this.room == null || !this.room.getRoomTurfManager().isBlocked());
+
+        HashMap<Integer, Integer> gangsInRoom = getGangsInRoom();
+
+        this.response.appendInt(this.room.getRoomTurfManager().getSecondsLeft());
+        this.response.appendBoolean(!this.room.getRoomTurfManager().isBlocked());
+        this.response.appendInt(gangsInRoom.size());
+        gangsInRoom.forEach((gangId, userCount) -> {
+            this.response.appendString(gangId + ";" + userCount);
+        });
         return this.response;
+    }
+
+    private HashMap<Integer, Integer> getGangsInRoom() {
+        Collection<Habbo> usersInRoom = this.room.getRoomUnitManager().getCurrentHabbos().values();
+
+        HashMap<Integer, Integer> gangsInRoom = new HashMap<>();
+
+        for (Habbo user : usersInRoom) {
+            Integer gangID = user.getHabboRoleplayStats().getGang() != null
+                    ? user.getHabboRoleplayStats().getGang().getId()
+                    : 0;
+
+            if (gangsInRoom.containsKey(gangID)) {
+                gangsInRoom.put(gangID, gangsInRoom.get(gangID) + 1);
+                continue;
+            }
+
+            gangsInRoom.put(gangID, 1);
+        }
+        return gangsInRoom;
     }
 }
