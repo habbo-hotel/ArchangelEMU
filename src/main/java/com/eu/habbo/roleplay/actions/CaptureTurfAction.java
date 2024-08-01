@@ -101,7 +101,6 @@ public class CaptureTurfAction implements Runnable {
 
     private void handleContestedRoom() {
         this.room.getRoomTurfManager().pauseCapturing();
-        this.capturingHabbo.shout(Emulator.getTexts().getValue("roleplay.turf_capture.paused"));
     }
 
     private void progressCapture() {

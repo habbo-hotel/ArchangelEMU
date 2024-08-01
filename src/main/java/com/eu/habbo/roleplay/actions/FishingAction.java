@@ -39,27 +39,27 @@ public class FishingAction implements Runnable {
         THashSet<RoomItem> ownedFishingPoles = this.habbo.getInventory().getItemsComponent().getItemsByInteractionType(InteractionFishingPole.class);
 
         if (ownedFishingPoles.isEmpty()) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.fishing.no_pole"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.fishing.no_pole"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getRoom() == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
             return;
         }
 
         if (this.roomItem.getRoom() == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getRoom().getRoomInfo().getId() != this.roomItem.getRoom().getRoomInfo().getId()) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getLastRoomTile() != this.roomTile) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.fishing.cancel"));
             return;
         }
 

@@ -34,27 +34,27 @@ public class TreeChoppingAction implements Runnable {
         THashSet<RoomItem> ownedPickaxes = this.habbo.getInventory().getItemsComponent().getItemsByInteractionType(InteractionToolAxe.class);
 
         if (ownedPickaxes.isEmpty()) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.no_axe"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.tree_chopping.no_axe"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getRoom() == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
             return;
         }
 
         if (this.roomItem.getRoom() == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getRoom().getRoomInfo().getId() != this.roomItem.getRoom().getRoomInfo().getId()) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getLastRoomTile() != this.roomTile) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.tree_chopping.cancel"));
             return;
         }
 

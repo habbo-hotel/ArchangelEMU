@@ -32,27 +32,27 @@ public class MiningAction implements Runnable {
         THashSet<RoomItem> ownedPickaxes = this.habbo.getInventory().getItemsComponent().getItemsByInteractionType(InteractionToolPickaxe.class);
 
         if (ownedPickaxes.isEmpty()) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.mining.no_pickaxe"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.mining.no_pickaxe"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getRoom() == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.mining.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.mining.cancel"));
             return;
         }
 
         if (this.roomItem.getRoom() == null) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.mining.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.mining.cancel"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getRoom().getRoomInfo().getId() != this.roomItem.getRoom().getRoomInfo().getId()) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.mining.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.mining.cancel"));
             return;
         }
 
         if (this.habbo.getRoomUnit().getLastRoomTile() != this.roomTile) {
-            this.habbo.shout(Emulator.getTexts().getValue("roleplay.mining.cancel"));
+            this.habbo.whisper(Emulator.getTexts().getValue("roleplay.mining.cancel"));
             return;
         }
 
