@@ -3,6 +3,7 @@ package com.eu.habbo.roleplay.commands.combat;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.users.HabboWeapon;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import com.eu.habbo.roleplay.weapons.WeaponsManager;
@@ -17,7 +18,9 @@ public class EquipCommand extends Command {
         if (params.length < 2) {
             Weapon prevEquippedWeapon = gameClient.getHabbo().getInventory().getWeaponsComponent().getEquippedWeapon().getWeapon();
             gameClient.getHabbo().getInventory().getWeaponsComponent().setEquippedWeapon(null);
+            gameClient.getHabbo().getInventory().getWeaponsComponent().setAmmoLeft(0);
             gameClient.getHabbo().getRoomUnit().giveEffect(0, -1);
+            gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
             gameClient.getHabbo().shout(prevEquippedWeapon.getUnequipMessage().replace(":displayName", prevEquippedWeapon.getDisplayName()));
             return true;
         }
@@ -36,7 +39,9 @@ public class EquipCommand extends Command {
         }
 
         gameClient.getHabbo().getInventory().getWeaponsComponent().setEquippedWeapon(matchingWeapon);
+        gameClient.getHabbo().getInventory().getWeaponsComponent().setAmmoLeft(matchingWeapon.getWeapon().getAmmoCapacity());
         gameClient.getHabbo().getRoomUnit().giveEffect(WeaponsManager.getInstance().getWeaponByID(matchingWeapon.getWeaponID()).getEquipEffect(), -1);
+        gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
         gameClient.getHabbo().shout(matchingWeapon.getWeapon().getEquipMessage().replace(":displayName", matchingWeapon.getWeapon().getDisplayName()));
 
         return true;

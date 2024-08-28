@@ -35,6 +35,7 @@ public class Weapon {
     @Getter
     @Setter
     private double reloadTime;
+    @Getter
     @Setter
     private int ammoCapacity;
     @Getter
