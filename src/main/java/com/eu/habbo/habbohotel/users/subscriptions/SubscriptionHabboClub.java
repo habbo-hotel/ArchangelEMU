@@ -12,7 +12,6 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboStats;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.outgoing.catalog.ScrSendKickbackInfoMessageComposer;
-import com.eu.habbo.messages.outgoing.generic.ClubGiftNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import gnu.trove.map.hash.THashMap;
@@ -82,10 +81,6 @@ public class SubscriptionHabboClub extends Subscription {
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
         if (habbo != null && habbo.getClient() != null) {
-
-            if (habbo.getHabboStats().getRemainingClubGifts() > 0) {
-                habbo.getClient().sendResponse(new ClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
-            }
 
             if ((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().getHcMessageLastModified()) < 60) {
                 Emulator.getThreading().run(() -> {
@@ -316,10 +311,6 @@ public class SubscriptionHabboClub extends Subscription {
     public static void processUnclaimed(Habbo habbo) {
 
         progressAchievement(habbo.getHabboInfo());
-
-        if (habbo.getHabboStats().getRemainingClubGifts() > 0) {
-            habbo.getClient().sendResponse(new ClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
-        }
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT * FROM `logs_hc_payday` WHERE user_id = ? AND claimed = 0")) {
