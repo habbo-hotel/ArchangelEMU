@@ -23,6 +23,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitSetGoalEvent;
+import com.eu.habbo.roleplay.messages.incoming.controls.MovementDirection;
 import com.eu.habbo.util.pathfinding.Rotation;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -153,9 +154,57 @@ public abstract class RoomUnit extends RoomEntity {
         this.statusUpdateNeeded = true;
     }
 
-    public void stopWalking() {
+    private Timer movementTimer;
+    private MovementDirection currentDirection;
+
+    public synchronized void startMoving(MovementDirection direction) {
+        stopMoving(); // Stop any previous movement
+
+        this.currentDirection = direction;
+
+        movementTimer = new Timer();
+        movementTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                boolean canContinue = moveInDirection(direction);
+                if (!canContinue) {
+                    stopMoving();
+                }
+            }
+        }, 0, 25);
+    }
+
+    public synchronized void stopMoving() {
+        if (movementTimer != null) {
+            movementTimer.cancel();
+            movementTimer = null;
+        }
+        this.currentDirection = null;
+        stopWalking(); // Ensure walking stops when movement stops
+    }
+
+    private synchronized boolean moveInDirection(MovementDirection direction) {
+        RoomTile currentPosition = this.getCurrentPosition();
+
+        RoomTile targetTile = switch (direction) {
+            case UP -> this.getRoom().getLayout().getTileInFront(currentPosition, 0);
+            case LEFT -> this.getRoom().getLayout().getTileInFront(currentPosition, 6);
+            case DOWN -> this.getRoom().getLayout().getTileInFront(currentPosition, 4);
+            case RIGHT -> this.getRoom().getLayout().getTileInFront(currentPosition, 2);
+            default -> null;
+        };
+
+        if (targetTile != null && targetTile.isWalkable()) {
+            this.walkTo(targetTile);
+            return true;
+        } else {
+            return false; // Stop if not walkable
+        }
+    }
+
+    public synchronized void stopWalking() {
         synchronized (this.statuses) {
-            if(this.path != null) {
+            if (this.path != null) {
                 this.path.clear();
             }
 
@@ -167,6 +216,25 @@ public abstract class RoomUnit extends RoomEntity {
             this.handleLayStatus();
 
             this.temporalFastWalkEnabled = false;
+
+            RoomItemManager roomItemManager = this.room.getRoomItemManager();
+            RoomUnitManager roomUnitManager = this.room.getRoomUnitManager();
+
+            roomItemManager.getItemsAt(this.currentPosition)
+                    .stream()
+                    .findFirst()
+                    .ifPresent(item -> {
+                        roomUnitManager.getRoomUnitsAt(this.currentPosition)
+                                .stream()
+                                .findFirst()
+                                .ifPresent(unit -> {
+                                    try {
+                                        item.onWalkOn(unit, this.room, null);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+                    });
         }
     }
 
