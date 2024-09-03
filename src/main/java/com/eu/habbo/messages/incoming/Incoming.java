@@ -66,6 +66,7 @@ import com.eu.habbo.roleplay.messages.incoming.billing.PayBillEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
+import com.eu.habbo.roleplay.messages.incoming.controls.UserAttackEvent;
 import com.eu.habbo.roleplay.messages.incoming.controls.UserMovementEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.device.DeviceCloseEvent;
@@ -1076,7 +1077,9 @@ public enum Incoming {
 
     turfCaptureQueryEvent(8065, TurfCaptureQueryEvent.class),
 
-    userMovementEvent(8066, UserMovementEvent.class);
+    userMovementEvent(8066, UserMovementEvent.class),
+
+    userAttackEvent(8067, UserAttackEvent.class);
 
     private final int messageId;
     private final Class<? extends MessageHandler> messageClass;
