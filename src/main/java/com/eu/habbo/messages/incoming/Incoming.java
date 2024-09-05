@@ -63,7 +63,6 @@ import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
 import com.eu.habbo.roleplay.messages.incoming.bank.*;
 import com.eu.habbo.roleplay.messages.incoming.billing.PayBillEvent;
-import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
 import com.eu.habbo.roleplay.messages.incoming.controls.UserAttackEvent;
@@ -947,9 +946,6 @@ public enum Incoming {
     voteForRoomEvent(143, UnknownEvent2.class),
 
     welcomeGiftChangeEmailEvent(66, UnknownEvent2.class),
-
-    // Roleplay
-    attackUserEvent(8001, AttackUserEvent.class),
 
     corpAcceptJobOfferEvent(8002, CorpAcceptJobEvent.class),
 

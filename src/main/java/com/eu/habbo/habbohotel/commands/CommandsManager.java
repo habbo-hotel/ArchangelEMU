@@ -36,7 +36,6 @@ import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import com.eu.habbo.roleplay.commands.bank.*;
 import com.eu.habbo.roleplay.commands.billing.PayBillCommand;
-import com.eu.habbo.roleplay.commands.combat.AttackCommand;
 import com.eu.habbo.roleplay.commands.combat.EquipCommand;
 import com.eu.habbo.roleplay.commands.combat.SetHealthCommand;
 import com.eu.habbo.roleplay.commands.corp.*;
@@ -322,7 +321,6 @@ public class CommandsManager {
         addCommand(new BankConnectATMCommand());
         addCommand(new BankConnectComputerCommand());
         // Combat
-        addCommand(new AttackCommand());
         addCommand(new EquipCommand());
         addCommand(new SetHealthCommand());
         // Corp
