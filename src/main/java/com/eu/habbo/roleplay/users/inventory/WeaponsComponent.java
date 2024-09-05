@@ -24,11 +24,6 @@ public class WeaponsComponent {
     @Getter
     private HabboWeapon equippedWeapon;
 
-    @Getter
-    @Setter
-    private int ammoLeft  = 0;
-
-
     public final Habbo habbo;
     public WeaponsComponent(Habbo habbo) {
         this.habbo = habbo;

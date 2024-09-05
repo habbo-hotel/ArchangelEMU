@@ -19,7 +19,7 @@ public class Weapon {
     private String uniqueName;
     @Getter
     @Setter
-    private String type;
+    private WeaponType type;
     @Getter
     @Setter
     private int minDamage;
@@ -35,6 +35,9 @@ public class Weapon {
     @Getter
     @Setter
     private double reloadTime;
+    @Getter
+    @Setter
+    private String reloadMessage;
     @Getter
     @Setter
     private int ammoCapacity;
@@ -75,12 +78,13 @@ public class Weapon {
         this.id = set.getInt("id");
         this.displayName = set.getString("display_name");
         this.uniqueName = set.getString("unique_name");
-        this.type = set.getString("type");
+        this.type = WeaponType.fromString(set.getString("type"));
         this.minDamage = set.getInt("min_damage");
         this.maxDamage = set.getInt("max_damage");
         this.rangeInTiles = set.getInt("range_in_tiles");
         this.accuracy = set.getInt("accuracy");
         this.reloadTime = set.getInt("reload_time");
+        this.reloadMessage = set.getString("reload_message");
         this.ammoCapacity = set.getInt("ammo_capacity");
         this.weight = set.getInt("weight");
         this.cooldownSeconds = set.getInt("cooldown_seconds");

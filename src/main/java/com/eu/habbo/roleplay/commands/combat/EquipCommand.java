@@ -18,7 +18,6 @@ public class EquipCommand extends Command {
         if (params.length < 2) {
             Weapon prevEquippedWeapon = gameClient.getHabbo().getInventory().getWeaponsComponent().getEquippedWeapon().getWeapon();
             gameClient.getHabbo().getInventory().getWeaponsComponent().setEquippedWeapon(null);
-            gameClient.getHabbo().getInventory().getWeaponsComponent().setAmmoLeft(0);
             gameClient.getHabbo().getRoomUnit().giveEffect(0, -1);
             gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
             gameClient.getHabbo().shout(prevEquippedWeapon.getUnequipMessage().replace(":displayName", prevEquippedWeapon.getDisplayName()));
@@ -39,7 +38,6 @@ public class EquipCommand extends Command {
         }
 
         gameClient.getHabbo().getInventory().getWeaponsComponent().setEquippedWeapon(matchingWeapon);
-        gameClient.getHabbo().getInventory().getWeaponsComponent().setAmmoLeft(matchingWeapon.getWeapon().getAmmoCapacity());
         gameClient.getHabbo().getRoomUnit().giveEffect(WeaponsManager.getInstance().getWeaponByID(matchingWeapon.getWeaponID()).getEquipEffect(), -1);
         gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(gameClient.getHabbo()).compose());
         gameClient.getHabbo().shout(matchingWeapon.getWeapon().getEquipMessage().replace(":displayName", matchingWeapon.getWeapon().getDisplayName()));

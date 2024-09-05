@@ -36,8 +36,6 @@ public class AttackCommand extends Command {
             executor.scheduleAtFixedRate(task, 0, 1, TimeUnit.SECONDS);
         }
 
-        gameClient.getHabbo().getHabboRoleplayStats().setLastAttackTime(System.currentTimeMillis());
-
         Habbo targetedHabbo = RoleplayHelper.getInstance().getTarget(gameClient, params);
 
         if (targetedHabbo == null) {

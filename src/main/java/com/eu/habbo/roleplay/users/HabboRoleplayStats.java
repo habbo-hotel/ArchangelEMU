@@ -300,21 +300,21 @@ public class HabboRoleplayStats{
         return new WeaponSkill(this.weaponXP, 1, 1);
     }
 
-    @Setter
     @Getter
-    private long lastAttackTime;
+    private long attackTimeoutExpiresAt;
+
+    public void setAttackTimeoutSeconds(int seconds) {
+        this.attackTimeoutExpiresAt = System.currentTimeMillis() + (seconds * 1000L);  // Convert seconds to milliseconds
+    }
 
     public boolean getCombatBlocked() {
-        long currentTime = System.currentTimeMillis();
-        int ATTACK_TIMEOUT = Emulator.getConfig().getInt("roleplay.attack.delay", 2000);
-        return (currentTime - this.lastAttackTime < ATTACK_TIMEOUT);
+        return (System.currentTimeMillis() >=  this.attackTimeoutExpiresAt);
     }
 
     public int getCombatDelayRemaining() {
         long currentTime = System.currentTimeMillis();
-        int ATTACK_TIMEOUT = Emulator.getConfig().getInt("roleplay.attack.delay", 2000);
-        long timeElapsed = currentTime - this.lastAttackTime;
-        return (int) Math.max(0, Math.ceil((ATTACK_TIMEOUT - timeElapsed) / 1000.0));
+        long timeElapsed = attackTimeoutExpiresAt - currentTime;
+        return (int) Math.max(0, Math.ceil(timeElapsed/ 1000.0));
     }
 
     public void setHealth(int healthCurrent) {

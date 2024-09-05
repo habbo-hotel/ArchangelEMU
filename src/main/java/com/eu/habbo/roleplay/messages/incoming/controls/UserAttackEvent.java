@@ -5,9 +5,11 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.messages.outgoing.combat.CombatDelayComposer;
 import com.eu.habbo.roleplay.messages.outgoing.combat.UserDiedComposer;
+import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.room.RoomType;
 import com.eu.habbo.roleplay.users.HabboWeapon;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.roleplay.weapons.WeaponType;
 
 import java.util.Collection;
 import java.util.concurrent.Executors;
@@ -25,13 +27,7 @@ public class UserAttackEvent extends MessageHandler {
         RoomTile roomTile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile((short) x, (short) y);
 
         if (roomTile == null) {
-            return;
-        }
-
-        Collection<Habbo> usersAtPosition = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getHabbosAt(roomTile);
-        Habbo targetedHabbo = usersAtPosition.stream().findFirst().orElse(null);
-
-        if (targetedHabbo == null) {
+            this.client.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_user_is_out_of_range").replace(":username", "target"));
             return;
         }
 
@@ -48,8 +44,6 @@ public class UserAttackEvent extends MessageHandler {
             executor.scheduleAtFixedRate(task, 0, 1, TimeUnit.SECONDS);
         }
 
-        this.client.getHabbo().getHabboRoleplayStats().setLastAttackTime(System.currentTimeMillis());
-
 
         if (this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getTags().contains(RoomType.PASSIVE)) {
             this.client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.generic.passive_room"));
@@ -61,19 +55,47 @@ public class UserAttackEvent extends MessageHandler {
 
         HabboWeapon equippedWeapon = this.client.getHabbo().getInventory().getWeaponsComponent().getEquippedWeapon();
 
+
+        if (equippedWeapon != null && equippedWeapon.getWeapon().getType() == WeaponType.GUN) {
+            if (equippedWeapon.getCurrentAmmo() == 0) {
+                this.client.getHabbo().whisper(equippedWeapon.getWeapon().getReloadMessage());
+                this.client.getHabbo().getHabboRoleplayStats().setAttackTimeoutSeconds((int) equippedWeapon.getWeapon().getReloadTime());
+                return;
+            }
+            equippedWeapon.setCurrentAmmo(equippedWeapon.getCurrentAmmo() - 1);
+            this.client.sendResponse(new UserRoleplayStatsChangeComposer(this.client.getHabbo()));
+        }
+
         int rangeInTiles = equippedWeapon != null ? equippedWeapon.getWeapon().getRangeInTiles() : 1;
 
         boolean isTargetWithinRange = Math.abs(distanceX) <= rangeInTiles && Math.abs(distanceY) <= rangeInTiles;
 
+        int combatTimeout = equippedWeapon != null ? equippedWeapon.getWeapon().getCooldownSeconds() : Emulator.getConfig().getInt("roleplay.attack.delay_secs", 1);
+
+        this.client.getHabbo().getHabboRoleplayStats().setAttackTimeoutSeconds(combatTimeout);
+
+        Collection<Habbo> usersAtPosition = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getHabbosAt(roomTile);
+        Habbo targetedHabbo = usersAtPosition.stream().findFirst().orElse(null);
+
+        if (targetedHabbo == null) {
+            this.client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.attack.target_missed"));
+            return;
+        }
         if (!isTargetWithinRange) {
-            this.client.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_user_is_out_of_range").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
+            this.client.getHabbo().whisper(Emulator.getTexts()
+                    .getValue("commands.roleplay.cmd_hit_user_is_out_of_range")
+                    .replace(":username", targetedHabbo.getHabboInfo().getUsername())
+            );
             return;
         }
 
         int totalEnergy = Emulator.getConfig().getInt("roleplay.attack.energy", 8);
 
         if (totalEnergy > this.client.getHabbo().getHabboRoleplayStats().getEnergyNow()) {
-            this.client.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.out_of_energy").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
+            this.client.getHabbo().whisper(Emulator.getTexts()
+                    .getValue("commands.roleplay.out_of_energy")
+                    .replace(":username", targetedHabbo.getHabboInfo().getUsername())
+            );
             return;
         }
 

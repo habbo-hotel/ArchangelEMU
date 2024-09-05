@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import com.eu.habbo.roleplay.weapons.WeaponsManager;
 import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +24,15 @@ public class HabboWeapon {
 
     private int userID;
 
+    @Setter
+    private int currentAmmo;
+
+
     public HabboWeapon(ResultSet set) throws SQLException {
         this.weapon = WeaponsManager.getInstance().getWeaponByID(set.getInt("weapon_id"));
         this.weaponID = set.getInt("weapon_id");
         this.userID = set.getInt("user_id");
+        this.currentAmmo = this.weapon.getAmmoCapacity();
     }
 
     public HabboWeapon(int weaponID, int userID) {

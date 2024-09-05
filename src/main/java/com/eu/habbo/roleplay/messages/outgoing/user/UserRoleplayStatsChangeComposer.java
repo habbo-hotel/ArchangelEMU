@@ -30,7 +30,7 @@ public class UserRoleplayStatsChangeComposer extends MessageComposer {
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerNow());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getHungerMax());
         this.response.appendInt(this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon() != null ? this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon().getWeaponID() : -1);
-        this.response.appendInt(this.habbo.getInventory().getWeaponsComponent().getAmmoLeft());
+        this.response.appendInt(this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon() != null ? this.habbo.getInventory().getWeaponsComponent().getEquippedWeapon().getCurrentAmmo() : 0);
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorp().getGuild().getId());
         this.response.appendInt(this.habbo.getHabboRoleplayStats().getCorpPosition().getId());
         if (this.habbo.getHabboRoleplayStats().getGang() != null) {
