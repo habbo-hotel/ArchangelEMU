@@ -18,10 +18,11 @@ public class UserAttackEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        short x = (short) this.packet.readShort();
-        short y = (short) this.packet.readShort();
+        int x = this.packet.readInt();
+        int y = this.packet.readInt();
+        int z = this.packet.readInt();
 
-        RoomTile roomTile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(x, y);
+        RoomTile roomTile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile((short) x, (short) y);
 
         if (roomTile == null) {
             return;
@@ -56,7 +57,7 @@ public class UserAttackEvent extends MessageHandler {
         }
 
         int distanceX = x - this.client.getHabbo().getRoomUnit().getCurrentPosition().getX();
-        int distanceY = y - this.client.getHabbo().getRoomUnit().getCurrentPosition().getY();
+        int distanceY = y- this.client.getHabbo().getRoomUnit().getCurrentPosition().getY();
 
         HabboWeapon equippedWeapon = this.client.getHabbo().getInventory().getWeaponsComponent().getEquippedWeapon();
 
