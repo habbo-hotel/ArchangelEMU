@@ -59,7 +59,7 @@ public class UserAttackEvent extends MessageHandler {
 
         if (equippedWeapon != null && equippedWeapon.getWeapon().getType() == WeaponType.GUN) {
             if (equippedWeapon.getCurrentAmmo() == 0) {
-                this.client.getHabbo().whisper(equippedWeapon.getWeapon().getReloadMessage());
+                this.client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.combat_out_of_ammo"));
                 this.client.getHabbo().getHabboRoleplayStats().setAttackTimeoutSeconds((int) equippedWeapon.getWeapon().getReloadTime());
                 return;
             }

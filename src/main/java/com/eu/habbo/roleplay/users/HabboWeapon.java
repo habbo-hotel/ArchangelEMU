@@ -27,7 +27,6 @@ public class HabboWeapon {
     @Setter
     private int currentAmmo;
 
-
     public HabboWeapon(ResultSet set) throws SQLException {
         this.weapon = WeaponsManager.getInstance().getWeaponByID(set.getInt("weapon_id"));
         this.weaponID = set.getInt("weapon_id");
