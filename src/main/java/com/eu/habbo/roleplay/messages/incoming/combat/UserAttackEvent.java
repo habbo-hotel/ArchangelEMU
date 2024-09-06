@@ -1,9 +1,10 @@
-package com.eu.habbo.roleplay.messages.incoming.controls;
+package com.eu.habbo.roleplay.messages.incoming.combat;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.messages.outgoing.combat.CombatDelayComposer;
+import com.eu.habbo.roleplay.messages.outgoing.combat.WeaponActionComposer;
 import com.eu.habbo.roleplay.messages.outgoing.combat.UserDiedComposer;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
 import com.eu.habbo.roleplay.room.RoomType;
@@ -76,6 +77,13 @@ public class UserAttackEvent extends MessageHandler {
 
         Collection<Habbo> usersAtPosition = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getHabbosAt(roomTile);
         Habbo targetedHabbo = usersAtPosition.stream().findFirst().orElse(null);
+
+
+        Collection<Habbo> nearbyHabbos = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values();
+        for (Habbo nearbyHabbo : nearbyHabbos) {
+            nearbyHabbo.getClient().sendResponse(new WeaponActionComposer(equippedWeapon, this.client.getHabbo()));
+        }
+
 
         if (targetedHabbo == null) {
             this.client.getHabbo().whisper(Emulator.getTexts().getValue("roleplay.attack.target_missed"));

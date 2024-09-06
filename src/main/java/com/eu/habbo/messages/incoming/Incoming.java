@@ -65,7 +65,7 @@ import com.eu.habbo.roleplay.messages.incoming.bank.*;
 import com.eu.habbo.roleplay.messages.incoming.billing.PayBillEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
-import com.eu.habbo.roleplay.messages.incoming.controls.UserAttackEvent;
+import com.eu.habbo.roleplay.messages.incoming.combat.UserAttackEvent;
 import com.eu.habbo.roleplay.messages.incoming.controls.UserMovementEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.device.DeviceCloseEvent;
