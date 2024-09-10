@@ -76,11 +76,6 @@ public class ConfigurationManager {
             envMapping.put("game.host", "EMU_HOST");
             envMapping.put("game.port", "EMU_PORT");
 
-            // RCON
-            envMapping.put("rcon.host", "RCON_HOST");
-            envMapping.put("rcon.port", "RCON_PORT");
-            envMapping.put("rcon.allowed", "RCON_ALLOWED");
-
             // Runtime
             envMapping.put("runtime.threads", "RT_THREADS");
             envMapping.put("logging.errors.runtime", "RT_LOG_ERRORS");
